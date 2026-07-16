@@ -1,27 +1,29 @@
-"""Task execution interface — supports multiple modes:
+"""Task execution interface — runs tasks through Hermes Agent with Elysium Swarmloop.
 
-1. Hermes CLI (primary): runs tasks through `hermes run` with Elysium Swarmloop skill
-2. LLM Direct (fallback): sends task to configured LLM provider (Ollama, OpenAI, etc.)
-3. Baseline: runs pytest directly on workspace (no agent, for comparison)
+The benchmark sends each task to `hermes run --skill elysium-swarmloop`.
+Hermes Agent then orchestrates the task using its configured LLM (e.g. deepseek-v4-flash)
+via the Elysium Swarmloop skill, handling subagent dispatch, quality gates, and self-learning.
+
+Fallback chain:
+1. `hermes run` CLI (primary) — full Elysium orchestration
+2. Baseline pytest — no AI, measures empty workspace score
 """
 
 from __future__ import annotations
 
-import json
 import subprocess
 import sys
 import time
 from pathlib import Path
 from typing import Any
 
-from .llm_interface import LLMProvider, LLMTaskExecutor, create_llm_provider
-
 
 class TaskExecutor:
-    """Unified task executor: Hermes CLI → LLM Direct → Baseline pytest."""
+    """Executes tasks via Hermes Agent CLI or baseline pytest."""
 
-    def __init__(self, llm_provider: LLMProvider | None = None, task_type: str = "code"):
-        self.llm_executor = LLMTaskExecutor(llm_provider) if llm_provider else None
+    def __init__(self, llm_provider=None, task_type: str = "code"):
+        # llm_provider kept for API compatibility but NOT used directly
+        # Elysium uses Hermes Agent's configured LLM, not our direct calls
         self.task_type = task_type
 
     def execute(
@@ -33,22 +35,14 @@ class TaskExecutor:
         timeout: int = 600,
         attempt: str = "first",
     ) -> dict[str, Any]:
-        """Execute a task. Tries: Hermes CLI → LLM Direct → Baseline pytest."""
+        """Execute a task. Tries: Hermes CLI → Baseline pytest."""
         start = time.time()
         result = None
 
-        # 1. Try Hermes CLI (primary — gives us Elysium Swarmloop orchestration)
+        # 1. Try Hermes CLI — runs task through Elysium Swarmloop skill
         result = self._try_hermes_cli(task_id, task_description, workspace, timeout)
 
-        # 2. Fallback: LLM Direct (if Hermes not available but LLM provider configured)
-        if result is None and self.llm_executor:
-            result = self.llm_executor.execute(
-                task_id=task_id, task_name=task_name,
-                task_description=task_description, task_type=self.task_type,
-                workspace=workspace, timeout=timeout,
-            )
-
-        # 3. Final fallback: baseline pytest (no AI at all)
+        # 2. Fallback: baseline pytest (no AI, empty workspace)
         if result is None:
             result = self._run_baseline(workspace, timeout)
 
@@ -63,7 +57,7 @@ class TaskExecutor:
         return result
 
     def _try_hermes_cli(self, task_id: str, description: str, workspace: Path, timeout: int) -> dict[str, Any] | None:
-        """Try executing via `hermes run` CLI. Returns None if Hermes not found."""
+        """Execute via `hermes run --skill elysium-swarmloop`."""
         prompt = self._build_prompt(task_id, description, workspace)
         prompt_file = workspace / "hermes_prompt.txt"
         prompt_file.write_text(prompt, encoding="utf-8")
@@ -72,14 +66,13 @@ class TaskExecutor:
             "hermes", "run",
             "--prompt-file", str(prompt_file),
             "--workdir", str(workspace / "workspace"),
+            "--skill", "elysium-swarmloop",
             "--timeout", str(timeout),
             "--json",
         ]
 
         try:
-            result = subprocess.run(
-                cmd, capture_output=True, text=True, timeout=timeout + 60,
-            )
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout + 60)
             return {
                 "stdout": result.stdout,
                 "stderr": result.stderr,
@@ -88,12 +81,12 @@ class TaskExecutor:
                 "mode": "hermes_cli",
             }
         except FileNotFoundError:
-            return None  # Hermes not installed, try next mode
+            return None  # Hermes not installed
         except subprocess.TimeoutExpired:
             return {"stdout": "", "stderr": f"Hermes CLI timed out ({timeout}s)", "returncode": -1, "success": False, "mode": "hermes_timeout"}
 
     def _run_baseline(self, workspace: Path, timeout: int) -> dict[str, Any] | None:
-        """Run pytest directly on whatever exists in workspace (no AI)."""
+        """Run pytest on workspace (no AI, just to measure zero baseline)."""
         test_dir = workspace / "workspace" / "tests"
         if test_dir.exists():
             try:
@@ -125,4 +118,6 @@ INSTRUCTIONS:
 2. Write all code to {workspace}/workspace/
 3. Ensure all tests in the tests/ directory pass
 4. Return a summary of what you implemented
+
+SKILL: elysium-swarmloop
 """

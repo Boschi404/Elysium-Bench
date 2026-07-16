@@ -1,73 +1,61 @@
 # =============================================================================
-# Elysium-Bench v0.3.0 — 10 Categories × 10 Tasks = 100 Total
-# 3 code categories + 7 non-code categories
+# Elysium-Bench v0.4.1 — 10 Categories × 10 Tasks = 100 Total
 # =============================================================================
 
 benchmark:
   name: "Elysium-Bench"
-  version: "0.3.0"
+  version: "0.4.1"
   description: >
     100-task multi-domain benchmark. Measures Elysium Swarmloop self-improvement
     across code, data, math, logic, security, review, docs, planning, and devops.
 
 # ─── 10 Task Categories ─────────────────────────────────────────────────────
 categories:
-  # === CODE CATEGORIES ===
   - id: api_development
     name: "API Development"
     description: "Implement REST API endpoints from specifications"
     weight: 1.0
     task_count: 10
-
   - id: bug_fixing
     name: "Bug Fixing"
     description: "Fix bugs in existing codebases with test-driven verification"
     weight: 1.0
     task_count: 10
-
   - id: algorithm_implementation
     name: "Algorithm Implementation"
     description: "Implement algorithms from descriptions with performance constraints"
     weight: 1.0
     task_count: 10
-
-  # === NON-CODE CATEGORIES ===
   - id: data_analysis
     name: "Data Analysis"
     description: "SQL queries, data transformation, pandas operations, reporting"
     weight: 1.0
     task_count: 10
-
   - id: mathematical_reasoning
     name: "Mathematical Reasoning"
     description: "Math problems, proofs, numerical computation, optimization"
     weight: 1.0
     task_count: 10
-
   - id: logical_deduction
     name: "Logical Deduction"
     description: "Logic puzzles, syllogisms, constraint satisfaction, riddles"
     weight: 1.0
     task_count: 10
-
   - id: security_analysis
     name: "Security Analysis"
     description: "Vulnerability detection, secure code review, threat modeling"
     weight: 1.0
     task_count: 10
-
   - id: code_review
     name: "Code Review"
     description: "Find bugs, suggest improvements, evaluate code quality"
     weight: 1.0
     task_count: 10
-
   - id: documentation_generation
     name: "Documentation Generation"
     description: "Write READMEs, API docs, code comments, user guides"
     weight: 1.0
     task_count: 10
-
   - id: configuration_management
     name: "Configuration & DevOps"
     description: "Dockerfiles, CI/CD configs, infrastructure-as-code, env setup"
@@ -78,14 +66,11 @@ categories:
 phases:
   baseline:
     enabled: true
-    description: "Run ALL 100 tasks without Elysium — bare execution baseline"
+    description: "Run ALL 100 tasks WITHOUT Hermes → bare execution baseline"
     use_elysium: false
-    run_all_tasks: true
 
   loops:
     count: 10
-    description: "10 loops. Each loop = 1 task per category (10 tasks/loop)."
-
     loop_1_tasks:
       api_development: [1]
       bug_fixing: [1]
@@ -97,30 +82,18 @@ phases:
       code_review: [1]
       documentation_generation: [1]
       configuration_management: [1]
-
     practice_tasks_start: 2
 
   retest:
     enabled: true
-    description: "Re-run the SAME 10 tasks as Loop 1 to measure improvement"
 
-# ─── Scoring Weights (generic dimensions, 0–100 total) ──────────────────────
+# ─── Scoring Weights (0–100) ────────────────────────────────────────────────
 scoring:
-  correctness:
-    weight: 40
-    description: "Is the answer/solution correct?"
-  completeness:
-    weight: 25
-    description: "Are all parts/requirements addressed?"
-  efficiency:
-    weight: 15
-    description: "Is it optimal, concise, well-performing?"
-  robustness:
-    weight: 10
-    description: "Edge cases, error handling, validation"
-  clarity:
-    weight: 10
-    description: "Well-structured, readable, properly formatted"
+  correctness:    { weight: 40, description: "Is the answer/solution correct?" }
+  completeness:   { weight: 25, description: "Are all parts/requirements addressed?" }
+  efficiency:     { weight: 15, description: "Is it optimal, concise, well-performing?" }
+  robustness:     { weight: 10, description: "Edge cases, error handling, validation" }
+  clarity:        { weight: 10, description: "Well-structured, readable, properly formatted" }
 
 # ─── Thresholds ───────────────────────────────────────────────────────────────
 thresholds:
@@ -136,51 +109,22 @@ environment:
   timeout_per_task: 600
   temp_dir: null
 
-# ─── LLM Provider Configuration ──────────────────────────────────────────────
-# The benchmark sends each task to an LLM for execution.
-# Multiple providers supported — pick one and configure accordingly.
+# ─── Hermes Agent ────────────────────────────────────────────────────────────
+# The benchmark sends tasks to `hermes run --skill elysium-swarmloop`.
+# Hermes Agent uses its OWN provider/model config (set via hermes config
+# or ~/.hermes/config.yaml). The benchmark does NOT call LLMs directly.
+#
+# Make sure Hermes Agent is configured with an LLM provider before running.
+# Example: hermes config set provider openrouter model deepseek/deepseek-v4-flash
 # ──────────────────────────────────────────────────────────────────────────────
-llm:
-  # Set enabled: true to have the LLM actually solve each task.
-  # Set enabled: false for baseline-only mode (just runs tests on existing code).
-  enabled: true
-
-  # ── Provider options ────────────────────────────────────────────────────────
-  # Supported: ollama (local, free) | openai | anthropic | openrouter | together
-  provider: "ollama"
-
-  # ── Model ──────────────────────────────────────────────────────────────────
-  # Ollama:   "qwen2.5:7b", "mistral:7b", "codellama:7b", "llama3.1:8b"
-  # OpenAI:   "gpt-4o", "gpt-4o-mini", "o1-mini"
-  # Anthropic: "claude-sonnet-4-20250514", "claude-3-5-sonnet-latest"
-  # OpenRouter: "anthropic/claude-sonnet-4", "openai/gpt-4o", "google/gemini-2.0-flash-001"
-  model: "qwen2.5:7b"
-
-  # ── Provider-specific settings ──────────────────────────────────────────────
-  # API keys are read from environment variables by default:
-  #   OpenAI:    OPENAI_API_KEY
-  #   Anthropic: ANTHROPIC_API_KEY
-  #   OpenRouter: OPENROUTER_API_KEY
-  #   Together:  TOGETHER_API_KEY
-  # You can also set api_key directly here (not recommended for shared configs).
-
-  temperature: 0.3             # Lower = more deterministic
-  max_tokens: 8000             # Max response tokens
-  # base_url: "http://localhost:11434"  # Custom base URL (Ollama default, change if remote)
-
-# ─── Hermes Agent Integration ────────────────────────────────────────────────
-# Only used when you want Elysium Swarmloop meta-orchestration on top of the LLM.
-# Enables: multi-agent decomposition, streaming gather, (elysium-swarmloop skill).
-# When disabled, tasks are sent directly to the LLM (simpler, faster).
-# ───────────────────────────────────────────────────────────
 hermes:
-  skill: "elysium-swarmloop"   # Skill loaded for orchestration layer
-  subagents_max: 100            # Max parallel subagents
-  quality_threshold: 8          # Quality gate threshold
-  retries_max: 5                # Max retries per task
-  streaming: true               # Streaming gather
-  self_learning: true           # Pattern capture + calibration
-  orchestrator_depth: 2         # Hierarchical depth
+  skill: "elysium-swarmloop"
+  subagents_max: 100
+  quality_threshold: 8
+  retries_max: 5
+  streaming: true
+  self_learning: true
+  orchestrator_depth: 2
 
 # ─── Reporting ────────────────────────────────────────────────────────────────
 reporting:
@@ -189,5 +133,4 @@ reporting:
     - json
     - markdown
     - html
-  include_charts: true
   verbose: false
