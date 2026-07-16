@@ -1,0 +1,134 @@
+<svg width="240" height="240" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bgGlow" cx="50%" cy="38%" r="75%">
+      <stop offset="0%" stop-color="#0a1628"/>
+      <stop offset="45%" stop-color="#060d1a"/>
+      <stop offset="100%" stop-color="#02050a"/>
+    </radialGradient>
+
+    <linearGradient id="panelFill" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.09"/>
+      <stop offset="45%" stop-color="#ffffff" stop-opacity="0.02"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.00"/>
+    </linearGradient>
+
+    <linearGradient id="panelStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7af0ff" stop-opacity="0.55"/>
+      <stop offset="50%" stop-color="#4de8ff" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#4d9fff" stop-opacity="0.4"/>
+    </linearGradient>
+
+    <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22d3ee"/>
+      <stop offset="50%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+
+    <linearGradient id="arcGrad2" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#a78bfa"/>
+      <stop offset="50%" stop-color="#818cf8"/>
+      <stop offset="100%" stop-color="#22d3ee"/>
+    </linearGradient>
+
+    <radialGradient id="coreGrad" cx="38%" cy="32%" r="75%">
+      <stop offset="0%" stop-color="#e6faff"/>
+      <stop offset="30%" stop-color="#22d3ee"/>
+      <stop offset="65%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </radialGradient>
+
+    <radialGradient id="nodeGrad" cx="35%" cy="30%" r="75%">
+      <stop offset="0%" stop-color="#e0f7ff"/>
+      <stop offset="55%" stop-color="#67e8f9"/>
+      <stop offset="100%" stop-color="#0891b2"/>
+    </radialGradient>
+
+    <radialGradient id="nodeGrad2" cx="35%" cy="30%" r="75%">
+      <stop offset="0%" stop-color="#ede9fe"/>
+      <stop offset="55%" stop-color="#a78bfa"/>
+      <stop offset="100%" stop-color="#7c3aed"/>
+    </radialGradient>
+
+    <filter id="softBlur" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="6"/>
+    </filter>
+    <filter id="strongBlur" x="-150%" y="-150%" width="400%" height="400%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+    <filter id="tinyBlur" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="2.2"/>
+    </filter>
+
+    <clipPath id="panelClip">
+      <rect x="8" y="8" width="224" height="224" rx="52"/>
+    </clipPath>
+  </defs>
+
+  <!-- background -->
+  <rect x="0" y="0" width="240" height="240" rx="56" fill="url(#bgGlow)"/>
+
+  <g clip-path="url(#panelClip)">
+    <!-- ambient color blooms -->
+    <circle cx="70" cy="190" r="70" fill="#3b82f6" opacity="0.20" filter="url(#strongBlur)"/>
+    <circle cx="185" cy="55" r="65" fill="#22d3ee" opacity="0.22" filter="url(#strongBlur)"/>
+    <circle cx="120" cy="120" r="55" fill="#a78bfa" opacity="0.12" filter="url(#strongBlur)"/>
+
+    <!-- orbit connection lines — upper 3 nodes (cyan) + lower 3 nodes (purple) -->
+    <g stroke-linecap="round" opacity="0.55">
+      <line x1="120" y1="120" x2="120" y2="43" stroke="url(#arcGrad)" stroke-width="1.6"/>
+      <line x1="120" y1="120" x2="187" y2="81" stroke="url(#arcGrad)" stroke-width="1.6"/>
+      <line x1="120" y1="120" x2="187" y2="159" stroke="url(#arcGrad2)" stroke-width="1.6"/>
+      <line x1="120" y1="120" x2="120" y2="197" stroke="url(#arcGrad2)" stroke-width="1.6"/>
+      <line x1="120" y1="120" x2="53" y2="159" stroke="url(#arcGrad2)" stroke-width="1.6"/>
+      <line x1="120" y1="120" x2="53" y2="81" stroke="url(#arcGrad)" stroke-width="1.6"/>
+    </g>
+
+    <!-- improvement loop arc (~300° from top, counter-clockwise, showing the re-test cycle) -->
+    <path d="M 120 36 A 84 84 0 1 1 38 85" fill="none" stroke="url(#arcGrad)" stroke-width="4.5" stroke-linecap="round" opacity="0.95"/>
+    <!-- arrowhead -->
+    <path d="M 28 68 L 38 85 L 55 78" fill="none" stroke="url(#arcGrad)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- leaf nodes: upper 3 cyan, lower 3 purple -->
+    <g>
+      <!-- top -->
+      <circle cx="120" cy="43" r="10.5" fill="url(#nodeGrad)" opacity="0.35" filter="url(#softBlur)"/>
+      <circle cx="120" cy="43" r="7.5" fill="url(#nodeGrad)"/>
+      <!-- top-right -->
+      <circle cx="187" cy="81" r="10.5" fill="url(#nodeGrad)" opacity="0.35" filter="url(#softBlur)"/>
+      <circle cx="187" cy="81" r="7.5" fill="url(#nodeGrad)"/>
+      <!-- bottom-right -->
+      <circle cx="187" cy="159" r="10.5" fill="url(#nodeGrad2)" opacity="0.35" filter="url(#softBlur)"/>
+      <circle cx="187" cy="159" r="7.5" fill="url(#nodeGrad2)"/>
+      <!-- bottom -->
+      <circle cx="120" cy="197" r="10.5" fill="url(#nodeGrad2)" opacity="0.35" filter="url(#softBlur)"/>
+      <circle cx="120" cy="197" r="7.5" fill="url(#nodeGrad2)"/>
+      <!-- bottom-left -->
+      <circle cx="53" cy="159" r="10.5" fill="url(#nodeGrad2)" opacity="0.35" filter="url(#softBlur)"/>
+      <circle cx="53" cy="159" r="7.5" fill="url(#nodeGrad2)"/>
+      <!-- top-left -->
+      <circle cx="53" cy="81" r="10.5" fill="url(#nodeGrad)" opacity="0.35" filter="url(#softBlur)"/>
+      <circle cx="53" cy="81" r="7.5" fill="url(#nodeGrad)"/>
+    </g>
+
+    <!-- core: score gauge / target with checkmark -->
+    <circle cx="120" cy="120" r="32" fill="#22d3ee" opacity="0.30" filter="url(#strongBlur)"/>
+    <circle cx="120" cy="120" r="23" fill="url(#coreGrad)"/>
+    <circle cx="120" cy="120" r="23" fill="none" stroke="#ffffff" stroke-opacity="0.5" stroke-width="1"/>
+
+    <!-- checkmark inside core -->
+    <path d="M 110 120 L 117 128 L 132 112" fill="none" stroke="#0a1628" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>
+
+    <!-- specular highlight -->
+    <circle cx="113" cy="112" r="6" fill="#ffffff" opacity="0.6" filter="url(#tinyBlur)"/>
+
+    <!-- score arc around the core (0-100 gauge) -->
+    <path d="M 98 108 A 32 32 0 0 1 142 108" fill="none" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1.5" stroke-linecap="round"/>
+
+    <!-- glass sheen -->
+    <ellipse cx="70" cy="40" rx="120" ry="55" fill="#ffffff" opacity="0.05"/>
+  </g>
+
+  <!-- glass panel fill + border on top -->
+  <rect x="8" y="8" width="224" height="224" rx="52" fill="url(#panelFill)"/>
+  <rect x="8.75" y="8.75" width="222.5" height="222.5" rx="51.25" fill="none" stroke="url(#panelStroke)" stroke-width="1.5"/>
+</svg>
