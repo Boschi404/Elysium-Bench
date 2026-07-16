@@ -1,11 +1,15 @@
 # =============================================================================
-# Elysium-Bench Configuration
+# Elysium-Bench v0.2.0 — 10-Loop Multi-Phase Configuration
 # =============================================================================
 
 benchmark:
   name: "Elysium-Bench"
-  version: "0.1.0"
-  description: "Measures multi-agent self-improvement: runs similar tasks sequentially, re-runs the first, and computes the learning delta."
+  version: "0.2.0"
+  description: >
+    Multi-phase benchmark measuring Elysium Swarmloop self-improvement.
+    Phase 0: All tasks WITHOUT Elysium (bare baseline).
+    Phase 1-10: 10 loops, each loop = 1 task per category WITH Elysium.
+    Phase 11: Re-run Loop 1 tasks → compute improvement delta vs Phase 1.
 
 # ─── Task Categories ──────────────────────────────────────────────────────────
 categories:
@@ -27,6 +31,45 @@ categories:
     weight: 1.0
     task_count: 10
 
+# ─── Multi-Phase Flow ────────────────────────────────────────────────────────
+#  Phase 0 (BASELINE): All tasks WITHOUT Elysium → pure execution baseline
+#  Phase 1 (LOOP 1):   Loop 1 tasks WITH Elysium (max config) → first score
+#  Phase 2-10:         Alternative tasks WITH Elysium → practice loops
+#  Phase 11 (RE-TEST): Same tasks as Loop 1 WITH Elysium → improvement delta
+# ──────────────────────────────────────────────────────────────────────────────
+
+phases:
+  # ── PHASE 0: Bare execution (no agent, no Elysium) ───────────────────────
+  baseline:
+    enabled: true
+    description: "Run ALL tasks without Elysium — direct execution baseline"
+    use_elysium: false         # NO agent — just run tests directly
+    run_all_tasks: true        # Run every task in every category
+
+  # ── PHASE 1-10: Practice loops with Elysium ──────────────────────────────
+  loops:
+    count: 10                  # Total loops (loop 1 is the measurement loop)
+    description: >
+      10 loops. Each loop runs 1 task per category (3 tasks per loop).
+      Loop 1 tasks are the "measurement set" — re-tested after all 10 loops.
+      Loops 2-10 use different tasks (practice).
+
+    # Tasks per loop: 1 from each category = 3 tasks/loop.
+    # With 10 tasks/category, we have exactly 10 loops (1→10).
+
+    loop_1_tasks:               # MEASUREMENT SET — these get re-tested
+      api_development: [1]      # Task index 1 (T01)
+      bug_fixing: [1]           # Task index 1 (T01)
+      algorithm_implementation: [1]  # Task index 1 (T01)
+
+    practice_tasks_start: 2     # Loops 2-10 use tasks starting from index 2
+                                # Loop 2 = task 2, Loop 3 = task 3, ..., Loop 10 = task 10
+
+  # ── PHASE 11: Re-test Loop 1 tasks ───────────────────────────────────────
+  retest:
+    enabled: true
+    description: "Re-run the SAME tasks as Loop 1 to measure improvement"
+
 # ─── Scoring Weights (0–100 total) ──────────────────────────────────────────
 scoring:
   functional_correctness:
@@ -45,37 +88,36 @@ scoring:
     weight: 10
     description: "Imports work, interface contracts match, no orphan code"
 
-# ─── Improvement Loop ─────────────────────────────────────────────────────────
-improvement_loop:
-  enabled: true
-  description: >
-    Run tasks 1→N sequentially, then re-run task 1.
-    Compare score_task_1_rerun vs score_task_1_first to measure learning.
-  tasks:
-    first: 1       # Task to use as baseline
-    sequence: 10   # How many tasks in the sequence
-    re_run: true   # Re-run first task after sequence
-
 # ─── Thresholds ───────────────────────────────────────────────────────────────
 thresholds:
-  pass: 60           # Minimum total score to consider "passing"
-  excellent: 85      # Excellent performance threshold
-  learning_min: 5    # Minimum % improvement to claim "learning detected"
+  pass: 60              # Minimum total score to consider "passing"
+  excellent: 85         # Excellent performance threshold
+  learning_min: 5       # Minimum % improvement to claim "learning detected"
 
 # ─── Environment ──────────────────────────────────────────────────────────────
 environment:
-  mode: "venv"              # venv | docker (docker recommended for clean runs)
+  mode: "venv"             # venv | docker
   python_version: "3.10"
-  cleanup: true             # Auto-cleanup temp files after run
-  timeout_per_task: 600     # Max seconds per task
-  temp_dir: null            # null = auto-create in system temp
+  cleanup: true            # Auto-cleanup temp files after run
+  timeout_per_task: 600    # Max seconds per task
+  temp_dir: null
 
-# ─── Hermes Agent Integration ────────────────────────────────────────────────
+# ─── Hermes Agent Integration (MAX CONFIG for Elysium) ───────────────────────
 hermes:
-  skill: "elysium-swarmloop"  # Skill to load for each task
-  subagents_max: 50           # Max subagents per task
-  quality_threshold: 7        # Quality gate threshold (out of 10)
-  retries_max: 3              # Max retries per subagent task
+  # === MAXED OUT for Elysium Swarmloop ===
+  skill: "elysium-swarmloop"
+  subagents_max: 100          # Max parallel subagents (was 50)
+  quality_threshold: 8        # Strict quality gate (was 7)
+  retries_max: 5              # More retries (was 3)
+  streaming: true             # Enable streaming gather
+  self_learning: true         # Enable self-learning loop
+  orchestrator_depth: 2       # Depth-2 orchestration
+  # === Elysium disabled mode (for baseline) ===
+  disabled:
+    skill: null               # No skill loaded
+    subagents_max: 0          # No subagents
+    quality_threshold: 0      # No quality gate
+    retries_max: 0            # No retries
 
 # ─── Reporting ────────────────────────────────────────────────────────────────
 reporting:

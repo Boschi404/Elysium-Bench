@@ -14,17 +14,22 @@ Most benchmarks ask: *"How good is the agent right now?"*
 
 Elysium-Bench asks: **"Does the agent get better after solving similar problems?"**
 
-### The Improvement Loop
+### The Multi-Phase Flow
 
 ```
-Task 1 (baseline) → Task 2 → Task 3 → ... → Task 10 → Task 1 (re-run)
-                                                          ↓
-                                                    Compare scores
-                                                          ↓
-                                                   📈 Learning Δ
+PHASE 0 (BASELINE):   All 30 tasks WITHOUT Elysium → bare execution baseline
+                          ↓
+PHASE 1 (LOOP 1):     3 tasks WITH Elysium (T01 from each category) → first score
+                          ↓
+PHASE 2-10 (LOOPS):   3 tasks per loop WITH Elysium → 9 practice loops
+                      (T02→T10, different tasks each loop)
+                          ↓
+PHASE 11 (RE-TEST):   Same 3 tasks as Loop 1 WITH Elysium → compare Δ
+                          ↓
+                   📈 Improvement Detected?
 ```
 
-If Elysium Swarmloop truly **learns from experience and improves the underlying LLM**, then the re-run of Task 1 should score higher than the first run. That's the `Δ Score` — the learning delta.
+**This proves self-improvement:** after 10 loops of practice on similar tasks, the agent should perform BETTER on the exact same tasks it saw in Loop 1. The delta between Loop 1 and Re-Test is the learning signal.
 
 ---
 

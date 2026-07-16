@@ -25,6 +25,11 @@ class HermesInterface:
         self.quality_threshold = quality_threshold
         self.retries_max = retries_max
 
+    @property
+    def is_elysium_enabled(self) -> bool:
+        """Elysium is enabled when a skill is configured and subagents > 0."""
+        return bool(self.skill) and self.subagents_max > 0
+
     def execute_task(
         self,
         task_id: str,
@@ -32,21 +37,24 @@ class HermesInterface:
         workspace: Path,
         timeout: int = 600,
     ) -> dict[str, Any]:
-        """Execute a task via Hermes Agent.
+        """Execute a task via Hermes Agent or directly (baseline mode).
 
-        Builds a prompt that instructs Hermes to solve the task,
-        then monitors the output for completion.
+        If Elysium is disabled (baseline mode), runs pytest directly.
+        If enabled, tries Hermes CLI with fallback to direct execution.
         """
-        prompt = self._build_prompt(task_id, task_description, workspace)
-
         start_time = time.time()
 
-        try:
-            # Try Hermes CLI first
-            result = self._run_hermes_cli(prompt, workspace, timeout)
-        except FileNotFoundError:
-            # Fallback: simulate with direct execution
-            result = self._run_direct(prompt, workspace, timeout)
+        if not self.is_elysium_enabled:
+            # BASELINE MODE: run tests directly, no agent
+            result = self._run_direct("", workspace, timeout)
+            result["mode"] = "baseline_no_elysium"
+        else:
+            # ELYSIUM MODE: try Hermes CLI
+            prompt = self._build_prompt(task_id, task_description, workspace)
+            try:
+                result = self._run_hermes_cli(prompt, workspace, timeout)
+            except FileNotFoundError:
+                result = self._run_direct(prompt, workspace, timeout)
 
         elapsed = time.time() - start_time
         result["elapsed_seconds"] = round(elapsed, 1)

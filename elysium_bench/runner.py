@@ -1,4 +1,11 @@
-"""Main benchmark runner — orchestrates the improvement loop."""
+"""Main benchmark runner — 10-loop multi-phase orchestration.
+
+Flow:
+  Phase 0 (BASELINE):   All tasks WITHOUT Elysium → bare execution baseline
+  Phase 1 (LOOP 1):     Measurement tasks WITH Elysium (max config) → first score
+  Phase 2-10 (LOOPS):   Practice tasks WITH Elysium → 9 practice loops
+  Phase 11 (RE-TEST):   Same tasks as Loop 1 WITH Elysium → improvement delta
+"""
 
 from __future__ import annotations
 
@@ -9,6 +16,7 @@ from typing import Any
 
 import yaml
 from rich.console import Console
+from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TaskProgressColumn
 from rich.table import Table
 
@@ -22,7 +30,7 @@ console = Console()
 
 
 class BenchmarkRunner:
-    """Orchestrates the full benchmark: load tasks → run improvement loop → score → report."""
+    """Multi-phase benchmark: Baseline → 10 Loops → Re-Test."""
 
     def __init__(self, config_path: Path = Path("config.yaml")):
         self.config = yaml.safe_load(config_path.read_text(encoding="utf-8"))
@@ -30,77 +38,94 @@ class BenchmarkRunner:
         self.results_dir = config_path.parent / self.config["reporting"]["output_dir"]
         self.results_dir.mkdir(parents=True, exist_ok=True)
 
-        # Components
         self.registry = TaskRegistry(self.tasks_root, self.config)
         self.harness = Harness(
             mode=self.config["environment"]["mode"],
             cleanup=self.config["environment"]["cleanup"],
         )
-        self.hermes = HermesInterface(
-            skill=self.config["hermes"]["skill"],
-            subagents_max=self.config["hermes"]["subagents_max"],
-            quality_threshold=self.config["hermes"]["quality_threshold"],
-            retries_max=self.config["hermes"]["retries_max"],
+
+        # Two Hermes instances: one for Elysium, one for baseline (disabled)
+        hc = self.config["hermes"]
+        self.hermes_elysium = HermesInterface(
+            skill=hc["skill"],
+            subagents_max=hc["subagents_max"],
+            quality_threshold=hc["quality_threshold"],
+            retries_max=hc["retries_max"],
+        )
+        dc = hc["disabled"]
+        self.hermes_baseline = HermesInterface(
+            skill=dc["skill"],
+            subagents_max=dc["subagents_max"],
+            quality_threshold=dc["quality_threshold"],
+            retries_max=dc["retries_max"],
         )
 
         # State
-        self.all_results: dict[str, Any] = {}
-        self.improvement_metrics: dict[str, ImprovementMetrics] = {}
+        self.baseline_scores: dict[str, ScoreBreakdown] = {}   # task_id → score
+        self.loop1_scores: dict[str, ScoreBreakdown] = {}       # task_id → score
+        self.practice_scores: list[dict[str, ScoreBreakdown]] = []  # per-loop
+        self.retest_scores: dict[str, ScoreBreakdown] = {}      # task_id → score
+        self.start_time = time.time()
+
+    # ═══════════════════════════════════════════════════════════════════════
+    # PUBLIC API
+    # ═══════════════════════════════════════════════════════════════════════
 
     def run(self) -> dict[str, Any]:
-        """Execute the full benchmark suite."""
-        console.print("\n[bold cyan]🚀 Elysium-Bench v0.1.0[/bold cyan]")
-        console.print("   Multi-Agent Self-Improvement Benchmark\n")
+        """Execute the full multi-phase benchmark."""
+        console.print()
+        console.print(Panel.fit(
+            "[bold cyan]🚀 Elysium-Bench v0.2.0[/bold cyan]\n"
+            "[dim]Multi-Phase Self-Improvement Benchmark[/dim]\n"
+            "[dim]Baseline → 10 Elysium Loops → Re-Test → Improvement Δ[/dim]",
+            border_style="cyan",
+        ))
 
-        # 1. Discover tasks
-        console.print("[bold]Phase 1:[/bold] Discovering tasks...")
         categories = self.registry.discover()
+        if not categories:
+            console.print("[bold red]❌ No tasks discovered![/bold red]")
+            return {}
         console.print(self.registry.summary())
         console.print()
 
-        if not categories:
-            console.print("[bold red]❌ No tasks discovered! Exiting.[/bold red]")
-            return {}
+        # ── Phase 0: BASELINE (no Elysium) ─────────────────────────────────
+        if self.config["phases"]["baseline"]["enabled"]:
+            self._run_baseline(categories)
 
-        # 2. Run improvement loop for each category
-        for category in categories:
-            console.print(f"\n[bold cyan]{'='*60}[/bold cyan]")
-            console.print(f"[bold]Category: {category.name} ({category.id})[/bold]")
-            console.print(f"[bold cyan]{'='*60}[/bold cyan]\n")
+        # ── Phase 1-10: LOOPS with Elysium ────────────────────────────────
+        loop_config = self.config["phases"]["loops"]
+        total_loops = loop_config["count"]
 
-            metrics = self._run_improvement_loop(category)
-            self.improvement_metrics[category.id] = metrics
+        # Phase 1 = Loop 1 (measurement)
+        self._run_loop(categories, loop_num=1, is_measurement=True, loop_config=loop_config)
 
-        # 3. Generate final report
-        report = self._generate_report()
+        # Phase 2-10 = Practice loops
+        for loop_num in range(2, total_loops + 1):
+            self._run_loop(categories, loop_num=loop_num, is_measurement=False, loop_config=loop_config)
+
+        # ── Phase 11: RE-TEST Loop 1 tasks ────────────────────────────────
+        if self.config["phases"]["retest"]["enabled"]:
+            self._run_retest(categories, loop_config)
+
+        # ── Generate Final Report ──────────────────────────────────────────
+        report = self._generate_final_report()
         self._save_results(report)
-
         return report
 
-    def _run_improvement_loop(self, category: Category) -> ImprovementMetrics:
-        """Run the improvement loop for one category.
+    # ═══════════════════════════════════════════════════════════════════════
+    # PHASE 0: BASELINE (no Elysium)
+    # ═══════════════════════════════════════════════════════════════════════
 
-        Flow: Task 1 → Task 2 → ... → Task N → Task 1 (re-run) → Compare
-        """
-        tasks = category.tasks
-        loop_config = self.config["improvement_loop"]
-        first_task_index = loop_config["first"] - 1  # 0-indexed
-        sequence_count = min(loop_config["sequence"], len(tasks))
+    def _run_baseline(self, categories: list[Category]) -> None:
+        """Run ALL tasks WITHOUT Elysium — bare execution baseline."""
+        console.print()
+        console.rule("[bold yellow]📋 PHASE 0: BASELINE — All tasks WITHOUT Elysium[/bold yellow]")
 
-        metrics = ImprovementMetrics(category=category.id)
+        all_tasks = []
+        for cat in categories:
+            all_tasks.extend(cat.tasks)
 
-        # Phase A: Run Task 1 (baseline)
-        baseline_task = tasks[first_task_index]
-        console.print(f"[bold yellow]📌 PHASE A: Baseline — {baseline_task.id}: {baseline_task.name}[/bold yellow]")
-
-        task1_result = self._run_single_task(baseline_task, attempt="first")
-        task1_score = self._score_task(baseline_task, task1_result)
-        metrics.task1_first_score = task1_score
-        console.print(f"   Score: [bold]{task1_score.total:.1f}/100[/bold] {'✅' if task1_score.passed else '❌'}\n")
-
-        # Phase B: Run remaining tasks (2..N)
-        console.print(f"[bold yellow]📌 PHASE B: Sequence — {sequence_count - 1} tasks[/bold yellow]")
-        sequence_tasks = [t for i, t in enumerate(tasks) if i != first_task_index][: sequence_count - 1]
+        console.print(f"   Running {len(all_tasks)} tasks without agent...\n")
 
         with Progress(
             SpinnerColumn(),
@@ -109,59 +134,133 @@ class BenchmarkRunner:
             TaskProgressColumn(),
             console=console,
         ) as progress:
-            seq_progress = progress.add_task("Running sequence...", total=len(sequence_tasks))
+            pbar = progress.add_task("[yellow]Baseline...", total=len(all_tasks))
 
-            for task in sequence_tasks:
-                progress.update(seq_progress, description=f"  {task.id}: {task.name[:40]}...")
+            for task in all_tasks:
+                progress.update(pbar, description=f"  [dim]{task.id}: {task.name[:45]}...[/dim]")
 
-                result = self._run_single_task(task, attempt="sequence")
+                # Use baseline Hermes (disabled — no Elysium)
+                result = self._run_single_task(task, hermes=self.hermes_baseline, attempt="baseline")
                 score = self._score_task(task, result)
-                metrics.sequence_scores.append(score)
+                self.baseline_scores[task.id] = score
 
-                console.print(f"   {task.id}: [bold]{score.total:.1f}/100[/bold] {'✅' if score.passed else '❌'}")
-                progress.advance(seq_progress)
+                icon = "✅" if score.passed else "❌"
+                console.print(f"   {task.id}: [bold]{score.total:.1f}/100[/bold] {icon}")
+                progress.advance(pbar)
 
-        console.print()
+        # Summary
+        avg = sum(s.total for s in self.baseline_scores.values()) / len(self.baseline_scores) if self.baseline_scores else 0
+        console.print(f"\n   [bold]Baseline Average: {avg:.1f}/100[/bold] (no Elysium)\n")
 
-        # Phase C: Re-run Task 1 (learning check)
-        if loop_config["re_run"]:
-            console.print(f"[bold yellow]📌 PHASE C: Re-Run — {baseline_task.id}: {baseline_task.name}[/bold yellow]")
-            task1_rerun = self._run_single_task(baseline_task, attempt="rerun")
-            task1_rerun_score = self._score_task(baseline_task, task1_rerun)
-            metrics.task1_rerun_score = task1_rerun_score
+    # ═══════════════════════════════════════════════════════════════════════
+    # PHASE 1-10: LOOPS (with Elysium)
+    # ═══════════════════════════════════════════════════════════════════════
 
-            delta = task1_rerun_score.total - task1_score.total
-            direction = "📈 IMPROVED" if delta > 0 else "📉 DECLINED" if delta < 0 else "➡️ UNCHANGED"
-            console.print(f"   Score: [bold]{task1_rerun_score.total:.1f}/100[/bold] | Δ: {delta:+.1f} | {direction}\n")
+    def _run_loop(
+        self,
+        categories: list[Category],
+        loop_num: int,
+        is_measurement: bool,
+        loop_config: dict,
+    ) -> None:
+        """Run a single loop: 1 task per category WITH Elysium."""
+        if is_measurement:
+            console.rule(f"[bold green]🔬 PHASE 1: LOOP 1 — Measurement Tasks WITH Elysium[/bold green]")
+            label = "LOOP 1 (measurement)"
         else:
-            # If no re-run, use first score as rerun (no delta)
-            metrics.task1_rerun_score = task1_score
+            console.rule(f"[bold blue]🔄 PHASE {loop_num}: LOOP {loop_num} — Practice Tasks WITH Elysium[/bold blue]")
+            label = f"LOOP {loop_num} (practice)"
 
-        # Compute all metrics
-        metrics.compute(learning_threshold=self.config["thresholds"]["learning_min"])
-        console.print(metrics.summary())
-        console.print()
+        # Determine which task index to use for this loop
+        if is_measurement:
+            # Use configured loop_1 task indices
+            task_map = loop_config["loop_1_tasks"]
+        else:
+            # Use practice tasks: loop 2 → task index 2, loop 3 → task index 3, etc.
+            task_idx = loop_num  # loop 2 uses task 2, loop 3 uses task 3...
+            task_map = {cat_id: [task_idx] for cat_id in loop_config["loop_1_tasks"]}
 
-        return metrics
+        loop_tasks: list[Task] = []
+        for cat in categories:
+            indices = task_map.get(cat.id, [1])
+            for idx in indices:
+                if 1 <= idx <= len(cat.tasks):
+                    loop_tasks.append(cat.tasks[idx - 1])  # 0-indexed
 
-    def _run_single_task(self, task: Task, attempt: str = "first") -> dict[str, Any]:
-        """Execute a single task through the harness + Hermes."""
+        console.print(f"   {label}: {len(loop_tasks)} tasks\n")
+
+        scores: dict[str, ScoreBreakdown] = {}
+        for task in loop_tasks:
+            result = self._run_single_task(task, hermes=self.hermes_elysium, attempt=f"loop{loop_num}")
+            score = self._score_task(task, result)
+            scores[task.id] = score
+            icon = "✅" if score.passed else "❌"
+            console.print(f"   {task.id}: [bold]{score.total:.1f}/100[/bold] {icon}")
+
+        avg = sum(s.total for s in scores.values()) / len(scores) if scores else 0
+        console.print(f"   [bold]Loop {loop_num} Avg: {avg:.1f}/100[/bold]\n")
+
+        if is_measurement:
+            self.loop1_scores = scores
+        else:
+            self.practice_scores.append(scores)
+
+    # ═══════════════════════════════════════════════════════════════════════
+    # PHASE 11: RE-TEST
+    # ═══════════════════════════════════════════════════════════════════════
+
+    def _run_retest(self, categories: list[Category], loop_config: dict) -> None:
+        """Re-run Loop 1 tasks to measure improvement."""
+        console.rule("[bold magenta]🔁 PHASE 11: RE-TEST — Re-running Loop 1 tasks[/bold magenta]")
+
+        task_map = loop_config["loop_1_tasks"]
+        retest_tasks: list[Task] = []
+        for cat in categories:
+            indices = task_map.get(cat.id, [1])
+            for idx in indices:
+                if 1 <= idx <= len(cat.tasks):
+                    retest_tasks.append(cat.tasks[idx - 1])
+
+        console.print(f"   Re-running {len(retest_tasks)} measurement tasks...\n")
+
+        for task in retest_tasks:
+            result = self._run_single_task(task, hermes=self.hermes_elysium, attempt="retest")
+            score = self._score_task(task, result)
+            self.retest_scores[task.id] = score
+
+            # Show delta vs Loop 1
+            loop1_score = self.loop1_scores.get(task.id)
+            if loop1_score:
+                delta = score.total - loop1_score.total
+                direction = "📈" if delta > 0 else "📉" if delta < 0 else "➡️"
+                console.print(
+                    f"   {task.id}: [bold]{score.total:.1f}/100[/bold] "
+                    f"| Loop 1 was {loop1_score.total:.1f} | Δ: {direction} {delta:+.1f}"
+                )
+            else:
+                console.print(f"   {task.id}: [bold]{score.total:.1f}/100[/bold]")
+
+        avg = sum(s.total for s in self.retest_scores.values()) / len(self.retest_scores) if self.retest_scores else 0
+        console.print(f"\n   [bold]Re-Test Avg: {avg:.1f}/100[/bold]\n")
+
+    # ═══════════════════════════════════════════════════════════════════════
+    # TASK EXECUTION
+    # ═══════════════════════════════════════════════════════════════════════
+
+    def _run_single_task(self, task: Task, hermes: HermesInterface, attempt: str = "first") -> dict[str, Any]:
+        """Execute a single task through the harness."""
         start = time.time()
 
-        # 1. Create isolated workspace
         source_dir = task.repo_dir or task.task_dir
         workspace = self.harness.create_workspace(f"{task.id}_{attempt}", source_dir)
 
-        # 2. Copy test files into workspace
         if task.test_dir and task.test_dir.exists():
             import shutil
-
             dest_test = workspace / "workspace" / "tests"
             if not dest_test.exists():
                 shutil.copytree(task.test_dir, dest_test, dirs_exist_ok=True)
 
-        # 3. Execute via Hermes
-        result = self.hermes.execute_task(
+        result = hermes.execute_task(
             task_id=task.id,
             task_description=task.description,
             workspace=workspace,
@@ -173,123 +272,238 @@ class BenchmarkRunner:
         result["task_id"] = task.id
         result["attempt"] = attempt
         result["workspace"] = str(workspace)
-
         return result
 
     def _score_task(self, task: Task, task_result: dict[str, Any]) -> ScoreBreakdown:
-        """Score a completed task using the multi-dimensional engine."""
+        """Score a completed task."""
         workspace = Path(task_result.get("workspace", ".")) / "workspace"
+
+        # Extract flat weights from nested config
+        raw_scoring = self.config["scoring"]
+        weights = {
+            k: v["weight"] if isinstance(v, dict) else v
+            for k, v in raw_scoring.items()
+        }
+
         engine = ScoringEngine(
             task_dir=task.task_dir or Path("."),
             solution_dir=workspace,
-            weights=self.config["scoring"],
+            weights=weights,
         )
         return engine.evaluate()
 
-    def _generate_report(self) -> dict[str, Any]:
-        """Generate the comprehensive benchmark report."""
-        console.print(f"\n[bold cyan]{'='*60}[/bold cyan]")
-        console.print("[bold cyan]📊 FINAL REPORT[/bold cyan]")
-        console.print(f"[bold cyan]{'='*60}[/bold cyan]\n")
+    # ═══════════════════════════════════════════════════════════════════════
+    # REPORTING
+    # ═══════════════════════════════════════════════════════════════════════
 
-        # Overall scores
-        overall_scores = []
-        for cat_id, metrics in self.improvement_metrics.items():
-            if metrics.task1_first_score:
-                overall_scores.append(metrics.task1_first_score.total)
-            if metrics.task1_rerun_score:
-                overall_scores.append(metrics.task1_rerun_score.total)
+    def _generate_final_report(self) -> dict[str, Any]:
+        """Generate the comprehensive multi-phase report."""
+        console.rule("[bold cyan]📊 FINAL REPORT[/bold cyan]")
 
-        overall_avg = sum(overall_scores) / len(overall_scores) if overall_scores else 0.0
+        elapsed = time.time() - self.start_time
 
-        # Table
-        table = Table(title="Elysium-Bench Results")
-        table.add_column("Category", style="cyan")
-        table.add_column("Task 1 First", justify="right")
-        table.add_column("Task 1 Re-run", justify="right")
-        table.add_column("Δ Score", justify="right")
-        table.add_column("Learning?", justify="center")
-        table.add_column("Transfer Eff.", justify="right")
-        table.add_column("Stability", justify="right")
+        # ── Build the main comparison table ────────────────────────────────
+        table = Table(title="Elysium-Bench: Improvement Comparison")
+        table.add_column("Task", style="cyan", width=35)
+        table.add_column("Baseline\n(no Elysium)", justify="right", width=12)
+        table.add_column("Loop 1\n(Elysium)", justify="right", width=12)
+        table.add_column("Re-Test\n(after 10 loops)", justify="right", width=14)
+        table.add_column("Δ vs Loop 1", justify="right", width=12)
+        table.add_column("Δ vs Baseline", justify="right", width=14)
+        table.add_column("Learning?", justify="center", width=10)
 
-        for cat_id, metrics in self.improvement_metrics.items():
-            first = f"{metrics.task1_first_score.total:.1f}" if metrics.task1_first_score else "N/A"
-            rerun = f"{metrics.task1_rerun_score.total:.1f}" if metrics.task1_rerun_score else "N/A"
-            delta = f"{metrics.delta_absolute:+.1f}" if metrics.task1_first_score and metrics.task1_rerun_score else "N/A"
-            learning = "✅" if metrics.learning_detected else "❌"
-            transfer = f"{metrics.transfer_efficiency:.2f}"
-            stability = f"{metrics.stability:.2f}"
+        improvements: list[float] = []
+        for task_id in self.loop1_scores:
+            baseline = self.baseline_scores.get(task_id)
+            loop1 = self.loop1_scores[task_id]
+            retest = self.retest_scores.get(task_id)
 
-            table.add_row(cat_id, first, rerun, delta, learning, transfer, stability)
+            bl_str = f"{baseline.total:.1f}" if baseline else "—"
+            l1_str = f"{loop1.total:.1f}"
+            rt_str = f"{retest.total:.1f}" if retest else "—"
+
+            if retest and loop1:
+                delta_loop1 = retest.total - loop1.total
+                delta_sign = "+" if delta_loop1 > 0 else ""
+                delta_str = f"{delta_sign}{delta_loop1:.1f}"
+                improvements.append(delta_loop1)
+            else:
+                delta_str = "—"
+
+            if retest and baseline:
+                delta_bl = retest.total - baseline.total
+                bl_sign = "+" if delta_bl > 0 else ""
+                delta_bl_str = f"{bl_sign}{delta_bl:.1f}"
+            else:
+                delta_bl_str = "—"
+
+            learning_threshold = self.config["thresholds"]["learning_min"]
+            if retest and loop1:
+                pct = ((retest.total - loop1.total) / loop1.total * 100) if loop1.total > 0 else 0
+                learning = "✅" if pct >= learning_threshold else "❌"
+            else:
+                learning = "—"
+
+            table.add_row(task_id, bl_str, l1_str, rt_str, delta_str, delta_bl_str, learning)
 
         console.print(table)
-        console.print(f"\n[bold]Overall Average Score: {overall_avg:.1f}/100[/bold]")
 
-        # Build report dict
+        # ── Summary stats ──────────────────────────────────────────────────
+        baseline_avg = self._avg_score(self.baseline_scores)
+        loop1_avg = self._avg_score(self.loop1_scores)
+        retest_avg = self._avg_score(self.retest_scores)
+        practice_avgs = [
+            self._avg_score(scores) for scores in self.practice_scores if scores
+        ]
+
+        delta_l1_rt = retest_avg - loop1_avg if (retest_avg and loop1_avg) else 0
+        delta_bl_rt = retest_avg - baseline_avg if (retest_avg and baseline_avg) else 0
+        improved = delta_l1_rt >= self.config["thresholds"]["learning_min"]
+
+        console.print()
+        summary = Table(title="Score Progression Across Phases", show_header=False)
+        summary.add_column("Metric", style="cyan")
+        summary.add_column("Value", justify="right")
+
+        summary.add_row("Baseline Avg (no Elysium)", f"{baseline_avg:.1f}/100")
+        summary.add_row("Loop 1 Avg (Elysium, first run)", f"{loop1_avg:.1f}/100")
+        if practice_avgs:
+            summary.add_row("Practice Loops Avg", f"{sum(practice_avgs)/len(practice_avgs):.1f}/100")
+        summary.add_row("Re-Test Avg (Elysium, after 10 loops)", f"{retest_avg:.1f}/100")
+        summary.add_row("", "")
+        summary.add_row("[bold]Δ Re-Test vs Loop 1[/bold]", f"[bold]{delta_l1_rt:+.1f}[/bold]")
+        summary.add_row("[bold]Δ Re-Test vs Baseline[/bold]", f"[bold]{delta_bl_rt:+.1f}[/bold]")
+        summary.add_row("[bold]Improvement Detected[/bold]", f"[bold]{'✅ YES' if improved else '❌ NO'}[/bold]")
+        summary.add_row("Total Duration", f"{elapsed/60:.1f} min")
+
+        console.print(summary)
+
+        # ── Practice progression ───────────────────────────────────────────
+        if practice_avgs:
+            console.print()
+            prog_table = Table(title="Practice Loop Progression (Loops 2-10)")
+            prog_table.add_column("Loop", justify="center")
+            prog_table.add_column("Avg Score", justify="right")
+            prog_table.add_column("Δ from Loop 1", justify="right")
+            prog_table.add_column("Trend", justify="center")
+
+            for i, avg in enumerate(practice_avgs):
+                loop_n = i + 2
+                delta = avg - loop1_avg if loop1_avg else 0
+                trend = "📈" if delta > 0 else "📉" if delta < 0 else "➡️"
+                prog_table.add_row(f"Loop {loop_n}", f"{avg:.1f}", f"{delta:+.1f}", trend)
+
+            console.print(prog_table)
+
+        # ── Build report dict ──────────────────────────────────────────────
         report = {
             "benchmark": "Elysium-Bench",
-            "version": "0.1.0",
+            "version": self.config["benchmark"]["version"],
             "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S"),
-            "overall_score": round(overall_avg, 1),
-            "categories": {},
-            "improvement_detected": any(
-                m.learning_detected for m in self.improvement_metrics.values()
-            ),
+            "duration_seconds": round(elapsed, 1),
+            "phases": {
+                "baseline": {
+                    "scores": {tid: s.to_dict() for tid, s in self.baseline_scores.items()},
+                    "average": round(baseline_avg, 1),
+                },
+                "loop1": {
+                    "scores": {tid: s.to_dict() for tid, s in self.loop1_scores.items()},
+                    "average": round(loop1_avg, 1),
+                },
+                "practice": [
+                    {
+                        "loop": i + 2,
+                        "scores": {tid: s.to_dict() for tid, s in scores.items()},
+                        "average": round(self._avg_score(scores), 1),
+                    }
+                    for i, scores in enumerate(self.practice_scores)
+                ],
+                "retest": {
+                    "scores": {tid: s.to_dict() for tid, s in self.retest_scores.items()},
+                    "average": round(retest_avg, 1),
+                },
+            },
+            "improvement": {
+                "delta_retest_vs_loop1": round(delta_l1_rt, 1),
+                "delta_retest_vs_baseline": round(delta_bl_rt, 1),
+                "learning_detected": improved,
+                "transfer_efficiency": (
+                    round(sum(practice_avgs) / len(practice_avgs) / loop1_avg, 2)
+                    if practice_avgs and loop1_avg > 0 else 0
+                ),
+            },
+            "config": {
+                "hermes_max_subagents": self.config["hermes"]["subagents_max"],
+                "hermes_quality_threshold": self.config["hermes"]["quality_threshold"],
+                "total_loops": self.config["phases"]["loops"]["count"],
+                "total_tasks": self.registry.total_tasks,
+            },
         }
 
-        for cat_id, metrics in self.improvement_metrics.items():
-            report["categories"][cat_id] = metrics.to_dict()
-
-        self.all_results = report
         return report
 
     def _save_results(self, report: dict[str, Any]) -> None:
-        """Save results to disk in all configured formats."""
+        """Save results to disk."""
         timestamp = time.strftime("%Y%m%d_%H%M%S")
 
         # JSON
         json_path = self.results_dir / f"results_{timestamp}.json"
         json_path.write_text(json.dumps(report, indent=2, default=str), encoding="utf-8")
-        console.print(f"\n📁 Results saved: {json_path}")
+        console.print(f"\n📁 Results: {json_path}")
 
         # Markdown
         md_path = self.results_dir / f"results_{timestamp}.md"
-        md_content = self._format_markdown(report)
-        md_path.write_text(md_content, encoding="utf-8")
-        console.print(f"📁 Markdown report: {md_path}")
+        md_path.write_text(self._format_markdown(report), encoding="utf-8")
+        console.print(f"📁 Report:  {md_path}")
+
+        # HTML
+        try:
+            from .reporter import generate_html_report
+
+            html_path = self.results_dir / f"results_{timestamp}.html"
+            generate_html_report(report, html_path)
+            console.print(f"📁 Dashboard: {html_path}")
+        except Exception:
+            pass
 
     def _format_markdown(self, report: dict[str, Any]) -> str:
         """Format report as markdown."""
+        imp = report["improvement"]
         lines = [
             f"# Elysium-Bench Results",
             f"",
-            f"**Version:** {report['version']}",
-            f"**Date:** {report['timestamp']}",
-            f"**Overall Score:** {report['overall_score']}/100",
-            f"**Improvement Detected:** {'✅ Yes' if report['improvement_detected'] else '❌ No'}",
+            f"**Version:** {report['version']} | **Date:** {report['timestamp']}",
+            f"**Duration:** {report['duration_seconds']:.0f}s",
             f"",
-            f"## Category Results",
+            f"## Score Progression",
             f"",
-            f"| Category | Task 1 First | Task 1 Re-run | Δ Score | Learning? | Transfer Eff. | Stability |",
-            f"|----------|-------------|--------------|---------|-----------|---------------|-----------|",
+            f"| Phase | Average Score |",
+            f"|-------|--------------|",
+            f"| Baseline (no Elysium) | {report['phases']['baseline']['average']}/100 |",
+            f"| Loop 1 (Elysium) | {report['phases']['loop1']['average']}/100 |",
         ]
-
-        for cat_id, data in report["categories"].items():
-            t1 = data.get("task1_first", {})
-            t1r = data.get("task1_rerun", {})
-            first = f"{t1.get('total', 0):.1f}" if t1 else "N/A"
-            rerun = f"{t1r.get('total', 0):.1f}" if t1r else "N/A"
-            delta = f"{data['delta_absolute']:+.1f}"
-            learning = "✅" if data.get("learning_detected") else "❌"
-            transfer = f"{data.get('transfer_efficiency', 0):.2f}"
-            stability = f"{data.get('stability', 0):.2f}"
-            lines.append(f"| {cat_id} | {first} | {rerun} | {delta} | {learning} | {transfer} | {stability} |")
-
-        lines.append("")
-        lines.append(f"## Methodology")
-        lines.append(f"- **Scoring dimensions:** Functional Correctness (40) + Code Quality (25) + Efficiency (15) + Robustness (10) + Integration (10)")
-        lines.append(f"- **Improvement loop:** Task 1 → Tasks 2-10 → Task 1 re-run → Compare delta")
-        lines.append(f"- **Threshold:** Pass ≥ 60/100, Learning ≥ 5% improvement")
-        lines.append(f"- **Mode:** {self.config['environment']['mode']}")
-
+        for p in report["phases"]["practice"]:
+            lines.append(f"| Loop {p['loop']} (practice) | {p['average']}/100 |")
+        lines.append(f"| Re-Test (after 10 loops) | {report['phases']['retest']['average']}/100 |")
+        lines.append(f"")
+        lines.append(f"## Improvement")
+        lines.append(f"")
+        lines.append(f"| Metric | Value |")
+        lines.append(f"|--------|-------|")
+        lines.append(f"| Δ Re-Test vs Loop 1 | {imp['delta_retest_vs_loop1']:+.1f} |")
+        lines.append(f"| Δ Re-Test vs Baseline | {imp['delta_retest_vs_baseline']:+.1f} |")
+        lines.append(f"| Learning Detected | {'✅ YES' if imp['learning_detected'] else '❌ NO'} |")
+        lines.append(f"| Transfer Efficiency | {imp['transfer_efficiency']:.2f} |")
+        lines.append(f"")
+        lines.append(f"## Config")
+        lines.append(f"- Hermes subagents: {report['config']['hermes_max_subagents']}")
+        lines.append(f"- Quality threshold: {report['config']['hermes_quality_threshold']}/10")
+        lines.append(f"- Total loops: {report['config']['total_loops']}")
+        lines.append(f"- Total tasks available: {report['config']['total_tasks']}")
         return "\n".join(lines)
+
+    @staticmethod
+    def _avg_score(scores: dict[str, ScoreBreakdown]) -> float:
+        if not scores:
+            return 0.0
+        return sum(s.total for s in scores.values()) / len(scores)
