@@ -1,245 +1,292 @@
-# 🚀 Elysium-Bench
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Boschi404/Elysium-Bench/main/assets/logo-banner.svg" alt="Elysium-Bench" width="100%">
+</p>
 
-**Multi-Agent Self-Improvement Benchmark Suite**
+<p align="center">
+  <strong>The Multi-Domain Self-Improvement Benchmark</strong><br>
+  <em>Does your agent actually get better with practice?</em>
+</p>
 
-> *"Does your agent actually get better with practice?"*
-
-Elysium-Bench is the official benchmark for [Elysium Swarmloop](https://github.com/Boschi404/Elysium-Swarmloop) — the self-improving multi-agent orchestration engine. It measures the one thing other benchmarks don't: **improvement over time.**
+<p align="center">
+  <img src="https://img.shields.io/badge/version-0.3.0-34d399?style=flat-square&labelColor=0f172a">
+  <img src="https://img.shields.io/badge/license-MIT-22d3ee?style=flat-square&labelColor=0f172a">
+  <img src="https://img.shields.io/badge/tasks-100-a78bfa?style=flat-square&labelColor=0f172a">
+  <img src="https://img.shields.io/badge/categories-10-fbbf24?style=flat-square&labelColor=0f172a">
+  <img src="https://img.shields.io/badge/loops-10-f472b6?style=flat-square&labelColor=0f172a">
+</p>
 
 ---
 
-## 🎯 Core Concept
+## What is Elysium-Bench?
 
-Most benchmarks ask: *"How good is the agent right now?"*
+The official benchmark for [Elysium Swarmloop](https://github.com/Boschi404/Elysium-Swarmloop) — the self-improving multi-agent orchestration engine. It measures the one thing other benchmarks don't: **improvement over time.**
 
-Elysium-Bench asks: **"Does the agent get better after solving similar problems?"**
+Most benchmarks ask *"How good is the agent right now?"* Elysium-Bench asks **"Does the agent get better after solving similar problems?"**
 
-### The Multi-Phase Flow
+- **100 tasks across 10 domains** — code, data, math, logic, security, review, docs, devops
+- **Multi-phase execution** — baseline (no Elysium) → 10 loops (with Elysium) → re-test → compare Δ
+- **5 scoring engines** — code (pytest), text (rubric), math (exact match), plan (constraints), data (validation)
+- **Zero-trace execution** — isolated venv/Docker workspaces, auto-cleanup, reproducible
+- **One-command launcher** — `./run.sh` on Linux/macOS, `run.bat` on Windows
+
+## Repository Structure
 
 ```
-PHASE 0 (BASELINE):   All 30 tasks WITHOUT Elysium → bare execution baseline
-                          ↓
-PHASE 1 (LOOP 1):     3 tasks WITH Elysium (T01 from each category) → first score
-                          ↓
-PHASE 2-10 (LOOPS):   3 tasks per loop WITH Elysium → 9 practice loops
-                      (T02→T10, different tasks each loop)
-                          ↓
-PHASE 11 (RE-TEST):   Same 3 tasks as Loop 1 WITH Elysium → compare Δ
-                          ↓
-                   📈 Improvement Detected?
+├── README.md
+├── config.yaml                    # Benchmark configuration (categories, phases, hermes, scoring)
+├── run.sh / run.bat               # One-command launcher
+├── pyproject.toml                 # Python package metadata
+├── requirements.txt
+├── docker/
+│   └── Dockerfile                 # Clean Docker environment
+├── elysium_bench/
+│   ├── cli.py                     # Click CLI (run, list-tasks, report, init)
+│   ├── runner.py                  # Multi-phase orchestrator
+│   ├── scoring.py                 # ScoringAdapter + 5 scoring engines
+│   ├── metrics.py                 # Improvement metrics (Δ, transfer, stability, convergence)
+│   ├── harness.py                 # Docker/venv clean environment isolation
+│   ├── hermes_interface.py        # Hermes Agent integration (Elysium + baseline modes)
+│   ├── task_registry.py           # YAML-based task discovery
+│   └── reporter.py                # HTML/Markdown/JSON report generator
+└── tasks/
+    ├── api_development/           # 10 tasks — REST APIs (FastAPI)
+    ├── bug_fixing/                # 10 tasks — Fix bugs in existing code
+    ├── algorithm_implementation/  # 10 tasks — Sort, graph, DP, data structures
+    ├── data_analysis/             # 10 tasks — SQL, pandas, statistical analysis
+    ├── mathematical_reasoning/    # 10 tasks — Algebra, calculus, probability, proofs
+    ├── logical_deduction/         # 10 tasks — Puzzles, syllogisms, truth tables
+    ├── security_analysis/         # 10 tasks — SQLi, XSS, OWASP, threat modeling
+    ├── code_review/               # 10 tasks — Bug detection, anti-patterns, PR review
+    ├── documentation_generation/  # 10 tasks — READMEs, API docs, ADRs, user guides
+    └── configuration_management/  # 10 tasks — Docker, K8s, Terraform, CI/CD
 ```
 
-**This proves self-improvement:** after 10 loops of practice on similar tasks, the agent should perform BETTER on the exact same tasks it saw in Loop 1. The delta between Loop 1 and Re-Test is the learning signal.
+## The Multi-Phase Flow
 
----
+```
+PHASE 0 (BASELINE)
+  └─ All 100 tasks WITHOUT Elysium → bare execution baseline
+       │
+       ▼
+PHASE 1 (LOOP 1 — MEASUREMENT)
+  └─ 10 tasks WITH Elysium (T01 from each category) → first Elysium score
+       │
+       ▼
+PHASES 2–10 (PRACTICE LOOPS)
+  └─ 10 tasks/loop WITH Elysium (T02→T10, different each loop) → 90 practice tasks
+       │
+       ▼
+PHASE 11 (RE-TEST)
+  └─ Same 10 tasks as Loop 1 WITH Elysium → compare Δ
+       │
+       ▼
+  📈 Improvement Detected?
+```
 
-## 📊 Scoring System
+**This proves self-improvement:** after 10 loops of practice on similar tasks across 10 different domains, the agent should perform BETTER on the exact same tasks it saw in Loop 1. The delta between Loop 1 and Re-Test is the learning signal.
 
-Inspired by [SWE-bench](https://www.swebench.com/) methodology, each task is scored across 5 dimensions (0–100 total):
-
-| Dimension | Weight | What it measures |
-|-----------|--------|-----------------|
-| **Functional Correctness** | 40 | All tests pass — fail→pass + pass→pass (no regressions) |
-| **Code Quality** | 25 | Linting, type hints, docstrings, no stubs/TODOs |
-| **Efficiency** | 15 | Algorithmic complexity, resource usage, runtime |
-| **Robustness** | 10 | Edge cases, error handling, input validation |
-| **Integration** | 10 | Imports work, interface contracts match, no orphans |
-
-**Pass threshold:** ≥ 60/100  
-**Learning detected:** ≥ 5% improvement on re-run
-
----
-
-## 🗂️ Task Categories
-
-| Category | Tasks | Difficulty | Description |
-|----------|-------|------------|-------------|
-| **API Development** | 10 | 3–6/10 | Implement REST APIs from specifications (FastAPI) |
-| **Bug Fixing** | 10 | 3–7/10 | Fix bugs in existing codebases (race conditions, SQL injection, memory leaks) |
-| **Algorithm Implementation** | 10 | 2–8/10 | Implement algorithms from descriptions (sort, graph, DP, data structures) |
-
-**30 tasks total** — each with its own test suite, gold reference, and quality criteria.
-
----
-
-## 🚀 Quick Start
-
-### One Command
+## Quick Start
 
 ```bash
-# Linux/macOS
-./run.sh
-
-# Windows
-run.bat
-```
-
-### Options
-
-```bash
-./run.sh --mode docker          # Docker isolation (cleanest)
-./run.sh --category api_development  # Single category
-./run.sh --quick                # Fast test: 1 category, reduced tasks
-./run.sh --list                 # List all tasks without running
-./run.sh --no-cleanup           # Keep temp files for debugging
-```
-
-### Python CLI
-
-```bash
+# Clone and run
+git clone https://github.com/Boschi404/Elysium-Bench.git
+cd Elysium-Bench
 pip install -e .
-elysium-bench run               # Full benchmark
-elysium-bench run -C bug_fixing # Single category
-elysium-bench list-tasks        # Discover all tasks
-elysium-bench report results/xxx.json  # View saved report
+
+# Full benchmark (all 100 tasks, all phases)
+elysium-bench run
+
+# Single category
+elysium-bench run --category data_analysis
+
+# List all tasks without running
+elysium-bench list-tasks
+
+# View previous results
+elysium-bench report results/results_20260716_120000.json
 ```
 
----
+## Scoring System
 
-## 📈 Output
+Every task is scored 0–100 across 5 generic dimensions. The **ScoringAdapter** routes to the right engine based on `task_type`:
 
-After running, results are saved to `./results/`:
+| Dimension | Weight | Code | Text | Math | Plan | Data |
+|-----------|--------|------|------|------|------|------|
+| **Correctness** | 40 | pytest pass rate | rubric keywords + reference similarity | exact/float answer match | constraint satisfaction | validation script |
+| **Completeness** | 25 | lint + no stubs | all required sections present | reasoning steps found | all sections covered | required elements check |
+| **Efficiency** | 15 | complexity analysis | conciseness check | optimal method used | optimization language | query/script efficiency |
+| **Robustness** | 10 | error handling | edge case mentions | edge cases addressed | risk/contingency coverage | edge data handling |
+| **Clarity** | 10 | import/syntax check | structure + formatting | step labeling | plan structure | formatting + readability |
+
+**Pass threshold:** ≥ 60/100 · **Excellent:** ≥ 85/100 · **Learning detected:** ≥ 5% improvement
+
+## Task Categories
+
+| # | Category | Type | Difficulty | Examples |
+|---|----------|------|------------|----------|
+| 1 | API Development | `code` | 3–6 | CRUD, Auth JWT, Rate Limiter, Event Booking |
+| 2 | Bug Fixing | `code` | 3–7 | SQL Injection, Race Condition, Memory Leak |
+| 3 | Algorithm Implementation | `code` | 2–8 | Binary Search, Dijkstra, Red-Black Tree |
+| 4 | Data Analysis | `data` | 3–8 | SQL queries, Pandas pipelines, ETL |
+| 5 | Mathematical Reasoning | `math` | 3–8 | Linear algebra, Calculus, ε-δ proofs |
+| 6 | Logical Deduction | `text` | 3–7 | Knights & Knaves, Syllogisms, Resolution |
+| 7 | Security Analysis | `text` | 3–7 | SQLi, XSS, OWASP, Threat modeling |
+| 8 | Code Review | `text` | 4–7 | Anti-patterns, PR review, API design |
+| 9 | Documentation Generation | `text` | 3–6 | READMEs, API docs, ADRs, User guides |
+| 10 | Configuration & DevOps | `plan` | 4–8 | Docker, K8s, Terraform, CI/CD |
+
+## Output & Results
+
+Results are saved to `./results/` after every run:
 
 ```
 results/
-├── results_20260716_120000.json    # Raw data (all scores, metrics)
+├── results_20260716_120000.json    # Raw data — all scores, metrics, config
 ├── results_20260716_120000.md      # Markdown report
-└── results_20260716_120000.html    # Interactive dashboard
+└── results_20260716_120000.html    # Interactive dark-themed dashboard
 ```
 
-### Example Output
+### Console Output
 
 ```
-╔══════════════════════════════════════════════════════════╗
-║           🚀  Elysium-Bench v0.1.0                       ║
-╚══════════════════════════════════════════════════════════╝
+┌───────────────────────────────────────────────────────┐
+│ 🚀 Elysium-Bench v0.3.0                               │
+│ Multi-Phase Self-Improvement Benchmark                │
+│ Baseline → 10 Elysium Loops → Re-Test → Improvement Δ │
+└───────────────────────────────────────────────────────┘
 
-📋 Task Registry: 30 tasks in 3 categories
-  ├─ API Development (api_development): 10 tasks
-  ├─ Bug Fixing (bug_fixing): 10 tasks
-  └─ Algorithm Implementation (algorithm_implementation): 10 tasks
+────────────── 📋 PHASE 0: BASELINE — All tasks WITHOUT Elysium ───────────────
+   Running 100 tasks without agent...
 
-============================================================
-Category: API Development (api_development)
-============================================================
+   Baseline Avg: 42.3/100 (no Elysium)
 
-📌 PHASE A: Baseline — T01_api_development: Create User CRUD API
-   Score: 62.5/100 ✅
-
-📌 PHASE B: Sequence — 9 tasks
-   T02: 65.0/100 ✅
-   T03: 68.0/100 ✅
+───── 🔬 PHASE 1: LOOP 1 — Measurement Tasks WITH Elysium ─────────────────
+   T01_api_development: 72.5/100 ✅
+   T01_data_analysis: 68.0/100 ✅
+   T01_mathematical_reasoning: 74.0/100 ✅
    ...
-   T10: 78.5/100 ✅
+   Loop 1 Avg: 71.2/100
 
-📌 PHASE C: Re-Run — T01_api_development: Create User CRUD API
-   Score: 74.0/100 | Δ: +11.5 | 📈 IMPROVED
+───── 🔄 PHASE 2-10: Practice Loops ────────────────────────────────────────
+   Loop 2 Avg: 73.1/100   Loop 6 Avg: 78.5/100
+   Loop 3 Avg: 74.8/100   Loop 7 Avg: 79.2/100
+   Loop 4 Avg: 76.2/100   Loop 8 Avg: 80.0/100
+   Loop 5 Avg: 77.0/100   Loop 9 Avg: 80.5/100
+                          Loop 10 Avg: 81.3/100
 
-📈 Improvement Metrics — api_development
-   Task 1 first run:  62.5/100
-   Task 1 re-run:     74.0/100
-   Δ Score:           📈 +11.5 (+18.4%)
-   Transfer Efficiency: 1.05
-   Stability:           0.92
-   Convergence:         5 tasks
-   Learning Detected:   ✅ YES
+───── 🔁 PHASE 11: RE-TEST — Re-running Loop 1 tasks ──────────────────────
+   T01_api_development: 81.0/100 | Δ: +8.5 📈
+   T01_data_analysis: 79.5/100 | Δ: +11.5 📈
+
+────────────────────────── 📊 FINAL REPORT ──────────────────────────────────
+| Phase                    | Average Score |
+|--------------------------|--------------|
+| Baseline (no Elysium)   | 42.3/100     |
+| Loop 1 (Elysium)        | 71.2/100     |
+| Practice Loops Avg      | 77.6/100     |
+| Re-Test (after 10 loops)| 82.5/100     |
+
+| Metric                      | Value     |
+|-----------------------------|-----------|
+| Δ Re-Test vs Loop 1         | +11.3     |
+| Δ Re-Test vs Baseline       | +40.2     |
+| Improvement Detected        | ✅ YES    |
 ```
 
----
+## Hermes Agent Integration
 
-## 🧪 Deterministic Design
+The benchmark integrates with [Hermes Agent](https://hermes-agent.nousresearch.com/) to run tasks through Elysium Swarmloop. Two modes are configured:
 
-- **Fixed task specifications** — every run uses the same descriptions, tests, and gold patches
-- **Clean environment** — each task runs in an isolated venv or Docker container
-- **Auto-cleanup** — temp files and venvs are removed after each run (disable with `--no-cleanup`)
-- **Reproducible scoring** — same solution always gets the same score
-- **No external dependencies** — tasks use only file-based storage or in-memory data
-
----
-
-## 🔗 Integration with Hermes Agent
-
-The benchmark integrates with [Hermes Agent](https://hermes-agent.nousresearch.com/) to run tasks through Elysium Swarmloop:
+### Elysium Mode (Loops 1–11)
 
 ```yaml
-# config.yaml
 hermes:
-  skill: "elysium-swarmloop"   # Skill loaded for each task
-  subagents_max: 50            # Max parallel subagents
-  quality_threshold: 7         # Quality gate threshold
-  retries_max: 3               # Max retries per subagent task
+  skill: "elysium-swarmloop"    # Full multi-agent orchestration
+  subagents_max: 100            # Maximum parallel subagents
+  quality_threshold: 8          # Strict quality gate (8/10)
+  retries_max: 5                # Aggressive retry policy
+  streaming: true               # Streaming gather with immediate retry
+  self_learning: true           # Pattern capture + calibration
+  orchestrator_depth: 2         # Hierarchical orchestration
 ```
 
-When `hermes` CLI is available, tasks run through the full multi-agent orchestration. If not available, the benchmark falls back to direct execution with pytest validation.
+### Baseline Mode (Phase 0)
 
----
-
-## 🏗️ Architecture
-
-```
-elysium_bench/
-├── runner.py              # Main orchestrator — improvement loop
-├── scoring.py             # Multi-dimensional scoring engine
-├── metrics.py             # Improvement Δ calculator
-├── harness.py             # Docker/venv isolation
-├── hermes_interface.py    # Hermes Agent integration
-├── task_registry.py       # Task discovery & loading
-├── reporter.py            # HTML/Markdown/JSON reports
-└── cli.py                 # CLI entry point
-
-tasks/
-├── api_development/       # 10 tasks: CRUD, auth, file upload, rate limiting...
-├── bug_fixing/            # 10 tasks: SQL injection, race conditions, memory leaks...
-└── algorithm_implementation/  # 10 tasks: sort, graph, DP, red-black tree...
+```yaml
+hermes:
+  disabled:
+    skill: null                 # No skill loaded
+    subagents_max: 0            # No subagents
+    quality_threshold: 0        # No quality gate
+    retries_max: 0              # No retries
 ```
 
----
+When Hermes CLI is not available, the benchmark falls back to direct pytest execution for code tasks and rubric-based evaluation for non-code tasks.
 
-## 📐 Methodology (SWE-bench Inspired)
-
-Like SWE-bench, Elysium-Bench evaluates on **real software engineering tasks**, not toy problems:
-
-- **Fail→Pass tests**: Tests that verify the task was completed correctly
-- **Pass→Pass tests**: Tests that verify existing functionality wasn't broken (regression)
-- **Binary per-test, continuous per-dimension**: SWE-bench is binary (resolved/unresolved). Elysium-Bench adds granularity with the 5-dimension scoring.
-- **Gold patches**: Each task has a reference implementation that serves as ground truth.
-
-**Key difference from SWE-bench:** SWE-bench measures one-shot capability. Elysium-Bench measures **learning rate** — does the agent improve after seeing similar problems?
-
----
-
-## 🔬 What This Benchmark Tests
+## What This Benchmark Tests
 
 | Elysium Claim | How It's Tested |
-|---------------|----------------|
-| **Self-improvement** | Task 1 re-run score vs first-run score (Δ) |
-| **Multi-agent orchestration** | 30 parallel task executions with subagent dispatch |
-| **Quality gate** | Score dimensions measure completeness, no stubs allowed |
-| **Pattern learning** | Transfer efficiency: does later-task performance improve? |
-| **Stability** | Variance across similar tasks within a category |
+|---------------|-----------------|
+| **Self-improvement over time** | Re-Test score vs Loop 1 score (Δ across 10 domains) |
+| **Multi-agent orchestration** | 100 subagents per task, parallel dispatch |
+| **Streaming quality gate** | Immediate retry on below-threshold results |
+| **Pattern learning transfer** | Practice loop progression trend (Loops 2→10) |
+| **Cross-domain generalization** | 10 different task types (code, text, math, plan, data) |
+| **Stability under load** | 100 tasks × 10 loops = 1000 executions |
 
----
+## Configurability
 
-## 📋 Contributing
+Everything is configurable via `config.yaml`:
 
-Add new tasks:
+- **Categories**: enable/disable, adjust weights, change task counts
+- **Phases**: toggle baseline, change loop count, select which tasks are the measurement set
+- **Scoring**: adjust dimension weights, change pass/excellent thresholds
+- **Hermes**: tune subagents, threshold, retries for Elysium mode
+- **Environment**: venv vs Docker, cleanup behavior, timeouts
+- **Reporting**: output formats, verbosity
+
+## Creating New Tasks
 
 ```bash
-elysium-bench init   # Creates a task template
+# Generate a task template
+elysium-bench init
 
-# Edit tasks/<category>/TXX_your_task/task.yaml
-# Add starting code to repo/
-# Add test suite to tests/
-# Add gold reference to gold/
+# Edit the task definition
+vim tasks/<category>/TXX_your_task/task.yaml
+
+# Add evaluation files
+vim tasks/<category>/TXX_your_task/tests/rubric.yaml     # For text tasks
+vim tasks/<category>/TXX_your_task/tests/expected.json   # For math tasks
+vim tasks/<category>/TXX_your_task/tests/validate.py     # For data tasks
+vim tasks/<category>/TXX_your_task/tests/test_solution.py # For code tasks
 ```
 
+Task YAML format:
+
+```yaml
+id: "T01_your_category"
+category: "your_category"
+name: "Task Name"
+task_type: "code"        # code | text | math | plan | data
+description: >
+  Detailed task description.
+difficulty: 5
+tags: [python, api]
+timeout_seconds: 600
+```
+
+## License
+
+MIT
+
+## Authors
+
+- **Boschi404** — Creator and Lead Architect
+- **ffazecaldy** — Collaborator and Co-Architect
+- **Hermes Agent** — Testing Agent
+
 ---
 
-## 📄 License
-
-MIT — same as Elysium Swarmloop.
-
----
-
-**Built by Boschi404 + ffazecaldy**  
-*Measuring what matters: not just how good your agent is, but how much better it becomes.*
+<p align="center">
+  <sub>Built to measure what matters: not just how good your agent is, but how much better it becomes.</sub>
+</p>
