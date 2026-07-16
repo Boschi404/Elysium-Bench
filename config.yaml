@@ -136,20 +136,51 @@ environment:
   timeout_per_task: 600
   temp_dir: null
 
-# ─── Hermes Agent Integration (MAX CONFIG for Elysium) ───────────────────────
+# ─── LLM Provider Configuration ──────────────────────────────────────────────
+# The benchmark sends each task to an LLM for execution.
+# Multiple providers supported — pick one and configure accordingly.
+# ──────────────────────────────────────────────────────────────────────────────
+llm:
+  # Set enabled: true to have the LLM actually solve each task.
+  # Set enabled: false for baseline-only mode (just runs tests on existing code).
+  enabled: true
+
+  # ── Provider options ────────────────────────────────────────────────────────
+  # Supported: ollama (local, free) | openai | anthropic | openrouter | together
+  provider: "ollama"
+
+  # ── Model ──────────────────────────────────────────────────────────────────
+  # Ollama:   "qwen2.5:7b", "mistral:7b", "codellama:7b", "llama3.1:8b"
+  # OpenAI:   "gpt-4o", "gpt-4o-mini", "o1-mini"
+  # Anthropic: "claude-sonnet-4-20250514", "claude-3-5-sonnet-latest"
+  # OpenRouter: "anthropic/claude-sonnet-4", "openai/gpt-4o", "google/gemini-2.0-flash-001"
+  model: "qwen2.5:7b"
+
+  # ── Provider-specific settings ──────────────────────────────────────────────
+  # API keys are read from environment variables by default:
+  #   OpenAI:    OPENAI_API_KEY
+  #   Anthropic: ANTHROPIC_API_KEY
+  #   OpenRouter: OPENROUTER_API_KEY
+  #   Together:  TOGETHER_API_KEY
+  # You can also set api_key directly here (not recommended for shared configs).
+
+  temperature: 0.3             # Lower = more deterministic
+  max_tokens: 8000             # Max response tokens
+  # base_url: "http://localhost:11434"  # Custom base URL (Ollama default, change if remote)
+
+# ─── Hermes Agent Integration ────────────────────────────────────────────────
+# Only used when you want Elysium Swarmloop meta-orchestration on top of the LLM.
+# Enables: multi-agent decomposition, streaming gather, (elysium-swarmloop skill).
+# When disabled, tasks are sent directly to the LLM (simpler, faster).
+# ───────────────────────────────────────────────────────────
 hermes:
-  skill: "elysium-swarmloop"
-  subagents_max: 100
-  quality_threshold: 8
-  retries_max: 5
-  streaming: true
-  self_learning: true
-  orchestrator_depth: 2
-  disabled:
-    skill: null
-    subagents_max: 0
-    quality_threshold: 0
-    retries_max: 0
+  skill: "elysium-swarmloop"   # Skill loaded for orchestration layer
+  subagents_max: 100            # Max parallel subagents
+  quality_threshold: 8          # Quality gate threshold
+  retries_max: 5                # Max retries per task
+  streaming: true               # Streaming gather
+  self_learning: true           # Pattern capture + calibration
+  orchestrator_depth: 2         # Hierarchical depth
 
 # ─── Reporting ────────────────────────────────────────────────────────────────
 reporting:

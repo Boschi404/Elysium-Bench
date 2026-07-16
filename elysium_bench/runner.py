@@ -21,7 +21,8 @@ from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TaskPr
 from rich.table import Table
 
 from .harness import Harness
-from .hermes_interface import HermesInterface
+from .hermes_interface import TaskExecutor
+from .llm_interface import LLMProvider, create_llm_provider
 from .metrics import ImprovementMetrics
 from .scoring import ScoreBreakdown, ScoringEngine
 from .task_registry import Category, Task, TaskRegistry
@@ -44,21 +45,16 @@ class BenchmarkRunner:
             cleanup=self.config["environment"]["cleanup"],
         )
 
-        # Two Hermes instances: one for Elysium, one for baseline (disabled)
-        hc = self.config["hermes"]
-        self.hermes_elysium = HermesInterface(
-            skill=hc["skill"],
-            subagents_max=hc["subagents_max"],
-            quality_threshold=hc["quality_threshold"],
-            retries_max=hc["retries_max"],
-        )
-        dc = hc["disabled"]
-        self.hermes_baseline = HermesInterface(
-            skill=dc["skill"],
-            subagents_max=dc["subagents_max"],
-            quality_threshold=dc["quality_threshold"],
-            retries_max=dc["retries_max"],
-        )
+        # LLM provider: this is the actual AI that solves tasks
+        llm_config = self.config.get("llm", {"enabled": False})
+        self.llm_provider = create_llm_provider(llm_config)
+        provider_name = llm_config.get("provider", "none") if self.llm_provider else "none"
+        model_name = llm_config.get("model", "none") if self.llm_provider else "none"
+
+        if self.llm_provider:
+            console.print(f"   [bold cyan]LLM: {provider_name}/{model_name}[/bold cyan]")
+        else:
+            console.print(f"   [bold yellow]LLM DISABLED — tasks won't be solved (baseline testing only)[/bold yellow]")
 
         # State
         self.baseline_scores: dict[str, ScoreBreakdown] = {}   # task_id → score
@@ -140,7 +136,7 @@ class BenchmarkRunner:
                 progress.update(pbar, description=f"  [dim]{task.id}: {task.name[:45]}...[/dim]")
 
                 # Use baseline Hermes (disabled — no Elysium)
-                result = self._run_single_task(task, hermes=self.hermes_baseline, attempt="baseline")
+                result = self._run_single_task(task, use_llm=False, attempt="baseline")
                 score = self._score_task(task, result)
                 self.baseline_scores[task.id] = score
 
@@ -191,7 +187,7 @@ class BenchmarkRunner:
 
         scores: dict[str, ScoreBreakdown] = {}
         for task in loop_tasks:
-            result = self._run_single_task(task, hermes=self.hermes_elysium, attempt=f"loop{loop_num}")
+            result = self._run_single_task(task, use_llm=True, attempt=f"loop{loop_num}")
             score = self._score_task(task, result)
             scores[task.id] = score
             icon = "✅" if score.passed else "❌"
@@ -224,7 +220,7 @@ class BenchmarkRunner:
         console.print(f"   Re-running {len(retest_tasks)} measurement tasks...\n")
 
         for task in retest_tasks:
-            result = self._run_single_task(task, hermes=self.hermes_elysium, attempt="retest")
+            result = self._run_single_task(task, use_llm=True, attempt="retest")
             score = self._score_task(task, result)
             self.retest_scores[task.id] = score
 
@@ -247,8 +243,8 @@ class BenchmarkRunner:
     # TASK EXECUTION
     # ═══════════════════════════════════════════════════════════════════════
 
-    def _run_single_task(self, task: Task, hermes: HermesInterface, attempt: str = "first") -> dict[str, Any]:
-        """Execute a single task through the harness."""
+    def _run_single_task(self, task: Task, use_llm: bool, attempt: str = "first") -> dict[str, Any]:
+        """Execute a single task: via LLM (Elysium mode) or direct test run (baseline)."""
         start = time.time()
 
         source_dir = task.repo_dir or task.task_dir
@@ -260,8 +256,14 @@ class BenchmarkRunner:
             if not dest_test.exists():
                 shutil.copytree(task.test_dir, dest_test, dirs_exist_ok=True)
 
-        result = hermes.execute_task(
+        # Create TaskExecutor with the right task type and LLM provider and execute
+        executor = TaskExecutor(
+            llm_provider=self.llm_provider if use_llm else None,
+            task_type=task.task_type if hasattr(task, 'task_type') else "code",
+        )
+        result = executor.execute(
             task_id=task.id,
+            task_name=task.name,
             task_description=task.description,
             workspace=workspace,
             timeout=task.timeout_seconds,

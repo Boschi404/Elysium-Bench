@@ -18,6 +18,7 @@ class Task:
     name: str
     description: str
     difficulty: int  # 1-10
+    task_type: str = "code"  # code | text | math | plan | data
     tags: list[str] = field(default_factory=list)
 
     # Paths
@@ -41,6 +42,7 @@ class Task:
             category=data["category"],
             name=data["name"],
             description=data["description"],
+            task_type=data.get("task_type", "code"),
             difficulty=data.get("difficulty", 5),
             tags=data.get("tags", []),
             task_dir=task_dir,
