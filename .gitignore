@@ -1,0 +1,37 @@
+# Bytecode
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Results
+results/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temp
+*.tmp
+*.log
+*.pid
+
+# Docker
+docker-compose.override.yml
+
+# Credentials
+.env
+*.key
+*.pem

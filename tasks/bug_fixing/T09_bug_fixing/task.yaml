@@ -1,0 +1,15 @@
+id: "T09_bug_fixing"
+category: "bug_fixing"
+name: "Fix Improper Error Handling Chain"
+description: >
+  Given an API where exceptions bubble up as generic 500 errors without context. Fix by adding proper exception handling middleware: catch ValueError → 400, KeyError → 404, PermissionError → 403, custom AppException → appropriate status. Preserve original error messages in debug mode, sanitize in production.
+difficulty: 4
+tags:
+  - python
+  - fastapi
+timeout_seconds: 600
+expected_files:
+  - main.py
+forbidden_patterns:
+  - "TODO"
+  - "pass  #"

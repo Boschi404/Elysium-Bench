@@ -1,0 +1,15 @@
+id: "T10_algorithm_implementation"
+category: "algorithm_implementation"
+name: "Implement Red-Black Tree"
+description: >
+  Implement a self-balancing Red-Black Tree. Must support: insert(key, value), delete(key), search(key) → value, get_min(), get_max(), inorder_traversal() → sorted list. Maintain all RB-tree invariants: root is black, no adjacent red nodes, equal black height. Handle duplicates by updating value. Return tree height for verification of O(log n) balance.
+difficulty: 8
+tags:
+  - python
+  - fastapi
+timeout_seconds: 600
+expected_files:
+  - main.py
+forbidden_patterns:
+  - "TODO"
+  - "pass  #"

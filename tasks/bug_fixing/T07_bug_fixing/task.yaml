@@ -1,0 +1,15 @@
+id: "T07_bug_fixing"
+category: "bug_fixing"
+name: "Fix JSON Serialization Error"
+description: >
+  Given an API that crashes when trying to serialize Decimal and datetime objects to JSON. The GET /invoices endpoint returns 500 Internal Server Error when invoice amounts are Decimals. Fix by adding a custom JSON encoder that handles Decimal, datetime, and UUID types.
+difficulty: 3
+tags:
+  - python
+  - fastapi
+timeout_seconds: 600
+expected_files:
+  - main.py
+forbidden_patterns:
+  - "TODO"
+  - "pass  #"

@@ -1,0 +1,15 @@
+id: "T06_algorithm_implementation"
+category: "algorithm_implementation"
+name: "Implement Trie (Prefix Tree)"
+description: >
+  Implement a Trie data structure. Must support: insert(word), search(word) → bool, starts_with(prefix) → bool, delete(word), count_words_with_prefix(prefix) → int, get_all_words() → list (sorted). Handle: empty strings, Unicode characters, duplicate insertions. Efficient prefix search.
+difficulty: 4
+tags:
+  - python
+  - fastapi
+timeout_seconds: 600
+expected_files:
+  - main.py
+forbidden_patterns:
+  - "TODO"
+  - "pass  #"

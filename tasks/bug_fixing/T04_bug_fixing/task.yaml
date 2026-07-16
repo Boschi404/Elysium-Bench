@@ -1,0 +1,15 @@
+id: "T04_bug_fixing"
+category: "bug_fixing"
+name: "Fix Date Parsing Timezone Bug"
+description: >
+  Given an API that parses dates without timezone awareness, causing off-by-one errors around DST transitions. The POST /events endpoint stores dates in UTC but GET /events returns them in local time incorrectly. Fix the timezone handling to consistently use UTC internally and convert only on output.
+difficulty: 5
+tags:
+  - python
+  - fastapi
+timeout_seconds: 600
+expected_files:
+  - main.py
+forbidden_patterns:
+  - "TODO"
+  - "pass  #"

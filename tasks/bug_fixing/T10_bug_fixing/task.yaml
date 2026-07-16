@@ -1,0 +1,15 @@
+id: "T10_bug_fixing"
+category: "bug_fixing"
+name: "Fix Resource Exhaustion in Connection Pool"
+description: >
+  Given a database connection pool that doesn't limit connections, causing resource exhaustion under load. The pool is used by all endpoints. Fix by adding a semaphore-based connection pool with max_connections=10 and a timeout of 5 seconds. Return 503 when pool is exhausted. Add connection lifecycle logging.
+difficulty: 7
+tags:
+  - python
+  - fastapi
+timeout_seconds: 600
+expected_files:
+  - main.py
+forbidden_patterns:
+  - "TODO"
+  - "pass  #"

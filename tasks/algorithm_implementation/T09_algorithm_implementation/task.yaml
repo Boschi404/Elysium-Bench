@@ -1,0 +1,15 @@
+id: "T09_algorithm_implementation"
+category: "algorithm_implementation"
+name: "Implement Topological Sort"
+description: >
+  Implement topological sort for directed acyclic graphs (DAG). Must return a valid ordering. Handle: multiple valid orderings (return any), cycle detection (raise ValueError with cycle info), disconnected graph. Also implement Kahn's algorithm variant. Return both DFS-based and Kahn's results for comparison.
+difficulty: 4
+tags:
+  - python
+  - fastapi
+timeout_seconds: 600
+expected_files:
+  - main.py
+forbidden_patterns:
+  - "TODO"
+  - "pass  #"

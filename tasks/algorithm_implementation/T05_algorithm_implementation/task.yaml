@@ -1,0 +1,15 @@
+id: "T05_algorithm_implementation"
+category: "algorithm_implementation"
+name: "Implement Dijkstra's Shortest Path"
+description: >
+  Implement Dijkstra's algorithm for weighted graphs. Must find the shortest path between two nodes. Graph: adjacency list with (neighbor, weight) tuples. Handle: no path exists, negative weights (raise ValueError), disconnected graph, multiple equal-cost paths. Return (distance, path) tuple. Must use priority queue for O((V+E) log V).
+difficulty: 5
+tags:
+  - python
+  - fastapi
+timeout_seconds: 600
+expected_files:
+  - main.py
+forbidden_patterns:
+  - "TODO"
+  - "pass  #"

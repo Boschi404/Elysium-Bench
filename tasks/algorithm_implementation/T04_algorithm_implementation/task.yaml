@@ -1,0 +1,15 @@
+id: "T04_algorithm_implementation"
+category: "algorithm_implementation"
+name: "Implement Graph BFS/DFS Traversal"
+description: >
+  Implement graph traversal algorithms: breadth-first search and depth-first search. Graph represented as adjacency list. Must return: BFS(node) → list of nodes in BFS order, DFS(node) → list of nodes in DFS order, has_path(start, end) → bool (using BFS), shortest_path(start, end) → list of nodes (using BFS). Handle cycles correctly.
+difficulty: 4
+tags:
+  - python
+  - fastapi
+timeout_seconds: 600
+expected_files:
+  - main.py
+forbidden_patterns:
+  - "TODO"
+  - "pass  #"

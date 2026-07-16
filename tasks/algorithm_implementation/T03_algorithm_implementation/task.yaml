@@ -1,0 +1,15 @@
+id: "T03_algorithm_implementation"
+category: "algorithm_implementation"
+name: "Implement LRU Cache"
+description: >
+  Implement an LRU (Least Recently Used) cache with O(1) get and put operations. Must support: get(key) → value or -1, put(key, value), delete(key). Configurable capacity. Track: size, hits, misses. Thread-safe implementation required. Use OrderedDict or custom doubly-linked list + hash map.
+difficulty: 5
+tags:
+  - python
+  - fastapi
+timeout_seconds: 600
+expected_files:
+  - main.py
+forbidden_patterns:
+  - "TODO"
+  - "pass  #"

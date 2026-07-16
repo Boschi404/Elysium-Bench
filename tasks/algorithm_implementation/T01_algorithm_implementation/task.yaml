@@ -1,0 +1,15 @@
+id: "T01_algorithm_implementation"
+category: "algorithm_implementation"
+name: "Implement Binary Search"
+description: >
+  Implement binary search on a sorted list. Must handle: exact match found, element not found, empty list, single element, duplicate elements, very large lists (performance test). Return the index of the target or -1 if not found. Must be O(log n) time complexity.
+difficulty: 2
+tags:
+  - python
+  - fastapi
+timeout_seconds: 600
+expected_files:
+  - main.py
+forbidden_patterns:
+  - "TODO"
+  - "pass  #"

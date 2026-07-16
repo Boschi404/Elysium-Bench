@@ -1,0 +1,15 @@
+id: "T05_api_development"
+category: "api_development"
+name: "Create E-Commerce Order API"
+description: >
+  Implement an order management API. Must include: POST /orders (create order with user_id, items[{product_id, quantity, price}]), GET /orders/{id} (get order with total calculation), GET /orders?user_id=X (list user orders), PATCH /orders/{id}/status (update status: pending→confirmed→shipped→delivered), DELETE /orders/{id} (cancel if pending). Use FastAPI. Validate stock-like logic: reject duplicate order items. Calculate total = sum(qty × price).
+difficulty: 5
+tags:
+  - python
+  - fastapi
+timeout_seconds: 600
+expected_files:
+  - main.py
+forbidden_patterns:
+  - "TODO"
+  - "pass  #"

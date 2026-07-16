@@ -1,0 +1,15 @@
+id: "T05_bug_fixing"
+category: "bug_fixing"
+name: "Fix Memory Leak in Cache Service"
+description: >
+  Given a cache service that never evicts entries, causing unbounded memory growth. Fix by implementing an LRU eviction policy with a configurable max_size. The cache is used by GET /data/{key} and POST /data (stores entries). Add monitoring: GET /cache/stats returns size, hits, misses.
+difficulty: 6
+tags:
+  - python
+  - fastapi
+timeout_seconds: 600
+expected_files:
+  - main.py
+forbidden_patterns:
+  - "TODO"
+  - "pass  #"

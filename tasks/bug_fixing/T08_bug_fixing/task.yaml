@@ -1,0 +1,15 @@
+id: "T08_bug_fixing"
+category: "bug_fixing"
+name: "Fix Concurrent File Write Corruption"
+description: >
+  Given a file-based data store where concurrent writes from POST /save can corrupt the data file because multiple processes write to the same file without locking. Fix by implementing file-level locking (using fcntl/msvcrt or a lock file). Ensure data integrity under concurrent access.
+difficulty: 6
+tags:
+  - python
+  - fastapi
+timeout_seconds: 600
+expected_files:
+  - main.py
+forbidden_patterns:
+  - "TODO"
+  - "pass  #"

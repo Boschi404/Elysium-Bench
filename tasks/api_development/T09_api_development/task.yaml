@@ -1,0 +1,15 @@
+id: "T09_api_development"
+category: "api_development"
+name: "Create Rate-Limited API Gateway"
+description: >
+  Implement a simple API gateway with rate limiting. Must include: POST /register-app (register app → get API key), middleware that checks X-API-Key header, rate limiting (max 100 requests per minute per app), GET /stats (admin: request counts per app). Return 429 when rate limit exceeded with Retry-After header. Use FastAPI middleware. Track request timestamps per API key in memory.
+difficulty: 6
+tags:
+  - python
+  - fastapi
+timeout_seconds: 600
+expected_files:
+  - main.py
+forbidden_patterns:
+  - "TODO"
+  - "pass  #"
