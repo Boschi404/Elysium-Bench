@@ -57,18 +57,19 @@ class TaskExecutor:
         return result
 
     def _try_hermes_cli(self, task_id: str, description: str, workspace: Path, timeout: int) -> dict[str, Any] | None:
-        """Execute via `hermes run --skill elysium-swarmloop`."""
+        """Execute via `hermes chat --skills elysium-swarmloop`."""
         prompt = self._build_prompt(task_id, description, workspace)
         prompt_file = workspace / "hermes_prompt.txt"
         prompt_file.write_text(prompt, encoding="utf-8")
 
+        # Read prompt content directly
+        prompt_content = prompt_file.read_text(encoding="utf-8")
+
         cmd = [
-            "hermes", "run",
-            "--prompt-file", str(prompt_file),
-            "--workdir", str(workspace / "workspace"),
-            "--skill", "elysium-swarmloop",
-            "--timeout", str(timeout),
-            "--json",
+            "hermes", "chat",
+            "-z", prompt_content,
+            "--skills", "elysium-swarmloop",
+            "--cli",  # Non-interactive mode
         ]
 
         try:
