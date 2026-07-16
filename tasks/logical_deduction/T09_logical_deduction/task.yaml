@@ -1,0 +1,10 @@
+id: "T09_logical_deduction"
+category: "logical_deduction"
+name: "Logical Fallacy Detection"
+task_type: "text"
+description: >
+  Identify logical fallacies in 5 arguments: 1) 'If we allow gay marriage, next people will marry animals.' 2) 'Einstein was bad at math, so grades don't matter.' 3) 'You can't prove aliens don't exist, so they exist.' 4) 'Everyone I know supports this policy, so it's popular.' 5) 'We've always done it this way, so it's the best way.' Name each fallacy and explain why it's fallacious.
+difficulty: 4
+tags:
+  - logical-deduction
+timeout_seconds: 600

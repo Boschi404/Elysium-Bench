@@ -1,0 +1,10 @@
+id: "T06_data_analysis"
+category: "data_analysis"
+name: "Pandas: Merge & Transform Pipeline"
+task_type: "data"
+description: >
+  Write a pandas script that: 1) Load two CSVs: users.csv and purchases.csv, 2) Left-join on user_id, 3) Compute total spend per user, 4) Segment users into tiers: 'low' (<$100), 'medium' ($100-$500), 'high' (>$500), 5) Create pivot table: avg spend by tier × by month, 6) Export as CSV with formatted numbers.
+difficulty: 5
+tags:
+  - data-analysis
+timeout_seconds: 600

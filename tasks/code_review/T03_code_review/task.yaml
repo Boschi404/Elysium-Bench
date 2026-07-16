@@ -1,0 +1,10 @@
+id: "T03_code_review"
+category: "code_review"
+name: "Review: Anti-Pattern Detection"
+task_type: "text"
+description: >
+  Review 100 lines of Python code containing: God object, magic numbers, shotgun surgery pattern, copy-paste duplication, boolean trap parameter. Identify each anti-pattern, explain why it's harmful, refactor each into clean code. Be specific about line numbers.
+difficulty: 5
+tags:
+  - code-review
+timeout_seconds: 600

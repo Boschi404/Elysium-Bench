@@ -1,0 +1,7 @@
+# Reference solution for T03_security_analysis
+
+This is a placeholder for the expected output.
+In production, this contains the gold-standard answer.
+
+Task: JWT Token Security Audit
+Difficulty: 5/10

@@ -1,0 +1,7 @@
+{
+  "answer": 2.0,
+  "method": "Gaussian elimination or substitution",
+  "edge_cases": [
+    "verify: substitute back"
+  ]
+}

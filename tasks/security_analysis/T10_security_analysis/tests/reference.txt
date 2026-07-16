@@ -1,0 +1,7 @@
+# Reference solution for T10_security_analysis
+
+This is a placeholder for the expected output.
+In production, this contains the gold-standard answer.
+
+Task: Penetration Test Report (Simulated)
+Difficulty: 7/10

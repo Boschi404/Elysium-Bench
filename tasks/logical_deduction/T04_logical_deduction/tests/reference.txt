@@ -1,0 +1,7 @@
+# Reference solution for T04_logical_deduction
+
+This is a placeholder for the expected output.
+In production, this contains the gold-standard answer.
+
+Task: Truth Table Construction
+Difficulty: 4/10

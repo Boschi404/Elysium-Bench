@@ -1,0 +1,10 @@
+id: "T01_documentation_generation"
+category: "documentation_generation"
+name: "Generate README for Python Project"
+task_type: "text"
+description: >
+  Given a Python project structure (src/ with models.py, routes.py, services.py, tests/), write a comprehensive README.md. Include: project title & description, installation, usage examples with code snippets, API endpoints table, configuration, contributing guide, license. Format with proper markdown.
+difficulty: 3
+tags:
+  - documentation-generation
+timeout_seconds: 600

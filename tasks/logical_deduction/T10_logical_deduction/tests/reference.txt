@@ -1,0 +1,7 @@
+# Reference solution for T10_logical_deduction
+
+This is a placeholder for the expected output.
+In production, this contains the gold-standard answer.
+
+Task: Automated Theorem Proving (Mini)
+Difficulty: 7/10

@@ -1,0 +1,10 @@
+id: "T04_configuration_management"
+category: "configuration_management"
+name: "Kubernetes Deployment Manifest"
+task_type: "plan"
+description: >
+  Write Kubernetes manifests for deploying a web app: Deployment (3 replicas, rolling update, resource limits), Service (ClusterIP), Ingress (with TLS), ConfigMap, Secret, HPA (CPU > 70%). Include: liveness/readiness probes, pod anti-affinity, namespace definition.
+difficulty: 7
+tags:
+  - configuration-management
+timeout_seconds: 600

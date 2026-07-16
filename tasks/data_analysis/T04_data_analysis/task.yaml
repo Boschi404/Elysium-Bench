@@ -1,0 +1,10 @@
+id: "T04_data_analysis"
+category: "data_analysis"
+name: "Pandas: Time Series Aggregation"
+task_type: "data"
+description: >
+  Write a pandas script that: 1) Load time-series CSV with columns [timestamp, sensor_id, value], 2) Resample to hourly averages per sensor, 3) Detect sensors with >20% missing data, 4) Compute 7-day rolling average, 5) Identify anomalies (values > 3 std from rolling mean). Output summary of anomalous sensors.
+difficulty: 6
+tags:
+  - data-analysis
+timeout_seconds: 600

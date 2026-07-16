@@ -1,0 +1,4 @@
+{
+  "answer": "y=1/2+1/2 e^(-x\u00b2)",
+  "method": "\u03bc(x)=e^(\u222b2x dx)=e^(x\u00b2)"
+}

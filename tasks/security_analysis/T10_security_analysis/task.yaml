@@ -1,0 +1,10 @@
+id: "T10_security_analysis"
+category: "security_analysis"
+name: "Penetration Test Report (Simulated)"
+task_type: "text"
+description: >
+  Write a penetration testing report for a hypothetical web application with these findings: exposed .git directory, default admin credentials, unvalidated file upload, verbose error messages, missing rate limiting. Structure: Executive Summary, Methodology, Findings (with CVSS scores), Recommendations, Remediation Timeline. Follow PTES standard format.
+difficulty: 7
+tags:
+  - security-analysis
+timeout_seconds: 600

@@ -1,0 +1,7 @@
+# Reference solution for T07_logical_deduction
+
+This is a placeholder for the expected output.
+In production, this contains the gold-standard answer.
+
+Task: Logic Grid: Who Owns What?
+Difficulty: 5/10

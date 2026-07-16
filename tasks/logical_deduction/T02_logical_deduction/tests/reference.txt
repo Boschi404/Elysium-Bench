@@ -1,0 +1,7 @@
+# Reference solution for T02_logical_deduction
+
+This is a placeholder for the expected output.
+In production, this contains the gold-standard answer.
+
+Task: Zebra Puzzle (Einstein's Riddle)
+Difficulty: 6/10

@@ -1,0 +1,10 @@
+id: "T03_data_analysis"
+category: "data_analysis"
+name: "SQL: Multi-Table JOIN Report"
+task_type: "data"
+description: >
+  Write a SQL query joining orders, customers, and products tables. Return: customer name, order date, product name, quantity, line total (qty × price). Filter to orders from the last 30 days. Include customers with no orders (show 0 quantity and NULL product). Sort by order date descending, customer name ascending.
+difficulty: 5
+tags:
+  - data-analysis
+timeout_seconds: 600

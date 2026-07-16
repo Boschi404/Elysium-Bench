@@ -1,0 +1,7 @@
+# Reference solution for T01_documentation_generation
+
+This is a placeholder for the expected output.
+In production, this contains the gold-standard answer.
+
+Task: Generate README for Python Project
+Difficulty: 3/10

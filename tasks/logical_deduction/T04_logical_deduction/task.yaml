@@ -1,0 +1,10 @@
+id: "T04_logical_deduction"
+category: "logical_deduction"
+name: "Truth Table Construction"
+task_type: "text"
+description: >
+  Build a truth table for (P → Q) ∧ (Q → R) → (P → R). Prove this is a tautology. Then determine if (P → Q) ∧ (¬P → R) is equivalent to (P ∧ Q) ∨ (¬P ∧ R). Show all rows.
+difficulty: 4
+tags:
+  - logical-deduction
+timeout_seconds: 600

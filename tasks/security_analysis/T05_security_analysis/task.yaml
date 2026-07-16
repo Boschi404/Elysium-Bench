@@ -1,0 +1,10 @@
+id: "T05_security_analysis"
+category: "security_analysis"
+name: "Cryptography: Weak Implementation"
+task_type: "text"
+description: >
+  Review this encryption code: AES-ECB mode with static IV, MD5 for password hashing, hardcoded key. Explain: 1) Why ECB is insecure (show penguin ECB example), 2) Why MD5 is broken for passwords, 3) Why hardcoded keys are dangerous. Provide secure alternatives (AES-GCM, bcrypt/argon2, key management).
+difficulty: 5
+tags:
+  - security-analysis
+timeout_seconds: 600

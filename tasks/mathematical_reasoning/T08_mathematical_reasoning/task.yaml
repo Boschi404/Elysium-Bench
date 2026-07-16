@@ -1,0 +1,10 @@
+id: "T08_mathematical_reasoning"
+category: "mathematical_reasoning"
+name: "Differential Equations"
+task_type: "math"
+description: >
+  Solve dy/dx + 2xy = x with initial condition y(0)=1. Identify as first-order linear ODE. Find integrating factor, general solution, particular solution. Verify by substitution.
+difficulty: 6
+tags:
+  - mathematical-reasoning
+timeout_seconds: 600

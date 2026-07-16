@@ -1,0 +1,10 @@
+id: "T10_logical_deduction"
+category: "logical_deduction"
+name: "Automated Theorem Proving (Mini)"
+task_type: "text"
+description: >
+  Using resolution refutation, prove that {P∨Q, ¬P∨R, ¬Q∨R} entails R. Show: 1) Convert to CNF, 2) Negate conclusion, 3) Apply resolution steps, 4) Derive contradiction (empty clause). Draw resolution tree.
+difficulty: 7
+tags:
+  - logical-deduction
+timeout_seconds: 600

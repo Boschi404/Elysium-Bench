@@ -1,0 +1,10 @@
+id: "T09_mathematical_reasoning"
+category: "mathematical_reasoning"
+name: "Graph Theory: Shortest Path Proof"
+task_type: "math"
+description: >
+  Prove that Dijkstra's algorithm correctly finds the shortest path in a graph with non-negative edge weights. Provide: 1) Loop invariant, 2) Base case, 3) Inductive step, 4) Termination proof. Use mathematical notation.
+difficulty: 7
+tags:
+  - mathematical-reasoning
+timeout_seconds: 600

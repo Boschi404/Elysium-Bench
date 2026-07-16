@@ -1,0 +1,10 @@
+id: "T06_configuration_management"
+category: "configuration_management"
+name: "Nginx Configuration"
+task_type: "plan"
+description: >
+  Write an nginx.conf for: reverse proxy to FastAPI on port 8000, serve static files from /static/, rate limiting (10 req/s per IP), gzip compression, HTTPS redirect, CORS headers for API, custom error pages (404, 500, 502), security headers (HSTS, X-Frame-Options, CSP). Include comments explaining each section.
+difficulty: 5
+tags:
+  - configuration-management
+timeout_seconds: 600

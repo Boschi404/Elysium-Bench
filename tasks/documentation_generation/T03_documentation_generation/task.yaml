@@ -1,0 +1,10 @@
+id: "T03_documentation_generation"
+category: "documentation_generation"
+name: "Write Docstrings for Module"
+task_type: "text"
+description: >
+  Given a Python module with 15 functions without docstrings, write Google-style docstrings for each. Include: short description, Args (with types), Returns (with type), Raises, Example usage. Functions range from simple getters to complex data transformations.
+difficulty: 3
+tags:
+  - documentation-generation
+timeout_seconds: 600

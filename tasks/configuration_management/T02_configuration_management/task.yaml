@@ -1,0 +1,10 @@
+id: "T02_configuration_management"
+category: "configuration_management"
+name: "Docker Compose: Full Stack"
+task_type: "plan"
+description: >
+  Write a docker-compose.yml for: FastAPI app, PostgreSQL, Redis, Nginx reverse proxy, Certbot for SSL. Configure: networks (frontend/backend), volumes for persistence, health checks, dependency ordering (depends_on with conditions), environment variables via .env file, restart policies.
+difficulty: 6
+tags:
+  - configuration-management
+timeout_seconds: 600

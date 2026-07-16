@@ -1,0 +1,27 @@
+criteria:
+- checks:
+  - 'contains: config'
+  - 'min_length: 200'
+  - 'contains: version'
+  name: correctness
+  weight: 40
+- checks:
+  - 'contains: step'
+  - 'min_length: 300'
+  name: completeness
+  weight: 25
+- checks:
+  - 'contains: optimize'
+  - 'min_length: 100'
+  name: efficiency
+  weight: 15
+- checks:
+  - 'contains: error'
+  - 'contains: backup'
+  name: robustness
+  weight: 10
+- checks:
+  - 'has_structure: #'
+  - 'min_length: 200'
+  name: clarity
+  weight: 10

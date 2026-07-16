@@ -1,0 +1,10 @@
+id: "T04_security_analysis"
+category: "security_analysis"
+name: "OWASP Top 10 Checklist"
+task_type: "text"
+description: >
+  Given a web application description (REST API with React frontend, PostgreSQL, JWT auth, file uploads), produce an OWASP Top 10 security assessment. For each of the 10 categories, explain: risk level for this app, what to check, mitigation strategy.
+difficulty: 6
+tags:
+  - security-analysis
+timeout_seconds: 600

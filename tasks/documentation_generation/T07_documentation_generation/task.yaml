@@ -1,0 +1,10 @@
+id: "T07_documentation_generation"
+category: "documentation_generation"
+name: "Write Troubleshooting Guide"
+task_type: "text"
+description: >
+  Write a troubleshooting guide for a Python web application. Cover 10 common issues: 500 errors, database connection failures, slow responses, memory issues, CORS errors, authentication failures, file upload problems, dependency conflicts, environment variable issues, deployment failures. For each: symptoms, diagnosis steps, solution, prevention.
+difficulty: 5
+tags:
+  - documentation-generation
+timeout_seconds: 600

@@ -1,0 +1,10 @@
+id: "T05_data_analysis"
+category: "data_analysis"
+name: "SQL: Window Functions Report"
+task_type: "data"
+description: >
+  Write a SQL query using window functions that: 1) Ranks employees by salary within each department, 2) Shows salary as % of department average, 3) Shows difference from previous rank's salary (LAG), 4) Running total of salaries within department. Return: dept, name, salary, rank, pct_of_avg, diff_from_prev, running_total.
+difficulty: 6
+tags:
+  - data-analysis
+timeout_seconds: 600

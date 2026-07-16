@@ -1,0 +1,10 @@
+id: "T07_security_analysis"
+category: "security_analysis"
+name: "CSRF & CORS Misconfiguration"
+task_type: "text"
+description: >
+  Analyze a CORS configuration: Access-Control-Allow-Origin: * with Access-Control-Allow-Credentials: true. Explain: 1) Why this combination is dangerous, 2) CSRF attack scenario, 3) Proper CORS configuration for a single-page app with credentials, 4) CSRF token implementation.
+difficulty: 5
+tags:
+  - security-analysis
+timeout_seconds: 600

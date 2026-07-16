@@ -1,0 +1,10 @@
+id: "T06_security_analysis"
+category: "security_analysis"
+name: "Threat Modeling: E-Commerce App"
+task_type: "text"
+description: >
+  Perform STRIDE threat modeling for an e-commerce application with: user accounts, payment processing, order management, admin panel. Create a threat matrix: Threat Type → Asset → Attack Vector → Impact → Mitigation. Identify top 3 critical threats.
+difficulty: 6
+tags:
+  - security-analysis
+timeout_seconds: 600

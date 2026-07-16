@@ -1,0 +1,10 @@
+id: "T05_documentation_generation"
+category: "documentation_generation"
+name: "Write Architecture Decision Records"
+task_type: "text"
+description: >
+  Write 5 Architecture Decision Records (ADRs) for a microservices migration project. Template: Title, Status, Context, Decision, Consequences. Decisions: 1) Database per service vs shared DB, 2) REST vs gRPC for internal comms, 3) Kafka vs RabbitMQ for events, 4) Kubernetes vs Docker Swarm, 5) Monorepo vs polyrepo.
+difficulty: 6
+tags:
+  - documentation-generation
+timeout_seconds: 600

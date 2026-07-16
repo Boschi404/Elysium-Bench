@@ -1,0 +1,7 @@
+# Reference solution for T09_documentation_generation
+
+This is a placeholder for the expected output.
+In production, this contains the gold-standard answer.
+
+Task: Write Contributing Guide
+Difficulty: 4/10

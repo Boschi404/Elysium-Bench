@@ -1,0 +1,10 @@
+id: "T03_logical_deduction"
+category: "logical_deduction"
+name: "Syllogism Validity Check"
+task_type: "text"
+description: >
+  Evaluate this syllogism: All programmers are logical. Some logical people are mathematicians. Therefore, some programmers are mathematicians. Is it valid? If not, provide a counterexample using Venn diagrams or set notation.
+difficulty: 4
+tags:
+  - logical-deduction
+timeout_seconds: 600

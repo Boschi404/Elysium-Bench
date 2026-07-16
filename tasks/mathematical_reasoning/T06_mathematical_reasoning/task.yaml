@@ -1,0 +1,10 @@
+id: "T06_mathematical_reasoning"
+category: "mathematical_reasoning"
+name: "Number Theory: Modular Arithmetic"
+task_type: "math"
+description: >
+  Find the last 3 digits of 7^2024. Show using Euler's theorem and modular exponentiation. Also find remainder when 7^2024 is divided by 100.
+difficulty: 6
+tags:
+  - mathematical-reasoning
+timeout_seconds: 600

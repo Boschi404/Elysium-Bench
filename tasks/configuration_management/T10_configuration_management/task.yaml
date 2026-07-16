@@ -1,0 +1,10 @@
+id: "T10_configuration_management"
+category: "configuration_management"
+name: "Full Infrastructure Design Document"
+task_type: "plan"
+description: >
+  Design complete infrastructure for a startup SaaS product (1000 initial users, scalable to 100k). Document: cloud provider choice with justification, network architecture diagram (ASCII art), service breakdown, database choices (SQL + cache + search), CI/CD pipeline, monitoring stack, backup strategy, cost estimate, scaling plan. ~1500 words.
+difficulty: 8
+tags:
+  - configuration-management
+timeout_seconds: 600

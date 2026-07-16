@@ -1,0 +1,10 @@
+id: "T02_security_analysis"
+category: "security_analysis"
+name: "XSS Vulnerability Review"
+task_type: "text"
+description: >
+  Analyze this JavaScript/HTML template for Cross-Site Scripting (XSS) vulnerabilities. Identify: stored XSS, reflected XSS, DOM-based XSS. Template uses innerHTML with user content. Show exploit examples and fixes using textContent or DOMPurify.
+difficulty: 4
+tags:
+  - security-analysis
+timeout_seconds: 600

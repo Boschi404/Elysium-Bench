@@ -1,0 +1,10 @@
+id: "T02_data_analysis"
+category: "data_analysis"
+name: "Pandas: Data Cleaning Pipeline"
+task_type: "data"
+description: >
+  Write a Python/pandas script that cleans a CSV dataset: 1) Remove duplicate rows, 2) Fill missing numeric values with column median, 3) Drop rows where >50% of columns are null, 4) Convert date strings to datetime, 5) Strip whitespace from string columns. Return row count before and after cleaning.
+difficulty: 4
+tags:
+  - data-analysis
+timeout_seconds: 600

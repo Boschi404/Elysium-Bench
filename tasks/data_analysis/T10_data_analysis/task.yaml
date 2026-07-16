@@ -1,0 +1,10 @@
+id: "T10_data_analysis"
+category: "data_analysis"
+name: "End-to-End: Dashboard Data Pipeline"
+task_type: "data"
+description: >
+  Build a complete data pipeline: 1) Load 3 CSV files (sales, inventory, customers), 2) Clean and validate each, 3) Join all three, 4) Compute KPIs: revenue, margin, stock turnover, customer lifetime value, 5) Aggregate by month and category, 6) Export as a single clean CSV with column descriptions. Handle all edge cases (missing files, empty data, type mismatches).
+difficulty: 8
+tags:
+  - data-analysis
+timeout_seconds: 600

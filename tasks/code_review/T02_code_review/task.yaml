@@ -1,0 +1,10 @@
+id: "T02_code_review"
+category: "code_review"
+name: "Review: Memory Leak Pattern"
+task_type: "text"
+description: >
+  Review this code with a memory leak: a global cache dict that grows unbounded, and event listeners never removed. Identify: 1) The leak sources, 2) Why they leak, 3) Memory profiling approach, 4) Fix using LRU cache and weak references.
+difficulty: 5
+tags:
+  - code-review
+timeout_seconds: 600

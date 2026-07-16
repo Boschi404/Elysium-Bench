@@ -1,0 +1,10 @@
+id: "T03_configuration_management"
+category: "configuration_management"
+name: "GitHub Actions CI/CD Pipeline"
+task_type: "plan"
+description: >
+  Design a GitHub Actions workflow (.github/workflows/ci.yml) for a Python project. Include: lint (ruff), type check (mypy), test (pytest with coverage), build Docker image, push to registry, deploy to staging. Configure: matrix testing across Python 3.10/3.11/3.12, caching, secrets management, PR vs main branch triggers.
+difficulty: 5
+tags:
+  - configuration-management
+timeout_seconds: 600

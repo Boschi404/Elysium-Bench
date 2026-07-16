@@ -1,0 +1,10 @@
+id: "T08_data_analysis"
+category: "data_analysis"
+name: "Pandas: Statistical Analysis Report"
+task_type: "data"
+description: >
+  Write a pandas script that performs statistical analysis on a dataset: 1) Summary statistics (mean, median, std, skew, kurtosis), 2) Correlation matrix for numeric columns, 3) Top 3 correlated pairs with correlation > 0.7, 4) Normality test (Shapiro-Wilk) for each numeric column, 5) Generate markdown report with findings.
+difficulty: 6
+tags:
+  - data-analysis
+timeout_seconds: 600

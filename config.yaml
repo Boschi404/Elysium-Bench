@@ -1,18 +1,18 @@
 # =============================================================================
-# Elysium-Bench v0.2.0 — 10-Loop Multi-Phase Configuration
+# Elysium-Bench v0.3.0 — 10 Categories × 10 Tasks = 100 Total
+# 3 code categories + 7 non-code categories
 # =============================================================================
 
 benchmark:
   name: "Elysium-Bench"
-  version: "0.2.0"
+  version: "0.3.0"
   description: >
-    Multi-phase benchmark measuring Elysium Swarmloop self-improvement.
-    Phase 0: All tasks WITHOUT Elysium (bare baseline).
-    Phase 1-10: 10 loops, each loop = 1 task per category WITH Elysium.
-    Phase 11: Re-run Loop 1 tasks → compute improvement delta vs Phase 1.
+    100-task multi-domain benchmark. Measures Elysium Swarmloop self-improvement
+    across code, data, math, logic, security, review, docs, planning, and devops.
 
-# ─── Task Categories ──────────────────────────────────────────────────────────
+# ─── 10 Task Categories ─────────────────────────────────────────────────────
 categories:
+  # === CODE CATEGORIES ===
   - id: api_development
     name: "API Development"
     description: "Implement REST API endpoints from specifications"
@@ -31,93 +31,125 @@ categories:
     weight: 1.0
     task_count: 10
 
-# ─── Multi-Phase Flow ────────────────────────────────────────────────────────
-#  Phase 0 (BASELINE): All tasks WITHOUT Elysium → pure execution baseline
-#  Phase 1 (LOOP 1):   Loop 1 tasks WITH Elysium (max config) → first score
-#  Phase 2-10:         Alternative tasks WITH Elysium → practice loops
-#  Phase 11 (RE-TEST): Same tasks as Loop 1 WITH Elysium → improvement delta
-# ──────────────────────────────────────────────────────────────────────────────
+  # === NON-CODE CATEGORIES ===
+  - id: data_analysis
+    name: "Data Analysis"
+    description: "SQL queries, data transformation, pandas operations, reporting"
+    weight: 1.0
+    task_count: 10
 
+  - id: mathematical_reasoning
+    name: "Mathematical Reasoning"
+    description: "Math problems, proofs, numerical computation, optimization"
+    weight: 1.0
+    task_count: 10
+
+  - id: logical_deduction
+    name: "Logical Deduction"
+    description: "Logic puzzles, syllogisms, constraint satisfaction, riddles"
+    weight: 1.0
+    task_count: 10
+
+  - id: security_analysis
+    name: "Security Analysis"
+    description: "Vulnerability detection, secure code review, threat modeling"
+    weight: 1.0
+    task_count: 10
+
+  - id: code_review
+    name: "Code Review"
+    description: "Find bugs, suggest improvements, evaluate code quality"
+    weight: 1.0
+    task_count: 10
+
+  - id: documentation_generation
+    name: "Documentation Generation"
+    description: "Write READMEs, API docs, code comments, user guides"
+    weight: 1.0
+    task_count: 10
+
+  - id: configuration_management
+    name: "Configuration & DevOps"
+    description: "Dockerfiles, CI/CD configs, infrastructure-as-code, env setup"
+    weight: 1.0
+    task_count: 10
+
+# ─── Multi-Phase Flow ────────────────────────────────────────────────────────
 phases:
-  # ── PHASE 0: Bare execution (no agent, no Elysium) ───────────────────────
   baseline:
     enabled: true
-    description: "Run ALL tasks without Elysium — direct execution baseline"
-    use_elysium: false         # NO agent — just run tests directly
-    run_all_tasks: true        # Run every task in every category
+    description: "Run ALL 100 tasks without Elysium — bare execution baseline"
+    use_elysium: false
+    run_all_tasks: true
 
-  # ── PHASE 1-10: Practice loops with Elysium ──────────────────────────────
   loops:
-    count: 10                  # Total loops (loop 1 is the measurement loop)
-    description: >
-      10 loops. Each loop runs 1 task per category (3 tasks per loop).
-      Loop 1 tasks are the "measurement set" — re-tested after all 10 loops.
-      Loops 2-10 use different tasks (practice).
+    count: 10
+    description: "10 loops. Each loop = 1 task per category (10 tasks/loop)."
 
-    # Tasks per loop: 1 from each category = 3 tasks/loop.
-    # With 10 tasks/category, we have exactly 10 loops (1→10).
+    loop_1_tasks:
+      api_development: [1]
+      bug_fixing: [1]
+      algorithm_implementation: [1]
+      data_analysis: [1]
+      mathematical_reasoning: [1]
+      logical_deduction: [1]
+      security_analysis: [1]
+      code_review: [1]
+      documentation_generation: [1]
+      configuration_management: [1]
 
-    loop_1_tasks:               # MEASUREMENT SET — these get re-tested
-      api_development: [1]      # Task index 1 (T01)
-      bug_fixing: [1]           # Task index 1 (T01)
-      algorithm_implementation: [1]  # Task index 1 (T01)
+    practice_tasks_start: 2
 
-    practice_tasks_start: 2     # Loops 2-10 use tasks starting from index 2
-                                # Loop 2 = task 2, Loop 3 = task 3, ..., Loop 10 = task 10
-
-  # ── PHASE 11: Re-test Loop 1 tasks ───────────────────────────────────────
   retest:
     enabled: true
-    description: "Re-run the SAME tasks as Loop 1 to measure improvement"
+    description: "Re-run the SAME 10 tasks as Loop 1 to measure improvement"
 
-# ─── Scoring Weights (0–100 total) ──────────────────────────────────────────
+# ─── Scoring Weights (generic dimensions, 0–100 total) ──────────────────────
 scoring:
-  functional_correctness:
+  correctness:
     weight: 40
-    description: "All fail→pass tests pass, no pass→pass regressions"
-  code_quality:
+    description: "Is the answer/solution correct?"
+  completeness:
     weight: 25
-    description: "Linting (ruff), type hints, docstrings, no stubs/TODOs"
+    description: "Are all parts/requirements addressed?"
   efficiency:
     weight: 15
-    description: "Algorithmic complexity, resource usage, runtime"
+    description: "Is it optimal, concise, well-performing?"
   robustness:
     weight: 10
-    description: "Edge cases, error handling, input validation"
-  integration:
+    description: "Edge cases, error handling, validation"
+  clarity:
     weight: 10
-    description: "Imports work, interface contracts match, no orphan code"
+    description: "Well-structured, readable, properly formatted"
 
 # ─── Thresholds ───────────────────────────────────────────────────────────────
 thresholds:
-  pass: 60              # Minimum total score to consider "passing"
-  excellent: 85         # Excellent performance threshold
-  learning_min: 5       # Minimum % improvement to claim "learning detected"
+  pass: 60
+  excellent: 85
+  learning_min: 5
 
 # ─── Environment ──────────────────────────────────────────────────────────────
 environment:
-  mode: "venv"             # venv | docker
+  mode: "venv"
   python_version: "3.10"
-  cleanup: true            # Auto-cleanup temp files after run
-  timeout_per_task: 600    # Max seconds per task
+  cleanup: true
+  timeout_per_task: 600
   temp_dir: null
 
 # ─── Hermes Agent Integration (MAX CONFIG for Elysium) ───────────────────────
 hermes:
-  # === MAXED OUT for Elysium Swarmloop ===
   skill: "elysium-swarmloop"
-  subagents_max: 100          # Max parallel subagents (was 50)
-  quality_threshold: 8        # Strict quality gate (was 7)
-  retries_max: 5              # More retries (was 3)
-  streaming: true             # Enable streaming gather
-  self_learning: true         # Enable self-learning loop
-  orchestrator_depth: 2       # Depth-2 orchestration
-  # === Elysium disabled mode (for baseline) ===
+  subagents_max: 100
+  quality_threshold: 8
+  retries_max: 5
+  streaming: true
+  self_learning: true
+  orchestrator_depth: 2
   disabled:
-    skill: null               # No skill loaded
-    subagents_max: 0          # No subagents
-    quality_threshold: 0      # No quality gate
-    retries_max: 0            # No retries
+    skill: null
+    subagents_max: 0
+    quality_threshold: 0
+    retries_max: 0
 
 # ─── Reporting ────────────────────────────────────────────────────────────────
 reporting:

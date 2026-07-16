@@ -1,0 +1,10 @@
+id: "T09_data_analysis"
+category: "data_analysis"
+name: "SQL: Performance Optimization"
+task_type: "data"
+description: >
+  Given a slow query on a 10M-row table, rewrite it for performance. Original: SELECT * FROM orders o JOIN customers c ON o.customer_id = c.id WHERE YEAR(o.order_date)=2024 AND c.country='Italy'. Rewrite to: use proper indexes, avoid YEAR() function, add LIMIT with pagination, select only needed columns. Explain your changes.
+difficulty: 7
+tags:
+  - data-analysis
+timeout_seconds: 600

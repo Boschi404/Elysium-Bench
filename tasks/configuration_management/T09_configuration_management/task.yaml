@@ -1,0 +1,10 @@
+id: "T09_configuration_management"
+category: "configuration_management"
+name: "Monitoring Stack Configuration"
+task_type: "plan"
+description: >
+  Design a monitoring setup: Prometheus for metrics (with custom FastAPI metrics), Grafana dashboards (4 panels: request rate, error rate, p95 latency, DB connections), Alertmanager rules (high error rate, disk > 80%, service down). Provide: docker-compose snippet, prometheus.yml, example alert rules, grafana dashboard JSON skeleton.
+difficulty: 6
+tags:
+  - configuration-management
+timeout_seconds: 600

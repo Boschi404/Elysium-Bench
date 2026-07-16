@@ -1,0 +1,10 @@
+id: "T01_security_analysis"
+category: "security_analysis"
+name: "SQL Injection Detection"
+task_type: "text"
+description: >
+  Review this Python code and identify SQL injection vulnerabilities. Provide: 1) Vulnerable line numbers, 2) Attack vector explanation, 3) Fixed version using parameterized queries. Code: cursor.execute(f"SELECT * FROM users WHERE username='{user_input}'").
+difficulty: 3
+tags:
+  - security-analysis
+timeout_seconds: 600

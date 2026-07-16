@@ -1,0 +1,10 @@
+id: "T08_security_analysis"
+category: "security_analysis"
+name: "Dependency Vulnerability Scan"
+task_type: "text"
+description: >
+  Given a requirements.txt with 20 Python packages (some outdated with known CVEs), produce: 1) Security advisory for each vulnerable package, 2) Upgrade path, 3) Alternative packages if no fix available, 4) Priority ranking (exploitable vs theoretical). Include CVE IDs.
+difficulty: 4
+tags:
+  - security-analysis
+timeout_seconds: 600

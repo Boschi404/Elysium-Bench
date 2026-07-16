@@ -1,0 +1,10 @@
+id: "T09_code_review"
+category: "code_review"
+name: "Review: Dependency Hell Audit"
+task_type: "text"
+description: >
+  Review a project with circular imports, tight coupling, and 50 direct dependencies. Provide: dependency graph analysis, circular import resolution strategy, dependency injection refactoring, recommendations for reducing dependency count. Use specific examples.
+difficulty: 6
+tags:
+  - code-review
+timeout_seconds: 600

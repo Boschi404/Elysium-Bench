@@ -1,0 +1,10 @@
+id: "T08_documentation_generation"
+category: "documentation_generation"
+name: "Generate Code Comments"
+task_type: "text"
+description: >
+  Given complex algorithm code (200 lines implementing Dijkstra with priority queue), add comprehensive inline comments. Explain: high-level approach, key data structures, edge cases handled, complexity analysis, non-obvious optimizations. Comments should help a junior developer understand the algorithm.
+difficulty: 4
+tags:
+  - documentation-generation
+timeout_seconds: 600

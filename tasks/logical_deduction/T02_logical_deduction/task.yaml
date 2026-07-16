@@ -1,0 +1,10 @@
+id: "T02_logical_deduction"
+category: "logical_deduction"
+name: "Zebra Puzzle (Einstein's Riddle)"
+task_type: "text"
+description: >
+  There are 5 houses in a row, each of a different color, inhabited by people of different nationalities, with different pets, drinks, and cigarettes. Using the clues provided, determine who owns the zebra. Clues: 1) Norwegian lives in first house, 2) Englishman lives in red house, 3) Green house is left of white house, 4) Dane drinks tea, 5) ... (10 clues total). Show deduction grid step by step.
+difficulty: 6
+tags:
+  - logical-deduction
+timeout_seconds: 600

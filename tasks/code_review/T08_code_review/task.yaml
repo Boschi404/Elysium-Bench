@@ -1,0 +1,10 @@
+id: "T08_code_review"
+category: "code_review"
+name: "Review: API Design Critique"
+task_type: "text"
+description: >
+  Review this REST API design: GET /getUsers, POST /createUser, DELETE /deleteUser?id=5, GET /getUserPosts?userId=5. Critique: naming conventions, HTTP method usage, URL structure, versioning, pagination, error responses. Propose a RESTful redesign following best practices.
+difficulty: 5
+tags:
+  - code-review
+timeout_seconds: 600

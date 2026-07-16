@@ -1,0 +1,10 @@
+id: "T06_documentation_generation"
+category: "documentation_generation"
+name: "Generate Changelog from Git History"
+task_type: "text"
+description: >
+  Given this simulated git log (20 commits), generate a CHANGELOG.md following Keep a Changelog format. Categorize into: Added, Changed, Deprecated, Removed, Fixed, Security. Write human-readable descriptions from commit messages. Version bump to v2.1.0.
+difficulty: 3
+tags:
+  - documentation-generation
+timeout_seconds: 600

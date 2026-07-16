@@ -1,0 +1,7 @@
+# Reference solution for T10_code_review
+
+This is a placeholder for the expected output.
+In production, this contains the gold-standard answer.
+
+Task: Full PR Review Simulation
+Difficulty: 7/10

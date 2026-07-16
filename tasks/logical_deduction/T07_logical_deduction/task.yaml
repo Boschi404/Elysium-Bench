@@ -1,0 +1,10 @@
+id: "T07_logical_deduction"
+category: "logical_deduction"
+name: "Logic Grid: Who Owns What?"
+task_type: "text"
+description: >
+  5 people (Alice, Bob, Carol, Dave, Eve) each own one pet (dog, cat, bird, fish, hamster) and one car (Tesla, BMW, Audi, Ford, Toyota). Clues: The dog owner drives a Tesla. Bob's car is German. The bird owner doesn't drive a Ford. ... Determine all assignments using a logic grid.
+difficulty: 5
+tags:
+  - logical-deduction
+timeout_seconds: 600

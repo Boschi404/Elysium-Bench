@@ -1,0 +1,10 @@
+id: "T04_documentation_generation"
+category: "documentation_generation"
+name: "Generate User Guide / Tutorial"
+task_type: "text"
+description: >
+  Write a beginner-friendly tutorial for a REST API client library. Cover: installation, authentication, making your first request, handling responses, error handling, pagination, advanced features. Include code examples for Python, JavaScript, and curl. Target audience: developers with basic HTTP knowledge. ~800 words.
+difficulty: 5
+tags:
+  - documentation-generation
+timeout_seconds: 600

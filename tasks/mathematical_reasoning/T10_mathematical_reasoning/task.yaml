@@ -1,0 +1,10 @@
+id: "T10_mathematical_reasoning"
+category: "mathematical_reasoning"
+name: "Real Analysis: Limit Proof"
+task_type: "math"
+description: >
+  Prove using ε-δ definition that lim(x→2) (x²-4)/(x-2) = 4. Provide: formal statement, ε-δ setup, bound |x+2|, choose δ = min(1, ε/5), complete proof. Show it's valid for all ε > 0.
+difficulty: 8
+tags:
+  - mathematical-reasoning
+timeout_seconds: 600

@@ -1,0 +1,10 @@
+id: "T05_mathematical_reasoning"
+category: "mathematical_reasoning"
+name: "Linear Algebra: Eigenvalues"
+task_type: "math"
+description: >
+  Find eigenvalues and eigenvectors of matrix A = [[3,1],[1,3]]. Show characteristic equation, solve for λ, find eigenvectors for each eigenvalue. Verify that Av = λv for each eigenpair.
+difficulty: 5
+tags:
+  - mathematical-reasoning
+timeout_seconds: 600

@@ -1,0 +1,10 @@
+id: "T01_configuration_management"
+category: "configuration_management"
+name: "Dockerfile: Python Web App"
+task_type: "plan"
+description: >
+  Write a production-ready multi-stage Dockerfile for a Python FastAPI app. Stage 1: build with dependencies. Stage 2: runtime with non-root user. Include: healthcheck, proper signal handling, layer caching optimization, .dockerignore recommendations. The app uses PostgreSQL and Redis.
+difficulty: 4
+tags:
+  - configuration-management
+timeout_seconds: 600

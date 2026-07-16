@@ -1,0 +1,10 @@
+id: "T02_mathematical_reasoning"
+category: "mathematical_reasoning"
+name: "Probability: Bayes Theorem"
+task_type: "math"
+description: >
+  A disease affects 1% of population. Test is 95% accurate (sensitivity and specificity). If someone tests positive, what's the probability they actually have the disease? Show Bayes theorem application step by step.
+difficulty: 4
+tags:
+  - mathematical-reasoning
+timeout_seconds: 600

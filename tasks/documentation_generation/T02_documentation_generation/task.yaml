@@ -1,0 +1,10 @@
+id: "T02_documentation_generation"
+category: "documentation_generation"
+name: "Generate API Documentation"
+task_type: "text"
+description: >
+  Given a FastAPI app with 10 endpoints (GET/POST/PUT/DELETE for users, products, orders), generate OpenAPI-style API documentation. For each endpoint: method, path, description, request body schema, query parameters, response schema, error codes, example request/response. Output as markdown.
+difficulty: 4
+tags:
+  - documentation-generation
+timeout_seconds: 600

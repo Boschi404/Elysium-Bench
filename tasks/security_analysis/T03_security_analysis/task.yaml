@@ -1,0 +1,10 @@
+id: "T03_security_analysis"
+category: "security_analysis"
+name: "JWT Token Security Audit"
+task_type: "text"
+description: >
+  Review a JWT authentication implementation. Check: algorithm confusion (none attack), weak secret, missing expiration, missing audience validation, token in URL. List all vulnerabilities with CVSS-like severity (Critical/High/Medium/Low) and provide fixes.
+difficulty: 5
+tags:
+  - security-analysis
+timeout_seconds: 600

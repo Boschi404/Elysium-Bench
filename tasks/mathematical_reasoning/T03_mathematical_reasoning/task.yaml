@@ -1,0 +1,10 @@
+id: "T03_mathematical_reasoning"
+category: "mathematical_reasoning"
+name: "Calculus: Optimization Problem"
+task_type: "math"
+description: >
+  Find the dimensions of a cylindrical can with volume 1000 cm³ that minimizes surface area. Show derivative work, critical point identification, and verify it's a minimum (second derivative test). Return radius and height in cm rounded to 2 decimals.
+difficulty: 5
+tags:
+  - mathematical-reasoning
+timeout_seconds: 600

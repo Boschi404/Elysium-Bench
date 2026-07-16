@@ -1,0 +1,7 @@
+# Reference solution for T02_documentation_generation
+
+This is a placeholder for the expected output.
+In production, this contains the gold-standard answer.
+
+Task: Generate API Documentation
+Difficulty: 4/10

@@ -1,0 +1,10 @@
+id: "T09_security_analysis"
+category: "security_analysis"
+name: "Secure Coding Guidelines"
+task_type: "text"
+description: >
+  Write a comprehensive secure coding guideline document for a Python/FastAPI team. Cover: input validation, output encoding, authentication, session management, access control, cryptographic practices, error handling, logging, data protection, dependency management. ~1000 words with code examples.
+difficulty: 5
+tags:
+  - security-analysis
+timeout_seconds: 600

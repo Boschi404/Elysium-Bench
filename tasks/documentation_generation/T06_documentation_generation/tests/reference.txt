@@ -1,0 +1,7 @@
+# Reference solution for T06_documentation_generation
+
+This is a placeholder for the expected output.
+In production, this contains the gold-standard answer.
+
+Task: Generate Changelog from Git History
+Difficulty: 3/10

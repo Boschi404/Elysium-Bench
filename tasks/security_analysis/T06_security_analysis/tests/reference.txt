@@ -1,0 +1,7 @@
+# Reference solution for T06_security_analysis
+
+This is a placeholder for the expected output.
+In production, this contains the gold-standard answer.
+
+Task: Threat Modeling: E-Commerce App
+Difficulty: 6/10

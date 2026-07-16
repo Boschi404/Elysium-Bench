@@ -1,0 +1,7 @@
+# Reference solution for T06_logical_deduction
+
+This is a placeholder for the expected output.
+In production, this contains the gold-standard answer.
+
+Task: Paradox Analysis: Liar's Paradox
+Difficulty: 5/10

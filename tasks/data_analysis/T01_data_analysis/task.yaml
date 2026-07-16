@@ -1,0 +1,10 @@
+id: "T01_data_analysis"
+category: "data_analysis"
+name: "SQL: Sales Report Query"
+task_type: "data"
+description: >
+  Write a SQL query that returns total sales by product category for Q4 2024. Include: category name, total units sold, total revenue, average price. Sort by revenue descending. Handle NULL categories as 'Uncategorized'. Round amounts to 2 decimals.
+difficulty: 3
+tags:
+  - data-analysis
+timeout_seconds: 600

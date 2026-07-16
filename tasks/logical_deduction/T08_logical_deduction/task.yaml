@@ -1,0 +1,10 @@
+id: "T08_logical_deduction"
+category: "logical_deduction"
+name: "Predicate Logic Translation"
+task_type: "text"
+description: >
+  Translate into first-order logic: 1) 'Every student who takes Logic passes the exam.' 2) 'There is a student who takes every course.' 3) 'No student takes both Logic and Calculus.' 4) 'If a course is easy, some student takes it.' Use quantifiers ∀, ∃ and define predicates. Then negate statement 3 and translate back to English.
+difficulty: 5
+tags:
+  - logical-deduction
+timeout_seconds: 600

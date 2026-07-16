@@ -1,0 +1,10 @@
+id: "T04_mathematical_reasoning"
+category: "mathematical_reasoning"
+name: "Combinatorics: Counting Problem"
+task_type: "math"
+description: >
+  How many ways can you arrange the letters in 'MISSISSIPPI'? Show the formula and calculation. How many of these arrangements start with 'M'? How many have no adjacent identical letters?
+difficulty: 5
+tags:
+  - mathematical-reasoning
+timeout_seconds: 600

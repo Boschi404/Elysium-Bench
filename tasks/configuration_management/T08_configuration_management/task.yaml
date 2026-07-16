@@ -1,0 +1,10 @@
+id: "T08_configuration_management"
+category: "configuration_management"
+name: "Disaster Recovery Plan"
+task_type: "plan"
+description: >
+  Write a disaster recovery plan for a SaaS application. Cover: RPO/RTO definitions, backup strategy (database, files, config), restore procedures (step by step), failover to secondary region, communication plan, testing schedule. Identify single points of failure and mitigation strategies.
+difficulty: 6
+tags:
+  - configuration-management
+timeout_seconds: 600

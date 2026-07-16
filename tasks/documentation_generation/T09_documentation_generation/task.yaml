@@ -1,0 +1,10 @@
+id: "T09_documentation_generation"
+category: "documentation_generation"
+name: "Write Contributing Guide"
+task_type: "text"
+description: >
+  Write a CONTRIBUTING.md for a large open-source Python project. Cover: code of conduct, how to report bugs, feature request process, development setup, coding standards (PEP 8, type hints, testing), PR process, commit message conventions, review expectations, release process. ~1000 words.
+difficulty: 4
+tags:
+  - documentation-generation
+timeout_seconds: 600

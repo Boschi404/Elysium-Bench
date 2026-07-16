@@ -1,0 +1,7 @@
+# Reference solution for T08_documentation_generation
+
+This is a placeholder for the expected output.
+In production, this contains the gold-standard answer.
+
+Task: Generate Code Comments
+Difficulty: 4/10

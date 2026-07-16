@@ -1,0 +1,7 @@
+# Reference solution for T03_code_review
+
+This is a placeholder for the expected output.
+In production, this contains the gold-standard answer.
+
+Task: Review: Anti-Pattern Detection
+Difficulty: 5/10

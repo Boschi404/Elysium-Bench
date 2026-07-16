@@ -1,0 +1,10 @@
+id: "T07_mathematical_reasoning"
+category: "mathematical_reasoning"
+name: "Statistics: Hypothesis Testing"
+task_type: "math"
+description: >
+  Given sample data: n=36, x̄=72, s=8. Test H₀: μ=70 vs H₁: μ>70 at α=0.05. Compute test statistic, p-value, critical value, and make a decision. Show all calculations. State conclusion in plain language.
+difficulty: 4
+tags:
+  - mathematical-reasoning
+timeout_seconds: 600

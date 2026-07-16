@@ -1,0 +1,10 @@
+id: "T07_configuration_management"
+category: "configuration_management"
+name: "Environment Setup Script"
+task_type: "plan"
+description: >
+  Write a bash setup script for a Python development environment. Must: check Python version (>=3.10), create venv, install dependencies, set up pre-commit hooks (ruff, mypy), configure git, create .env from template, run initial migrations, seed dev database. Must be idempotent (safe to run multiple times) and work on macOS and Linux.
+difficulty: 4
+tags:
+  - configuration-management
+timeout_seconds: 600

@@ -1,0 +1,10 @@
+id: "T06_logical_deduction"
+category: "logical_deduction"
+name: "Paradox Analysis: Liar's Paradox"
+task_type: "text"
+description: >
+  Analyze 'This statement is false.' Explain: why it's a paradox, its logical structure, historical context (Epimenides, Russell), attempted resolutions (Tarski's hierarchy, Kripke's truth theory). Write a clear 300-word analysis.
+difficulty: 5
+tags:
+  - logical-deduction
+timeout_seconds: 600

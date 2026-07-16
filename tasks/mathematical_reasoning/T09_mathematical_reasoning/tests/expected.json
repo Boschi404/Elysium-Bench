@@ -1,0 +1,4 @@
+{
+  "answer": "Invariant: when node is extracted, d[v]=\u03b4(s,v)",
+  "method": "Proof by induction on extracted nodes"
+}

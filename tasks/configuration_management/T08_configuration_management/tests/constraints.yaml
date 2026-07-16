@@ -1,0 +1,13 @@
+forbidden_elements:
+- TODO
+- TBD
+required_elements:
+- overview
+- steps
+- configuration
+- deployment
+required_sections:
+- overview
+- implementation
+- testing
+- deployment

@@ -1,0 +1,10 @@
+id: "T05_logical_deduction"
+category: "logical_deduction"
+name: "Constraint Satisfaction: Seating"
+task_type: "text"
+description: >
+  8 people at a round table. Constraints: Alice next to Bob, Carol opposite Dave, Eve not next to Frank, Grace between Alice and Eve, ... Determine all valid seating arrangements. Show constraint propagation and backtracking steps.
+difficulty: 6
+tags:
+  - logical-deduction
+timeout_seconds: 600

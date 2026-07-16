@@ -1,0 +1,10 @@
+id: "T04_code_review"
+category: "code_review"
+name: "Review: Security Vulnerabilities"
+task_type: "text"
+description: >
+  Review this Flask endpoint: it reads a filename from GET param, opens the file with open(), and returns contents. Identify: path traversal vulnerability, lack of authentication, error information leak. Provide: exploit example, fixed version with safe path joining, auth check, generic error messages.
+difficulty: 4
+tags:
+  - code-review
+timeout_seconds: 600

@@ -1,0 +1,10 @@
+id: "T05_configuration_management"
+category: "configuration_management"
+name: "Terraform: AWS Infrastructure"
+task_type: "plan"
+description: >
+  Write Terraform HCL to provision: VPC with public/private subnets, EC2 instance in private subnet, RDS PostgreSQL, S3 bucket for static assets, IAM roles with least privilege, security groups. Use variables for environment-specific configs. Output the RDS endpoint and EC2 public IP.
+difficulty: 7
+tags:
+  - configuration-management
+timeout_seconds: 600

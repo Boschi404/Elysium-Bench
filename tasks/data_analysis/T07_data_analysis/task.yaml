@@ -1,0 +1,10 @@
+id: "T07_data_analysis"
+category: "data_analysis"
+name: "SQL: Recursive CTE Hierarchy"
+task_type: "data"
+description: >
+  Write a SQL query using recursive CTE to traverse an organizational hierarchy (employee -> manager). Return: employee name, manager name, hierarchy level (CEO=1), full path from CEO (e.g. 'CEO > VP > Director > Employee'). Handle cycles gracefully.
+difficulty: 7
+tags:
+  - data-analysis
+timeout_seconds: 600

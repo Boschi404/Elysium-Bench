@@ -1,0 +1,10 @@
+id: "T10_documentation_generation"
+category: "documentation_generation"
+name: "Complete Project Documentation Suite"
+task_type: "text"
+description: >
+  Generate complete documentation for a Python library: 1) README with badges, 2) Quickstart guide, 3) API reference for 3 modules, 4) 5 usage examples (beginner to advanced), 5) FAQ section with 10 common questions. All in a single well-structured markdown file with table of contents. ~1500 words.
+difficulty: 6
+tags:
+  - documentation-generation
+timeout_seconds: 600

@@ -1,0 +1,10 @@
+id: "T01_logical_deduction"
+category: "logical_deduction"
+name: "Knights and Knaves Puzzle"
+task_type: "text"
+description: >
+  On an island, Knights always tell truth, Knaves always lie. A says: 'B is a Knave.' B says: 'We are both Knights.' Determine who is what. Show all cases and eliminate contradictions.
+difficulty: 3
+tags:
+  - logical-deduction
+timeout_seconds: 600

@@ -1,0 +1,10 @@
+id: "T01_mathematical_reasoning"
+category: "mathematical_reasoning"
+name: "Linear Equations System"
+task_type: "math"
+description: >
+  Solve the system: 2x + 3y - z = 8, -x + 4y + 2z = 5, 3x - y + 4z = 12. Show all steps. Return x, y, z as numbers.
+difficulty: 3
+tags:
+  - mathematical-reasoning
+timeout_seconds: 600
