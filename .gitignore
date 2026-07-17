@@ -35,3 +35,4 @@ docker-compose.override.yml
 .env
 *.key
 *.pem
+workspace_test/
