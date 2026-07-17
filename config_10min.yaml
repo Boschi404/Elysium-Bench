@@ -1,0 +1,70 @@
+# =============================================================================
+# Elysium-Bench — Quick 10-Minute Benchmark
+# 1 Category × 3 Tasks × 2 Loops + Re-Test
+# Baseline DISABLED for speed (focus on Elysium improvement)
+# =============================================================================
+
+benchmark:
+  name: "Elysium-Bench Quick Run"
+  version: "0.4.1-quick"
+  description: >
+    Quick 10-minute benchmark: 1 category (api_development), 3 tasks,
+    2 Elysium loops + re-test. Self-improvement measurement via Elysium.
+
+categories:
+  - id: api_development
+    name: "API Development"
+    description: "Implement REST API endpoints from specifications"
+    weight: 1.0
+    task_count: 10
+
+phases:
+  baseline:
+    enabled: false
+    description: "Skipped for quick run"
+    use_elysium: false
+
+  loops:
+    count: 2
+    loop_1_tasks:
+      api_development: [1]
+    practice_tasks_start: 2
+
+  retest:
+    enabled: true
+
+scoring:
+  correctness:    { weight: 40, description: "Correctness" }
+  completeness:   { weight: 25, description: "Completeness" }
+  efficiency:     { weight: 15, description: "Efficiency" }
+  robustness:     { weight: 10, description: "Robustness" }
+  clarity:        { weight: 10, description: "Clarity" }
+
+thresholds:
+  pass: 60
+  excellent: 85
+  learning_min: 5
+
+environment:
+  mode: "venv"
+  python_version: "3.10"
+  cleanup: false
+  timeout_per_task: 300
+  temp_dir: null
+
+hermes:
+  skill: "elysium-swarmloop"
+  subagents_max: 5
+  quality_threshold: 7
+  retries_max: 2
+  streaming: true
+  self_learning: true
+  orchestrator_depth: 2
+
+reporting:
+  output_dir: "./results"
+  formats:
+    - json
+    - markdown
+    - html
+  verbose: true

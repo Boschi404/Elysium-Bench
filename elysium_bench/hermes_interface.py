@@ -67,9 +67,9 @@ class TaskExecutor:
 
         cmd = [
             "hermes", "chat",
-            "-z", prompt_content,
+            "-q", prompt_content,
             "--skills", "elysium-swarmloop",
-            "--cli",  # Non-interactive mode
+            "-Q",  # Quiet mode for programmatic use
         ]
 
         try:

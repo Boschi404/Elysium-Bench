@@ -1,0 +1,81 @@
+# =============================================================================
+# Elysium-Bench — Quick 10-Minute Configuration
+# 2 Categories × 4 Tasks × 3 Loops + Baseline + Re-Test
+# =============================================================================
+
+benchmark:
+  name: "Elysium-Bench Quick"
+  version: "0.4.1-quick"
+  description: >
+    Quick 10-minute benchmark: 2 categories (api_development, bug_fixing),
+    4 tasks each, 3 Elysium loops. Measures self-improvement.
+
+# ─── 2 Categories for Quick Run ──────────────────────────────────────────────
+categories:
+  - id: api_development
+    name: "API Development"
+    description: "Implement REST API endpoints from specifications"
+    weight: 1.0
+    task_count: 4
+  - id: bug_fixing
+    name: "Bug Fixing"
+    description: "Fix bugs in existing codebases with test-driven verification"
+    weight: 1.0
+    task_count: 4
+
+# ─── Multi-Phase Flow (3 Loops only for speed) ───────────────────────────────
+phases:
+  baseline:
+    enabled: true
+    description: "Run tasks WITHOUT Hermes → bare execution baseline"
+    use_elysium: false
+
+  loops:
+    count: 3
+    loop_1_tasks:
+      api_development: [1]
+      bug_fixing: [1]
+    practice_tasks_start: 2
+
+  retest:
+    enabled: true
+
+# ─── Scoring Weights (0–100) ────────────────────────────────────────────────
+scoring:
+  correctness:    { weight: 40, description: "Is the answer/solution correct?" }
+  completeness:   { weight: 25, description: "Are all parts/requirements addressed?" }
+  efficiency:     { weight: 15, description: "Is it optimal, concise, well-performing?" }
+  robustness:     { weight: 10, description: "Edge cases, error handling, validation" }
+  clarity:        { weight: 10, description: "Well-structured, readable, properly formatted" }
+
+thresholds:
+  pass: 60
+  excellent: 85
+  learning_min: 5
+
+# ─── Environment ──────────────────────────────────────────────────────────────
+environment:
+  mode: "venv"
+  python_version: "3.10"
+  cleanup: false
+  timeout_per_task: 600
+  temp_dir: null
+
+# ─── Hermes Agent with Elysium Swarmloop ──────────────────────────────────────
+hermes:
+  skill: "elysium-swarmloop"
+  subagents_max: 10
+  quality_threshold: 7
+  retries_max: 2
+  streaming: true
+  self_learning: true
+  orchestrator_depth: 2
+
+# ─── Reporting ────────────────────────────────────────────────────────────────
+reporting:
+  output_dir: "./results"
+  formats:
+    - json
+    - markdown
+    - html
+  verbose: true
