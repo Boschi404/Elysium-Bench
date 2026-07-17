@@ -2,7 +2,7 @@ criteria:
 - checks:
   - 'contains: solution'
   - 'min_length: 100'
-  - 'regex: zebra|puzzle|einstein'
+  - 'regex: review:|race|condition'
   name: correctness
   weight: 40
 - checks:
