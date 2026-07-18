@@ -278,6 +278,7 @@ class BenchmarkRunner:
     def _run_swebench_task(self, task: Task, use_llm: bool, attempt: str) -> dict[str, Any]:
         """Execute a SWE-bench task: clone repo, apply issue prompt, evaluate patch."""
         from .swebench_adapter import SweBenchAdapter
+        start_time = time.time()
 
         executor = TaskExecutor(task_type="code")
         adapter = SweBenchAdapter(task.task_dir, executor)
@@ -302,7 +303,7 @@ class BenchmarkRunner:
         eval_result = adapter.evaluate_patch(workspace)
         result["swebench_eval"] = eval_result
 
-        elapsed = time.time() - start
+        elapsed = time.time() - start_time
         result["elapsed_seconds"] = round(elapsed, 1)
         result["task_id"] = task.id
         result["attempt"] = attempt
