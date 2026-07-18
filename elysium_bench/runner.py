@@ -252,11 +252,6 @@ class BenchmarkRunner:
     def _run_single_task(self, task: Task, use_llm: bool, attempt: str = "first") -> dict[str, Any]:
         """Execute a single task: via LLM (Elysium mode) or direct test run (baseline)."""
         start = time.time()
-
-        # SWE-bench tasks need special preparation (clone repo at base commit)
-        if task.category == "swe_bench":
-            return self._run_swebench_task(task, use_llm, attempt)
-
         source_dir = task.repo_dir or task.task_dir
         workspace = self.harness.create_workspace(f"{task.id}_{attempt}", source_dir)
 
@@ -276,42 +271,6 @@ class BenchmarkRunner:
         )
 
         elapsed = time.time() - start
-        result["elapsed_seconds"] = round(elapsed, 1)
-        result["task_id"] = task.id
-        result["attempt"] = attempt
-        result["workspace"] = str(workspace)
-        return result
-
-    def _run_swebench_task(self, task: Task, use_llm: bool, attempt: str) -> dict[str, Any]:
-        """Execute a SWE-bench task: clone repo, apply issue prompt, evaluate patch."""
-        from .swebench_adapter import SweBenchAdapter
-        start_time = time.time()
-
-        executor = TaskExecutor(task_type="code")
-        adapter = SweBenchAdapter(task.task_dir, executor)
-
-        # Phase 1: Prepare workspace (clone repo at base commit)
-        workspace = adapter.prepare()
-
-        # Phase 2: Run the agent (Hermes CLI with/without Elysium skill)
-        result = executor.execute(
-            task_id=task.id, task_name=task.name,
-            task_description=task.description,
-            workspace=workspace, timeout=task.timeout_seconds,
-            force_baseline=not use_llm,
-        )
-
-        # Phase 3: Generate patch from repo changes
-        patch_file = adapter.generate_patch(workspace)
-        result["patch_file"] = str(patch_file)
-        patch_content = patch_file.read_text(encoding="utf-8") if patch_file.exists() else ""
-        result["patch_length"] = len(patch_content)
-
-        # Phase 4: Evaluate patch using SWE-bench methodology
-        eval_result = adapter.evaluate_patch(workspace)
-        result["swebench_eval"] = eval_result
-
-        elapsed = time.time() - start_time
         result["elapsed_seconds"] = round(elapsed, 1)
         result["task_id"] = task.id
         result["attempt"] = attempt

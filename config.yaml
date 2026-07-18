@@ -61,11 +61,6 @@ categories:
     description: "Dockerfiles, CI/CD configs, infrastructure-as-code, env setup"
     weight: 1.0
     task_count: 10
-  - id: swe_bench
-    name: "SWE-bench Verified"
-    description: "Real GitHub issues from SWE-bench — Django, Flask, SymPy, pytest, matplotlib"
-    weight: 1.5
-    task_count: 10
 
 # ─── Multi-Phase Flow ────────────────────────────────────────────────────────
 phases:
@@ -87,7 +82,6 @@ phases:
       code_review: [1]
       documentation_generation: [1]
       configuration_management: [1]
-      swe_bench: [1]
     practice_tasks_start: 2
 
   retest:
