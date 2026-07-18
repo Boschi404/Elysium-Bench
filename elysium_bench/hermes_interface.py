@@ -34,17 +34,22 @@ class TaskExecutor:
         workspace: Path,
         timeout: int = 600,
         attempt: str = "first",
+        force_baseline: bool = False,
     ) -> dict[str, Any]:
         """Execute a task. Tries: Hermes CLI → Baseline pytest."""
         start = time.time()
         result = None
 
-        # 1. Try Hermes CLI — runs task through Elysium Swarmloop skill
-        result = self._try_hermes_cli(task_id, task_description, workspace, timeout)
-
-        # 2. Fallback: baseline pytest (no AI, empty workspace)
-        if result is None:
+        if force_baseline:
+            # Skip Hermes entirely — just run baseline pytest
             result = self._run_baseline(workspace, timeout)
+        else:
+            # 1. Try Hermes CLI — runs task through Elysium Swarmloop skill
+            result = self._try_hermes_cli(task_id, task_description, workspace, timeout)
+
+            # 2. Fallback: baseline pytest (no AI, empty workspace)
+            if result is None:
+                result = self._run_baseline(workspace, timeout)
 
         if result is None:
             result = {"stdout": "", "stderr": "No execution mode available", "returncode": -1, "success": False, "mode": "none"}

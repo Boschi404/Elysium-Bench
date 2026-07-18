@@ -272,6 +272,7 @@ class BenchmarkRunner:
             task_id=task.id, task_name=task.name,
             task_description=task.description,
             workspace=workspace, timeout=task.timeout_seconds,
+            attempt=attempt, force_baseline=not use_llm,
         )
 
         elapsed = time.time() - start
