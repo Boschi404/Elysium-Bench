@@ -298,6 +298,7 @@ class BenchmarkRunner:
             task_id=task.id, task_name=task.name,
             task_description=task.description,
             workspace=workspace, timeout=task.timeout_seconds,
+            force_baseline=not use_llm,
         )
 
         # Phase 3: Generate patch from repo changes
