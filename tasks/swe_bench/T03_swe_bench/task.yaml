@@ -1,0 +1,14 @@
+id: "T03_swe_bench"
+category: "swe_bench"
+name: "Fix solve() for trigonometric equations"
+task_type: "code"           # code — uses pytest/SWE-bench eval
+difficulty: 4
+instance_id: "sympy__sympy-12419"
+repo: "sympy/sympy"
+base_commit: "7d15fa3cbfcf4d8d7b0e85ebff92a0f08ea9b22f"
+description: >
+  sympy.solve() returns incorrect solutions for trigonometric equations involving sin and cos with periodicity.
+tags:
+  - swe-bench
+  - sympy
+timeout_seconds: 1200

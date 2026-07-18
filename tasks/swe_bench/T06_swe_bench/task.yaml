@@ -1,0 +1,14 @@
+id: "T06_swe_bench"
+category: "swe_bench"
+name: "Fix URL parameter quoting in redirects"
+task_type: "code"           # code — uses pytest/SWE-bench eval
+difficulty: 4
+instance_id: "flask__flask-4050"
+repo: "pallets/flask"
+base_commit: "f1ae1ec9a6c4f3c6b9d8b6c7a5f4e3d2c1b0a9f8"
+description: >
+  Flask.redirect() doesn't properly quote URL parameters containing special characters (spaces, unicode), causing malformed Location headers.
+tags:
+  - swe-bench
+  - flask
+timeout_seconds: 1200

@@ -1,0 +1,14 @@
+id: "T07_swe_bench"
+category: "swe_bench"
+name: "Fix assert rewriting in async functions"
+task_type: "code"           # code — uses pytest/SWE-bench eval
+difficulty: 5
+instance_id: "pytest__pytest-5437"
+repo: "pytest-dev/pytest"
+base_commit: "a4d3af18cc3726c68e480649d48195bab8bac389"
+description: >
+  Pytest's assert rewriting doesn't work inside async functions, causing AssertionErrors without helpful context in async tests.
+tags:
+  - swe-bench
+  - pytest
+timeout_seconds: 1200

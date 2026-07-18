@@ -1,0 +1,14 @@
+id: "T02_swe_bench"
+category: "swe_bench"
+name: "Fix QuerySet.select_for_update with NULLS LAST"
+task_type: "code"           # code — uses pytest/SWE-bench eval
+difficulty: 4
+instance_id: "django__django-11011"
+repo: "django/django"
+base_commit: "c6a352aa0a7da3ac4c66e25f979a6b0c34053b42"
+description: >
+  QuerySet.select_for_update() crashes when combined with ordering that includes NULLS LAST on PostgreSQL. Fix the query generation.
+tags:
+  - swe-bench
+  - django
+timeout_seconds: 1200

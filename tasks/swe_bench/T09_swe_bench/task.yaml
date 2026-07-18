@@ -1,0 +1,14 @@
+id: "T09_swe_bench"
+category: "swe_bench"
+name: "Fix colorbar with logarithmic normalization"
+task_type: "code"           # code — uses pytest/SWE-bench eval
+difficulty: 5
+instance_id: "matplotlib__matplotlib-22711"
+repo: "matplotlib/matplotlib"
+base_commit: "3495b63e61daeedee26c7ce94f9d5c74519e18e3"
+description: >
+  Colorbar does not display correctly with LogNorm or SymLogNorm when vmin/vmax span multiple orders of magnitude. Tick labels become unreadable.
+tags:
+  - swe-bench
+  - matplotlib
+timeout_seconds: 1200
