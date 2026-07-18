@@ -1,0 +1,582 @@
+{
+  "benchmark": "Medium (Elysium v072)",
+  "skill": "elysium-swarmloop v072",
+  "version": "v072",
+  "categories": [
+    "api_development",
+    "bug_fixing",
+    "algorithm_implementation",
+    "data_analysis"
+  ],
+  "total_loops": 3,
+  "per_category": {
+    "api_development": {
+      "loop1": 70.0,
+      "retest": 65.0,
+      "delta": -5.0
+    },
+    "bug_fixing": {
+      "loop1": 0,
+      "retest": 65.0,
+      "delta": 65.0
+    },
+    "algorithm_implementation": {
+      "loop1": 68.0,
+      "retest": 72.0,
+      "delta": 4.0
+    },
+    "data_analysis": {
+      "loop1": 58.0,
+      "retest": 58.0,
+      "delta": 0.0
+    }
+  },
+  "avg_loop1": 49.0,
+  "avg_retest": 65.0,
+  "avg_delta": 16.0,
+  "duration_minutes": 30.4,
+  "loops": {
+    "loop1": {
+      "T01_api_development": {
+        "correctness": 40.0,
+        "completeness": 7.0,
+        "efficiency": 13.0,
+        "robustness": 0.0,
+        "clarity": 10.0,
+        "total": 70.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 29,
+          "total": 29,
+          "output": ".............................                                            [100%]\n============================== warnings summary ===============================\ntests/test_solution.py::TestCreateUserCRUDAPI::test_input_validation_present\n  C:\\Users\\Admin\\Elysium-Bench\\tasks\\api_development\\T01_api_development\\tests\\test_solution.py:30: PydanticDeprecatedSince20: The `__fields__` attribute is deprecated, use the `model_fields` class property instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/\n    hasattr(getattr(main, name, None), '__fields__') or\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n29 passed, 1 warning in 0.52s\n"
+        },
+        "files": [
+          ".pytest_cache/.gitignore",
+          ".pytest_cache/CACHEDIR.TAG",
+          ".pytest_cache/README.md",
+          ".pytest_cache/v/cache/lastfailed",
+          ".pytest_cache/v/cache/nodeids",
+          "__pycache__/main.cpython-311.pyc",
+          "__pycache__/models.cpython-311.pyc",
+          "main.py",
+          "models.py",
+          "requirements.txt",
+          "tests/__init__.py",
+          "tests/__pycache__/__init__.cpython-311.pyc",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_main.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_main.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 111.7,
+        "mode": "elysium"
+      },
+      "T01_bug_fixing": {
+        "correctness": 0,
+        "completeness": 0,
+        "efficiency": 0,
+        "robustness": 0,
+        "clarity": 0,
+        "total": 0,
+        "passed": false,
+        "task_type": "code",
+        "gaps": [
+          "Timeout"
+        ],
+        "tests": {
+          "passed": 0,
+          "total": 0,
+          "output": "Timeout"
+        },
+        "files": [],
+        "mode": "timeout",
+        "duration_s": 180.0
+      },
+      "T01_algorithm_implementation": {
+        "correctness": 40.0,
+        "completeness": 5.0,
+        "efficiency": 13.0,
+        "robustness": 0.0,
+        "clarity": 10.0,
+        "total": 68.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 26,
+          "total": 26,
+          "output": "..........................sssssss                                        [100%]\n26 passed, 7 skipped in 0.06s\n"
+        },
+        "files": [
+          ".pytest_cache/.gitignore",
+          ".pytest_cache/CACHEDIR.TAG",
+          ".pytest_cache/README.md",
+          ".pytest_cache/v/cache/nodeids",
+          "__pycache__/binary_search.cpython-311.pyc",
+          "binary_search.py",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_binary_search.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_binary_search.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 72.5,
+        "mode": "elysium"
+      },
+      "T01_data_analysis": {
+        "correctness": 40.0,
+        "completeness": 7.5,
+        "efficiency": 4.5,
+        "robustness": 3.0,
+        "clarity": 3.0,
+        "total": 58.0,
+        "passed": false,
+        "task_type": "data",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 0,
+          "total": 0,
+          "output": "\nno tests ran in 0.01s\n"
+        },
+        "files": [
+          "query.sql",
+          "schema.sql",
+          "seed.sql",
+          "tests/test_query.py",
+          "tests/validate.py"
+        ],
+        "duration_s": 93.0,
+        "mode": "elysium"
+      }
+    },
+    "loop2": {
+      "T02_api_development": {
+        "correctness": 40.0,
+        "completeness": 0.0,
+        "efficiency": 13.0,
+        "robustness": 0.0,
+        "clarity": 10.0,
+        "total": 63.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 39,
+          "total": 39,
+          "output": ".......................................                                  [100%]\n============================== warnings summary ===============================\ntests/test_api.py: 11 warnings\n  C:\\Users\\Admin\\AppData\\Local\\hermes\\hermes-agent\\venv\\Lib\\site-packages\\_pytest\\python.py:167: DeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.\n    result = testfunction(**testargs)\n\ntests/test_solution.py::TestCreateProductCatalogAPI::test_input_validation_present\n  C:\\Users\\Admin\\Elysium-Bench\\tasks\\api_development\\T02_api_development\\tests\\test_solution.py:30: PydanticDeprecatedSince20: The `__fields__` attribute is deprecated, use the `model_fields` class property instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/\n    hasattr(getattr(main, name, None), '__fields__') or\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n39 passed, 12 warnings in 0.96s\n"
+        },
+        "files": [
+          ".pytest_cache/.gitignore",
+          ".pytest_cache/CACHEDIR.TAG",
+          ".pytest_cache/README.md",
+          ".pytest_cache/v/cache/lastfailed",
+          ".pytest_cache/v/cache/nodeids",
+          "__pycache__/main.cpython-311.pyc",
+          "app/__init__.py",
+          "app/__pycache__/__init__.cpython-311.pyc",
+          "app/__pycache__/database.cpython-311.pyc",
+          "app/__pycache__/main.cpython-311.pyc",
+          "app/__pycache__/models.cpython-311.pyc",
+          "app/__pycache__/routes.cpython-311.pyc",
+          "app/database.py",
+          "app/main.py",
+          "app/models.py",
+          "app/routes.py",
+          "main.py",
+          "requirements.txt",
+          "tests/__init__.py",
+          "tests/__pycache__/__init__.cpython-311.pyc",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_api.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_api.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 149.1,
+        "mode": "elysium"
+      },
+      "T02_bug_fixing": {
+        "correctness": 40.0,
+        "completeness": 11.0,
+        "efficiency": 15.0,
+        "robustness": 3.0,
+        "clarity": 10.0,
+        "total": 79.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 6,
+          "total": 6,
+          "output": "......                                                                   [100%]\n6 passed in 0.34s\n"
+        },
+        "files": [
+          ".pytest_cache/.gitignore",
+          ".pytest_cache/CACHEDIR.TAG",
+          ".pytest_cache/README.md",
+          ".pytest_cache/v/cache/nodeids",
+          "__pycache__/main.cpython-311.pyc",
+          "main.py",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 59.5,
+        "mode": "elysium"
+      },
+      "T02_algorithm_implementation": {
+        "correctness": 40.0,
+        "completeness": 3.0,
+        "efficiency": 0.0,
+        "robustness": 0.0,
+        "clarity": 10.0,
+        "total": 53.0,
+        "passed": false,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 57,
+          "total": 57,
+          "output": ".........................................................                [100%]\n57 passed in 1.19s\n"
+        },
+        "files": [
+          ".pytest_cache/.gitignore",
+          ".pytest_cache/CACHEDIR.TAG",
+          ".pytest_cache/README.md",
+          ".pytest_cache/v/cache/nodeids",
+          "__pycache__/main.cpython-311.pyc",
+          "__pycache__/merge_sort.cpython-311.pyc",
+          "main.py",
+          "merge_sort.py",
+          "pytest.ini",
+          "tests/__init__.py",
+          "tests/__pycache__/__init__.cpython-311.pyc",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_merge_sort.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_merge_sort.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 140.2,
+        "mode": "elysium"
+      },
+      "T02_data_analysis": {
+        "correctness": 40.0,
+        "completeness": 7.5,
+        "efficiency": 4.5,
+        "robustness": 3.0,
+        "clarity": 3.0,
+        "total": 58.0,
+        "passed": false,
+        "task_type": "data",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 6,
+          "total": 6,
+          "output": "......                                                                   [100%]\n============================== warnings summary ===============================\ntests/test_clean_data.py::test_remove_duplicates\ntests/test_clean_data.py::test_drop_high_null_rows\ntests/test_clean_data.py::test_strip_whitespace\ntests/test_clean_data.py::test_strip_whitespace\ntests/test_clean_data.py::test_full_pipeline_on_sample\ntests/test_clean_data.py::test_full_pipeline_on_sample\ntests/test_clean_data.py::test_full_pipeline_on_sample\n  C:\\Users\\Admin\\Elysium-Swarmloop\\workspaces\\T02_data_analysis_p2\\workspace\\clean_data.py:55: UserWarning: Could not infer format, so each element will be parsed individually, falling back to `dateutil`. To ensure parsing is consistent and as-expected, please specify a format.\n    parsed = pd.to_datetime(sample, errors='coerce')\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n6 passed, 7 warnings in 0.33s\n"
+        },
+        "files": [
+          ".pytest_cache/.gitignore",
+          ".pytest_cache/CACHEDIR.TAG",
+          ".pytest_cache/README.md",
+          ".pytest_cache/v/cache/lastfailed",
+          ".pytest_cache/v/cache/nodeids",
+          "__pycache__/clean_data.cpython-311.pyc",
+          "clean_data.py",
+          "cleaned_output.csv",
+          "sample_data.csv",
+          "tests/__pycache__/test_clean_data.cpython-311-pytest-9.1.1.pyc",
+          "tests/test_clean_data.py",
+          "tests/validate.py"
+        ],
+        "duration_s": 156.1,
+        "mode": "elysium"
+      }
+    },
+    "loop3": {
+      "T03_api_development": {
+        "correctness": 40.0,
+        "completeness": 11.0,
+        "efficiency": 13.0,
+        "robustness": 3.0,
+        "clarity": 10.0,
+        "total": 77.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 7,
+          "total": 7,
+          "output": ".......                                                                  [100%]\n============================== warnings summary ===============================\ntests/test_solution.py::TestCreateTask_TODOAPI::test_input_validation_present\n  C:\\Users\\Admin\\Elysium-Bench\\tasks\\api_development\\T03_api_development\\tests\\test_solution.py:30: PydanticDeprecatedSince20: The `__fields__` attribute is deprecated, use the `model_fields` class property instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/\n    hasattr(getattr(main, name, None), '__fields__') or\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n7 passed, 1 warning in 0.32s\n"
+        },
+        "files": [
+          ".pytest_cache/.gitignore",
+          ".pytest_cache/CACHEDIR.TAG",
+          ".pytest_cache/README.md",
+          ".pytest_cache/v/cache/lastfailed",
+          ".pytest_cache/v/cache/nodeids",
+          "__pycache__/main.cpython-311.pyc",
+          "main.py",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 133.5,
+        "mode": "elysium"
+      },
+      "T03_bug_fixing": {
+        "correctness": 40.0,
+        "completeness": 11.0,
+        "efficiency": 15.0,
+        "robustness": 5.0,
+        "clarity": 10.0,
+        "total": 81.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 6,
+          "total": 6,
+          "output": "......                                                                   [100%]\n6 passed in 0.35s\n"
+        },
+        "files": [
+          "__pycache__/main.cpython-311.pyc",
+          "main.py",
+          "tests/conftest.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 91.8,
+        "mode": "elysium"
+      },
+      "T03_algorithm_implementation": {
+        "correctness": 40.0,
+        "completeness": 7.0,
+        "efficiency": 5.0,
+        "robustness": 3.0,
+        "clarity": 10.0,
+        "total": 65.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 43,
+          "total": 43,
+          "output": "...........................................sssssss                       [100%]\n43 passed, 7 skipped in 0.57s\n"
+        },
+        "files": [
+          ".pytest_cache/.gitignore",
+          ".pytest_cache/CACHEDIR.TAG",
+          ".pytest_cache/README.md",
+          ".pytest_cache/v/cache/lastfailed",
+          ".pytest_cache/v/cache/nodeids",
+          "__pycache__/lru_cache.cpython-311.pyc",
+          "lru_cache.py",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_lru_cache.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_lru_cache.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 121.3,
+        "mode": "elysium"
+      },
+      "T03_data_analysis": {
+        "correctness": 40.0,
+        "completeness": 7.5,
+        "efficiency": 4.5,
+        "robustness": 3.0,
+        "clarity": 3.0,
+        "total": 58.0,
+        "passed": false,
+        "task_type": "data",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 9,
+          "total": 9,
+          "output": ".........                                                                [100%]\n9 passed in 0.01s\n"
+        },
+        "files": [
+          ".pytest_cache/.gitignore",
+          ".pytest_cache/CACHEDIR.TAG",
+          ".pytest_cache/README.md",
+          ".pytest_cache/v/cache/nodeids",
+          "solution/query.sql",
+          "solution/schema.sql",
+          "tests/__pycache__/test_query.cpython-311-pytest-9.1.1.pyc",
+          "tests/test_query.py",
+          "tests/validate.py"
+        ],
+        "duration_s": 86.3,
+        "mode": "elysium"
+      }
+    },
+    "retest": {
+      "T01_api_development": {
+        "correctness": 40.0,
+        "completeness": 2.0,
+        "efficiency": 13.0,
+        "robustness": 0.0,
+        "clarity": 10.0,
+        "total": 65.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 25,
+          "total": 25,
+          "output": ".........................                                                [100%]\n============================== warnings summary ===============================\ntests/test_api.py::test_create_user_invalid_name_too_short[asyncio]\ntests/test_api.py::test_create_user_invalid_email[asyncio]\ntests/test_api.py::test_create_user_invalid_age_zero[asyncio]\ntests/test_api.py::test_create_user_invalid_age_negative[asyncio]\ntests/test_api.py::test_update_user_invalid_email[asyncio]\n  C:\\Users\\Admin\\AppData\\Local\\hermes\\hermes-agent\\venv\\Lib\\site-packages\\anyio\\_backends\\_asyncio.py:2303: DeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.\n    retval = await coro\n\ntests/test_solution.py::TestCreateUserCRUDAPI::test_input_validation_present\n  C:\\Users\\Admin\\Elysium-Bench\\tasks\\api_development\\T01_api_development\\tests\\test_solution.py:30: PydanticDeprecatedSince20: The `__fields__` attribute is deprecated, use the `model_fields` class property instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/\n    hasattr(getattr(main, name, None), '__fields__') or\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n25 passed, 6 warnings in 0.38s\n"
+        },
+        "files": [
+          ".pytest_cache/.gitignore",
+          ".pytest_cache/CACHEDIR.TAG",
+          ".pytest_cache/README.md",
+          ".pytest_cache/v/cache/nodeids",
+          "__pycache__/main.cpython-311.pyc",
+          "__pycache__/models.cpython-311.pyc",
+          "main.py",
+          "models.py",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_api.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_api.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 84.5,
+        "mode": "elysium"
+      },
+      "T01_bug_fixing": {
+        "correctness": 40.0,
+        "completeness": 0.0,
+        "efficiency": 15.0,
+        "robustness": 0.0,
+        "clarity": 10.0,
+        "total": 65.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 21,
+          "total": 21,
+          "output": ".....................                                                    [100%]\n21 passed in 0.39s\n"
+        },
+        "files": [
+          ".pytest_cache/.gitignore",
+          ".pytest_cache/CACHEDIR.TAG",
+          ".pytest_cache/README.md",
+          ".pytest_cache/v/cache/lastfailed",
+          ".pytest_cache/v/cache/nodeids",
+          "__pycache__/main.cpython-311.pyc",
+          "app/__init__.py",
+          "app/__pycache__/__init__.cpython-311.pyc",
+          "app/__pycache__/main.cpython-311.pyc",
+          "app/__pycache__/schemas.cpython-311.pyc",
+          "app/__pycache__/service.cpython-311.pyc",
+          "app/main.py",
+          "app/schemas.py",
+          "app/service.py",
+          "main.py",
+          "requirements.txt",
+          "tests/__init__.py",
+          "tests/__pycache__/__init__.cpython-311.pyc",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_users.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_solution.py",
+          "tests/test_users.py"
+        ],
+        "duration_s": 153.8,
+        "mode": "elysium"
+      },
+      "T01_algorithm_implementation": {
+        "correctness": 40.0,
+        "completeness": 9.0,
+        "efficiency": 13.0,
+        "robustness": 0.0,
+        "clarity": 10.0,
+        "total": 72.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 30,
+          "total": 30,
+          "output": "..............................sssssss                                    [100%]\n30 passed, 7 skipped in 0.31s\n"
+        },
+        "files": [
+          ".pytest_cache/.gitignore",
+          ".pytest_cache/CACHEDIR.TAG",
+          ".pytest_cache/README.md",
+          ".pytest_cache/v/cache/nodeids",
+          "__pycache__/binary_search.cpython-311.pyc",
+          "binary_search.py",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_binary_search.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_binary_search.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 65.4,
+        "mode": "elysium"
+      },
+      "T01_data_analysis": {
+        "correctness": 40.0,
+        "completeness": 7.5,
+        "efficiency": 4.5,
+        "robustness": 3.0,
+        "clarity": 3.0,
+        "total": 58.0,
+        "passed": false,
+        "task_type": "data",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 11,
+          "total": 11,
+          "output": "...........                                                              [100%]\n11 passed in 0.02s\n"
+        },
+        "files": [
+          ".pytest_cache/.gitignore",
+          ".pytest_cache/CACHEDIR.TAG",
+          ".pytest_cache/README.md",
+          ".pytest_cache/v/cache/lastfailed",
+          ".pytest_cache/v/cache/nodeids",
+          "schema.sql",
+          "seed.sql",
+          "solution.sql",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/test_solution.py",
+          "tests/validate.py"
+        ],
+        "duration_s": 108.8,
+        "mode": "elysium"
+      }
+    }
+  }
+}
