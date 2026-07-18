@@ -195,5 +195,14 @@ forbidden_patterns:
     console.print("   Edit task.yaml, add starting code to repo/, tests to tests/, and gold patch to gold/")
 
 
+@main.command()
+@click.option("--host", default="127.0.0.1", help="Host to bind to")
+@click.option("--port", default=8080, help="Port to bind to", type=int)
+def ui(host: str, port: int):
+    """Start the web UI dashboard."""
+    from .ui_server import start_ui
+    start_ui(host=host, port=port)
+
+
 if __name__ == "__main__":
     main()
