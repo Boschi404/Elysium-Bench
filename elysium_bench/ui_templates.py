@@ -191,9 +191,6 @@ RUN_PAGE = """
             <option value="documentation_generation">Documentation (10)</option>
             <option value="configuration_management">DevOps (10)</option>
           </optgroup>
-          <optgroup label="External Benchmarks">
-            <option value="swe_bench">SWE-bench Verified (10)</option>
-          </optgroup>
         </select>
       </div>
       <div>
