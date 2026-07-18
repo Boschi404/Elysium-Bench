@@ -43,6 +43,7 @@ class BenchmarkRunner:
         self.harness = Harness(
             mode=self.config["environment"]["mode"],
             cleanup=self.config["environment"]["cleanup"],
+            workspace_base=Path.home() / "Desktop" / "Hermes" / ".elysium-bench",
         )
 
         # LLM provider: this is the actual AI that solves tasks
@@ -54,7 +55,12 @@ class BenchmarkRunner:
         if self.llm_provider:
             console.print(f"   [bold cyan]LLM: {provider_name}/{model_name}[/bold cyan]")
         else:
-            console.print(f"   [bold yellow]LLM DISABLED — tasks won't be solved (baseline testing only)[/bold yellow]")
+            # Check if Hermes CLI is available
+            import shutil
+            if shutil.which("hermes"):
+                console.print(f"   [bold cyan]Using Hermes CLI → deepseek-v4-flash + elysium-swarmloop[/bold cyan]")
+            else:
+                console.print(f"   [bold yellow]No LLM or Hermes CLI — baseline testing only[/bold yellow]")
 
         # State
         self.baseline_scores: dict[str, ScoreBreakdown] = {}   # task_id → score

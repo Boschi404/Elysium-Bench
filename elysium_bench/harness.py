@@ -19,20 +19,40 @@ class Harness:
     - venv: Lightweight venv isolation (fallback, always available)
     """
 
-    def __init__(self, mode: str = "venv", cleanup: bool = True):
+    def __init__(self, mode: str = "venv", cleanup: bool = True, workspace_base: Path | None = None):
         self.mode = mode
         self.cleanup = cleanup
+        self.workspace_base = workspace_base
         self._temp_dirs: list[Path] = []
 
-    def create_workspace(self, task_id: str, source_dir: Path) -> Path:
+    def create_workspace(self, task_id: str, source_dir: Path = None) -> Path:
         """Create a clean workspace for a task.
 
         Returns the workspace directory path.
         """
         if self.mode == "docker":
             return self._create_docker_workspace(task_id, source_dir)
-        else:
-            return self._create_venv_workspace(task_id, source_dir)
+
+        # Use workspace_base if set (Hermes-compatible), else system temp
+        base = self.workspace_base or Path(tempfile.mkdtemp())
+        if base == self.workspace_base:
+            base.mkdir(parents=True, exist_ok=True)
+
+        workspace = base / f"bench_{task_id}"
+        if workspace.exists():
+            import shutil
+            shutil.rmtree(workspace)
+        workspace.mkdir(parents=True, exist_ok=True)
+        self._temp_dirs.append(workspace)
+
+        # Create workspace/ subdir for solution files
+        dest = workspace / "workspace"
+        dest.mkdir(exist_ok=True)
+
+        if source_dir and source_dir.exists():
+            _copy_tree(source_dir, dest)
+
+        return workspace
 
     def _create_venv_workspace(self, task_id: str, source_dir: Path) -> Path:
         """Create an isolated venv workspace."""
