@@ -1,0 +1,27 @@
+criteria:
+- checks:
+  - 'EXPLAIN'
+  - 'SELECT'
+  - 'INDEX'
+  - 'JOIN'
+  - 'FROM'
+  name: completeness
+  weight: 25
+- checks:
+  - 'query'
+  - 'plan'
+  - 'optimize'
+  name: efficiency
+  weight: 15
+- checks:
+  - 'WHERE'
+  - 'LIMIT'
+  - 'performance'
+  name: robustness
+  weight: 10
+- checks:
+  - '#'
+  - 'table'
+  - 'cost'
+  name: clarity
+  weight: 10
