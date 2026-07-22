@@ -1,0 +1,14 @@
+[
+  {
+    "label": "CORRECT_SOLUTION (workspace_test)",
+    "correctness": 40.0,
+    "completeness": 11.0,
+    "efficiency": 13.0,
+    "robustness": 0.0,
+    "clarity": 10.0,
+    "total": 74.0,
+    "passed": true,
+    "pytest_returncode": 0,
+    "pytest_stdout": ".......                                                                  [100%]\n============================== warnings summary ===============================\ntests/test_solution.py::TestCreateUserCRUDAPI::test_input_validation_present\n  C:\\Users\\Admin\\Elysium-Bench\\tasks\\api_development\\T01_api_development\\tests\\test_solution.py:30: PydanticDeprecatedSince20: The `__fields__` attribute is deprecated, use the `model_fields` class property instead. Deprecated in Pydantic V2.0 to be removed in V3"
+  }
+]

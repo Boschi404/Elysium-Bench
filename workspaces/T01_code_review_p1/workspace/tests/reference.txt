@@ -1,7 +1,0 @@
-# Reference solution for T01_code_review
-
-This is a placeholder for the expected output.
-In production, this contains the gold-standard answer.
-
-Task: Review: Race Condition Bug
-Difficulty: 4/10

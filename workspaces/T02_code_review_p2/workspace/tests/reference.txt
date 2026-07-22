@@ -1,7 +1,0 @@
-# Reference solution for T02_code_review
-
-This is a placeholder for the expected output.
-In production, this contains the gold-standard answer.
-
-Task: Review: Memory Leak Pattern
-Difficulty: 5/10

@@ -1,0 +1,38 @@
+[
+  {
+    "label": "BROKEN_SYNTAX (import fails)",
+    "correctness": 0.0,
+    "completeness": 9.0,
+    "efficiency": 13.0,
+    "robustness": 0.0,
+    "clarity": 0.0,
+    "total": 22.0,
+    "passed": false,
+    "pytest_returncode": 1,
+    "pytest_stdout": "EEEEEFF                                                                  [100%]\n=================================== ERRORS ====================================\n__________ ERROR at setup of TestCreateUserCRUDAPI.test_app_imports ___________\nC:\\Users\\Admin\\Elysium-Bench\\tasks\\api_development\\T01_api_development\\tests\\conftest.py:12: in client\n    from main import app\nE     File \"C:\\Users\\Admin\\AppData\\Local\\Temp\\falsify_1mptqdwt\\broken_syntax\\main.py\", line 5\nE       def get_users(\nE              "
+  },
+  {
+    "label": "BROKEN_RETURN (wrong content-type)",
+    "correctness": 0.0,
+    "completeness": 11.0,
+    "efficiency": 13.0,
+    "robustness": 0.0,
+    "clarity": 10.0,
+    "total": 34.0,
+    "passed": false,
+    "pytest_returncode": 1,
+    "pytest_stdout": "..F....                                                                  [100%]\n================================== FAILURES ===================================\n_____________ TestCreateUserCRUDAPI.test_input_validation_present _____________\nC:\\Users\\Admin\\Elysium-Bench\\tasks\\api_development\\T01_api_development\\tests\\test_solution.py:34: in test_input_validation_present\n    assert has_models, \"No Pydantic models found \u2014 input validation is required\"\nE   AssertionError: No Pydantic models found \u2014 i"
+  },
+  {
+    "label": "MINIMAL_STUB (no routes)",
+    "correctness": 0.0,
+    "completeness": 11.0,
+    "efficiency": 13.0,
+    "robustness": 0.0,
+    "clarity": 10.0,
+    "total": 34.0,
+    "passed": false,
+    "pytest_returncode": 1,
+    "pytest_stdout": "..F....                                                                  [100%]\n================================== FAILURES ===================================\n_____________ TestCreateUserCRUDAPI.test_input_validation_present _____________\nC:\\Users\\Admin\\Elysium-Bench\\tasks\\api_development\\T01_api_development\\tests\\test_solution.py:34: in test_input_validation_present\n    assert has_models, \"No Pydantic models found \u2014 input validation is required\"\nE   AssertionError: No Pydantic models found \u2014 i"
+  }
+]
