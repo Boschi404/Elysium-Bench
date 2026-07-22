@@ -619,21 +619,78 @@ class DataScoringEngine:
             return 0.0
 
     def _rubric_check(self, output: str, dimension: str) -> float:
+        """Evaluate a scoring dimension for data tasks.
+
+        If a rubric.yaml exists, use it for keyword-based checks.
+        If no rubric exists, fall back to CONTENT-AWARE heuristics
+        (not a static constant) so the score actually reflects output quality.
+        """
         weight_map = {"completeness": 25, "efficiency": 15, "robustness": 10, "clarity": 10}
         max_score = float(self.weights.get(dimension, weight_map.get(dimension, 10)))
 
         rubric_file = self.task_dir / "tests" / "rubric.yaml"
-        if not rubric_file.exists():
-            return max_score * 0.3
+        if rubric_file.exists():
+            rubric = yaml.safe_load(rubric_file.read_text(encoding="utf-8"))
+            for crit in rubric.get("criteria", []):
+                if crit.get("name") == dimension:
+                    checks = crit.get("checks", [])
+                    points = sum(1.0 for c in checks if c.lower() in output.lower())
+                    return max_score * (points / len(checks)) if checks else max_score * 0.5
+            return max_score * 0.5
 
-        rubric = yaml.safe_load(rubric_file.read_text(encoding="utf-8"))
-        for crit in rubric.get("criteria", []):
-            if crit.get("name") == dimension:
-                checks = crit.get("checks", [])
-                points = sum(1.0 for c in checks if c.lower() in output.lower())
-                return max_score * (points / len(checks)) if checks else max_score * 0.5
+        # ── CONTENT-AWARE FALLBACK (replaces static max_score * 0.3) ──
+        # When no rubric.yaml exists, evaluate the actual output content
+        # so the score VARIES with input quality instead of being constant.
+        output_lower = output.lower().strip()
+        if not output_lower:
+            return 0.0
 
-        return max_score * 0.5
+        if dimension == "completeness":
+            # Check for SQL/Pandas completeness indicators
+            score = 0.0
+            if "select" in output_lower or "insert" in output_lower or "update" in output_lower:
+                score += max_score * 0.3  # Has SQL operations
+            if "join" in output_lower or "group by" in output_lower or "order by" in output_lower:
+                score += max_score * 0.25  # Has advanced SQL
+            if "where" in output_lower or "having" in output_lower:
+                score += max_score * 0.2  # Has filtering
+            if "import pandas" in output_lower or "import numpy" in output_lower or "df[" in output_lower:
+                score += max_score * 0.25  # Uses data libraries
+            return min(max_score, score)
+
+        if dimension == "efficiency":
+            # Penalize excessively long solutions
+            lines = output_lower.split("\n")
+            non_empty = [l for l in lines if l.strip()]
+            if len(non_empty) < 5:
+                return max_score * 0.3
+            if len(non_empty) > 100:
+                return max_score * 0.4  # Too verbose
+            return max_score * 0.8  # Reasonable length
+
+        if dimension == "robustness":
+            # Check for error handling in data code
+            score = 0.0
+            if "try:" in output_lower or "except" in output_lower:
+                score += max_score * 0.4
+            if "isnull" in output_lower or "isna" in output_lower or "notnull" in output_lower:
+                score += max_score * 0.3  # Null checks
+            if "if" in output_lower and "else" in output_lower:
+                score += max_score * 0.3  # Conditional logic
+            return min(max_score, score)
+
+        if dimension == "clarity":
+            # Check for comments, formatting, readable structure
+            score = 0.0
+            if "#" in output_lower and ("--" in output_lower or '"""' in output_lower):
+                score += max_score * 0.4  # Has comments
+            if "\n\n" in output_lower:
+                score += max_score * 0.3  # Has paragraph breaks
+            if any(kw in output_lower for kw in ["select", "from", "where", "import"]):
+                score += max_score * 0.3  # Has structured syntax
+            return min(max_score, score)
+
+        return max_score * 0.3  # Final fallback (should rarely reach here)
 
 
 # ── Legacy compatibility ──────────────────────────────────────────────────
