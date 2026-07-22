@@ -1,6 +1,7 @@
 id: "T06_algorithm_implementation"
 category: "algorithm_implementation"
 name: "Implement Trie (Prefix Tree)"
+task_type: "code"
 description: >
   Implement a Trie data structure. Must support: insert(word), search(word) → bool, starts_with(prefix) → bool, delete(word), count_words_with_prefix(prefix) → int, get_all_words() → list (sorted). Handle: empty strings, Unicode characters, duplicate insertions. Efficient prefix search.
 difficulty: 4

@@ -1,6 +1,7 @@
 id: "T07_algorithm_implementation"
 category: "algorithm_implementation"
 name: "Implement Dynamic Programming: Knapsack"
+task_type: "code"
 description: >
   Implement the 0/1 knapsack problem solver. Given items with (weight, value) and a max capacity, return the maximum value achievable. Also return which items are selected. Must handle: empty items, zero capacity, single item, all items too heavy. Use O(n×W) DP solution. Also implement the fractional variant for comparison.
 difficulty: 5

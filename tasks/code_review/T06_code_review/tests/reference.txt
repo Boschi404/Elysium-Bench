@@ -1,7 +1,1 @@
-# Reference solution for T06_code_review
-
-This is a placeholder for the expected output.
-In production, this contains the gold-standard answer.
-
-Task: Review: Error Handling Gaps
-Difficulty: 4/10
+Security vulnerability: eval() used on user input line 34. Arbitrary code execution risk. Replace with ast.literal_eval or parser.

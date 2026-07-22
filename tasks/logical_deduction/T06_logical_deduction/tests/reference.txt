@@ -1,7 +1,1 @@
-# Reference solution for T06_logical_deduction
-
-This is a placeholder for the expected output.
-In production, this contains the gold-standard answer.
-
-Task: Paradox Analysis: Liar's Paradox
-Difficulty: 5/10
+Bob sits in seat 3. Constraints: Alice not at 1, Charlie at 4, Bob > Alice, no one at 5. Solution: Alice=2, Bob=3, Charlie=4.

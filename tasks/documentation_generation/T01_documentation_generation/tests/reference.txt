@@ -1,7 +1,1 @@
-# Reference solution for T01_documentation_generation
-
-This is a placeholder for the expected output.
-In production, this contains the gold-standard answer.
-
-Task: Generate README for Python Project
-Difficulty: 3/10
+This project provides a FastAPI CRUD application for user management. Installation: pip install -r requirements.txt. Run: uvicorn main:app --reload. API endpoints: GET /users, POST /users, GET /users/{id}, PUT /users/{id}, DELETE /users/{id}.

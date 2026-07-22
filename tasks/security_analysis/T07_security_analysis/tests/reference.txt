@@ -1,7 +1,1 @@
-# Reference solution for T07_security_analysis
-
-This is a placeholder for the expected output.
-In production, this contains the gold-standard answer.
-
-Task: CSRF & CORS Misconfiguration
-Difficulty: 5/10
+Insecure deserialization with pickle.load() on user input. Arbitrary code execution risk. Fix: use json.loads instead or validate input schema.

@@ -1,6 +1,7 @@
 id: "T01_bug_fixing"
 category: "bug_fixing"
 name: "Fix Null Pointer in User Service"
+task_type: "code"
 description: >
   Given a user service module with bugs: GET /users/{id} crashes when user not found (returns None instead of 404), POST /users accepts empty names, PUT /users/{id} doesn't check if user exists. Fix all three bugs. Write tests that verify the fixes.
 difficulty: 3

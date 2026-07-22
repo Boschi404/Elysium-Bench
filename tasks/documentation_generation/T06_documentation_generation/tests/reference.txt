@@ -1,7 +1,1 @@
-# Reference solution for T06_documentation_generation
-
-This is a placeholder for the expected output.
-In production, this contains the gold-standard answer.
-
-Task: Generate Changelog from Git History
-Difficulty: 3/10
+Database Schema Documentation. Tables: users (id, name, email, created_at), orders (id, user_id, total, status), products (id, name, price, stock). Foreign keys: orders.user_id → users.id.

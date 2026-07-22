@@ -1,7 +1,1 @@
-# Reference solution for T04_logical_deduction
-
-This is a placeholder for the expected output.
-In production, this contains the gold-standard answer.
-
-Task: Truth Table Construction
-Difficulty: 4/10
+Truth table shows: P=True Q=False gives the only row where premise is true but conclusion is false, thus the argument is invalid.

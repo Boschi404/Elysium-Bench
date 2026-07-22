@@ -1,6 +1,7 @@
 id: "T06_api_development"
 category: "api_development"
 name: "Create Authentication API"
+task_type: "code"
 description: >
   Implement JWT-based authentication API. Must include: POST /register (email, password, name → return user), POST /login (email, password → return JWT token), GET /me (protected, returns user profile), PUT /me (protected, update profile), POST /logout (invalidate token). Use FastAPI with python-jose for JWT. Hash passwords with bcrypt. Return 401 for invalid/missing tokens.
 difficulty: 6

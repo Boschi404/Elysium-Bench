@@ -397,28 +397,60 @@ class MathScoringEngine:
         if expected_answer is None:
             return 0.0
 
-        # Try numeric comparison
+        # 1. TRY CODE EXECUTION (most reliable)
+        solution_output = self._execute_solution()
+        if solution_output is not None:
+            numbers = re.findall(r'[-+]?\d*\.?\d+', solution_output)
+            for n in numbers:
+                try:
+                    if isinstance(expected_answer, (int, float)):
+                        if abs(float(n) - float(expected_answer)) < 0.001:
+                            return max_score
+                    elif isinstance(expected_answer, str):
+                        if expected_answer.lower() in solution_output.lower():
+                            return max_score
+                        if n.lower() == expected_answer.lower():
+                            return max_score
+                except (ValueError, TypeError):
+                    pass
+            if numbers:
+                return max_score * 0.5  # Code ran but wrong answer
+
+        # 2. FALLBACK: scan text for expected answer (original full-credit logic)
         if isinstance(expected_answer, (int, float)):
-            # Find numbers in output
             numbers = re.findall(r'[-+]?\d*\.?\d+', output)
             for n in numbers:
                 try:
                     if abs(float(n) - float(expected_answer)) < 0.001:
-                        return max_score
+                        return max_score  # Full credit — found in text
                 except ValueError:
                     pass
-            # Partial credit: answer present but wrong
             if numbers:
                 return max_score * 0.3
             return 0.0
 
-        # String comparison
         if isinstance(expected_answer, str):
             if expected_answer.lower() in output.lower():
-                return max_score
-            return max_score * 0.2  # Partial: output exists but answer not found
+                return max_score  # Full credit — found in text
+            return max_score * 0.2
 
         return 0.0
+
+    def _execute_solution(self) -> str | None:
+        """Execute Python solution file and return stdout, or None if can't execute."""
+        import tempfile
+        py_files = sorted(self.solution_dir.rglob("*.py"))
+        if not py_files:
+            return None
+        try:
+            result = subprocess.run(
+                [sys.executable, str(py_files[0])],
+                capture_output=True, text=True, timeout=30,
+                cwd=str(self.solution_dir),
+            )
+            return result.stdout.strip()
+        except Exception:
+            return None
 
     def _check_reasoning(self, output: str) -> float:
         max_score = float(self.weights.get("completeness", 25))
@@ -478,8 +510,10 @@ class PlanScoringEngine:
 
         constraints = self._load_constraints()
 
-        # 1. Correctness: all constraints satisfied?
-        score.correctness = self._check_constraints(output, constraints)
+        # 1. Correctness: all constraints satisfied + artifact validation
+        constraint_score = self._check_constraints(output, constraints)
+        validation_score = self._validate_artifact()
+        score.correctness = max(constraint_score, validation_score)  # best of both
 
         # 2. Completeness: all required sections present?
         score.completeness = self._check_completeness(output, constraints)
@@ -495,6 +529,64 @@ class PlanScoringEngine:
 
         score.compute_total()
         return score
+
+    def _validate_artifact(self) -> float:
+        """Try to validate the actual artifact (Dockerfile, YAML, etc)."""
+        max_score = float(self.weights.get("correctness", 40))
+        
+        # Scan ALL files for Dockerfile content
+        for f in sorted(self.solution_dir.rglob("*")):
+            if not f.is_file(): continue
+            try:
+                content = f.read_text(encoding="utf-8", errors="ignore")
+            except Exception:
+                continue
+            
+            # Dockerfile validation
+            if re.search(r'^FROM\s+\S+', content, re.MULTILINE):
+                has_run = bool(re.search(r'^RUN\s+', content, re.MULTILINE))
+                has_cmd = bool(re.search(r'^CMD\s+|^ENTRYPOINT\s+', content, re.MULTILINE))
+                if has_run or has_cmd:
+                    return max_score * 0.8  # Valid Dockerfile found
+                return max_score * 0.6  # Minimal Dockerfile
+            
+            # docker-compose.yml validation
+            if re.search(r'^services:', content, re.MULTILINE) or '"services"' in content.lower():
+                try:
+                    yaml.safe_load(content)
+                    return max_score * 0.7  # Valid compose
+                except yaml.YAMLError:
+                    return max_score * 0.2
+                except Exception:
+                    pass
+
+        # Check for Dockerfile file
+        dockerfile = self.solution_dir / "Dockerfile"
+        if not dockerfile.exists():
+            dockerfile = next(self.solution_dir.rglob("Dockerfile"), None)
+        if dockerfile and dockerfile.exists():
+            try:
+                content = dockerfile.read_text(encoding="utf-8")
+                if re.search(r'^FROM\s+\S+', content, re.MULTILINE):
+                    return max_score * 0.7
+                return max_score * 0.3
+            except Exception:
+                pass
+
+        # Check for docker-compose.yml
+        compose = self.solution_dir / "docker-compose.yml"
+        if not compose.exists():
+            compose = next(self.solution_dir.rglob("docker-compose.y*ml"), None)
+        if compose and compose.exists():
+            try:
+                yaml.safe_load(compose.read_text(encoding="utf-8"))
+                return max_score * 0.7
+            except yaml.YAMLError:
+                return max_score * 0.1
+            except Exception:
+                pass
+
+        return 0.0  # No artifact found
 
     def _read_output(self) -> str:
         texts = []

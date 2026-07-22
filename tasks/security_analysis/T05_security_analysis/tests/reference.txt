@@ -1,7 +1,1 @@
-# Reference solution for T05_security_analysis
-
-This is a placeholder for the expected output.
-In production, this contains the gold-standard answer.
-
-Task: Cryptography: Weak Implementation
-Difficulty: 5/10
+Path traversal vulnerability in download.php. User-supplied filename not validated against directory traversal. Fix: use os.path.basename and whitelist.

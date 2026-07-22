@@ -1,6 +1,7 @@
 id: "T08_api_development"
 category: "api_development"
 name: "Create Weather Data API"
+task_type: "code"
 description: >
   Implement a weather data aggregation API. Must include: POST /stations (register weather station), POST /readings (submit reading: station_id, temperature, humidity, timestamp), GET /stations/{id}/readings (get readings with ?from=&to=&aggregate=avg|min|max), GET /stations/{id}/latest (most recent reading). Use FastAPI. Validate: temperature -50 to 60, humidity 0-100, timestamps ISO format. Compute aggregate correctly.
 difficulty: 5

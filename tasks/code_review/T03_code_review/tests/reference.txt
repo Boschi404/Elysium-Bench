@@ -1,7 +1,1 @@
-# Reference solution for T03_code_review
-
-This is a placeholder for the expected output.
-In production, this contains the gold-standard answer.
-
-Task: Review: Anti-Pattern Detection
-Difficulty: 5/10
+Performance: O(n²) nested loop on line 67-89. Can be O(n) with hashmap. Inefficient for large datasets.

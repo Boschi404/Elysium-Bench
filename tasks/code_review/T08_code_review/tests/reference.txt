@@ -1,7 +1,1 @@
-# Reference solution for T08_code_review
-
-This is a placeholder for the expected output.
-In production, this contains the gold-standard answer.
-
-Task: Review: API Design Critique
-Difficulty: 5/10
+Exception swallowing: bare except on line 56 hides all errors. Fix: catch specific exceptions and log error details.

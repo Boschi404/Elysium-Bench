@@ -1,7 +1,1 @@
-# Reference solution for T02_documentation_generation
-
-This is a placeholder for the expected output.
-In production, this contains the gold-standard answer.
-
-Task: Generate API Documentation
-Difficulty: 4/10
+API Reference for Product Catalog. Endpoints: GET /products (list), POST /products (create), GET /products/{id}, PUT /products/{id}, DELETE /products/{id}. Authentication via Bearer token. Request/Response formats in JSON.

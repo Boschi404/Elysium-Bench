@@ -1,7 +1,1 @@
-# Reference solution for T02_logical_deduction
-
-This is a placeholder for the expected output.
-In production, this contains the gold-standard answer.
-
-Task: Zebra Puzzle (Einstein's Riddle)
-Difficulty: 6/10
+The German owns the zebra. Nationalities: Norwegian(1st), Dane, Brit, German, Swede. Pets: dog, horse, bird, zebra, cat. The German in the green house drinks coffee and smokes Prince.

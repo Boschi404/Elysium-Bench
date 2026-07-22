@@ -1,7 +1,1 @@
-# Reference solution for T05_documentation_generation
-
-This is a placeholder for the expected output.
-In production, this contains the gold-standard answer.
-
-Task: Write Architecture Decision Records
-Difficulty: 6/10
+Contributing Guide. Fork repo, create feature branch, write tests, submit PR. Follow PEP 8 style. Run pytest before committing. Review process: 1 reviewer required.

@@ -1,6 +1,7 @@
 id: "T02_api_development"
 category: "api_development"
 name: "Create Product Catalog API"
+task_type: "code"
 description: >
   Implement a product catalog API with filtering and pagination. Must include: GET /products (list with ?category=&min_price=&max_price=&page=&limit=), GET /products/{id} (get single), POST /products (create with name, price, category), PUT /products/{id} (update), DELETE /products/{id} (delete). Use FastAPI with Pydantic models. Validate price > 0, category non-empty, name non-empty.
 difficulty: 4

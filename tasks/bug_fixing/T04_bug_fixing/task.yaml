@@ -1,6 +1,7 @@
 id: "T04_bug_fixing"
 category: "bug_fixing"
 name: "Fix Date Parsing Timezone Bug"
+task_type: "code"
 description: >
   Given an API that parses dates without timezone awareness, causing off-by-one errors around DST transitions. The POST /events endpoint stores dates in UTC but GET /events returns them in local time incorrectly. Fix the timezone handling to consistently use UTC internally and convert only on output.
 difficulty: 5

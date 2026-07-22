@@ -1,7 +1,1 @@
-# Reference solution for T03_documentation_generation
-
-This is a placeholder for the expected output.
-In production, this contains the gold-standard answer.
-
-Task: Write Docstrings for Module
-Difficulty: 3/10
+Authentication Module Documentation. JWT-based auth with refresh tokens. Endpoints: POST /auth/login, POST /auth/register, POST /auth/refresh, POST /auth/logout. Token expires after 15 minutes.
