@@ -1,6 +1,7 @@
 id: "T02_algorithm_implementation"
 category: "algorithm_implementation"
 name: "Implement Merge Sort"
+task_type: "code"
 description: >
   Implement merge sort algorithm. Must sort lists of integers in ascending order. Handle: empty list, single element, already sorted, reverse sorted, duplicates, large lists (100k+ elements). Must be O(n log n) worst case. Include a key parameter for custom sort keys (like built-in sorted()).
 difficulty: 3

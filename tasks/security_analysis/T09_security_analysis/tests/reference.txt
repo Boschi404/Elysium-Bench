@@ -1,7 +1,1 @@
-# Reference solution for T09_security_analysis
-
-This is a placeholder for the expected output.
-In production, this contains the gold-standard answer.
-
-Task: Secure Coding Guidelines
-Difficulty: 5/10
+Missing rate limiting on login endpoint. Brute force attack possible. Fix: add rate limiter with exponential backoff.

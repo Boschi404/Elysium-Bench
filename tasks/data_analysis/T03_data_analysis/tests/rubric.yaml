@@ -1,0 +1,27 @@
+criteria:
+- checks:
+  - 'SELECT'
+  - 'JOIN'
+  - 'LEFT JOIN'
+  - 'COALESCE'
+  - 'ORDER BY'
+  name: completeness
+  weight: 25
+- checks:
+  - 'SUM'
+  - 'quantity'
+  - 'date'
+  name: efficiency
+  weight: 15
+- checks:
+  - 'NULL'
+  - '0'
+  - 'WHERE'
+  name: robustness
+  weight: 10
+- checks:
+  - '#'
+  - 'customer'
+  - 'product'
+  name: clarity
+  weight: 10

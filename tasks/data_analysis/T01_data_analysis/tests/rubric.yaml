@@ -1,0 +1,27 @@
+criteria:
+- checks:
+  - 'SELECT'
+  - 'FROM'
+  - 'SUM'
+  - 'GROUP BY'
+  - 'ORDER BY'
+  name: completeness
+  weight: 25
+- checks:
+  - 'COALESCE'
+  - 'ROUND'
+  - 'revenue'
+  name: efficiency
+  weight: 15
+- checks:
+  - 'NULL'
+  - 'WHERE'
+  - 'Uncategorized'
+  name: robustness
+  weight: 10
+- checks:
+  - '#'
+  - 'category'
+  - 'sales'
+  name: clarity
+  weight: 10

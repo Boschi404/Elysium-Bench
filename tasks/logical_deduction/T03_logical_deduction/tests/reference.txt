@@ -1,7 +1,1 @@
-# Reference solution for T03_logical_deduction
-
-This is a placeholder for the expected output.
-In production, this contains the gold-standard answer.
-
-Task: Syllogism Validity Check
-Difficulty: 4/10
+All syllogisms are valid. Premise 1: All A are B. Premise 2: All B are C. Therefore All A are C. The syllogism is logically sound.

@@ -1,0 +1,734 @@
+{
+  "benchmark": "Elysium-Bench Lungo",
+  "version": "0.4.1-lungo",
+  "timestamp": "2026-07-17T17:33:14",
+  "duration_minutes": 42.3,
+  "duration_seconds": 2536.9,
+  "skill": "elysium-swarmloop",
+  "categories": [
+    "api_development",
+    "bug_fixing",
+    "algorithm_implementation",
+    "logical_deduction",
+    "code_review"
+  ],
+  "total_loops": 4,
+  "per_category": {
+    "api_development": {
+      "loop1": 75.0,
+      "retest": 74.0,
+      "delta": -1.0
+    },
+    "bug_fixing": {
+      "loop1": 81.0,
+      "retest": 74.0,
+      "delta": -7.0
+    },
+    "algorithm_implementation": {
+      "loop1": 74.0,
+      "retest": 66.0,
+      "delta": -8.0
+    },
+    "logical_deduction": {
+      "loop1": 100.0,
+      "retest": 100.0,
+      "delta": 0.0
+    },
+    "code_review": {
+      "loop1": 100.0,
+      "retest": 0,
+      "delta": -100.0
+    }
+  },
+  "avg_loop1": 86.0,
+  "avg_retest": 62.8,
+  "avg_delta": -23.2,
+  "improvement_pct": -27.0,
+  "improvement_detected": false,
+  "loops": {
+    "loop1": {
+      "T01_api_development": {
+        "correctness": 40.0,
+        "completeness": 11.0,
+        "efficiency": 13.0,
+        "robustness": 1.0,
+        "clarity": 10.0,
+        "total": 75.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 7,
+          "total": 7,
+          "output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\Admin\\Elysium-Bench\nconfigfile: pyproject.toml\nplugins: anyio-4.14.1, asyncio-1.4.0\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 7 items\n\ntests\\test_solution.py .......                                           [100%]\n\n============================== warnings summary ===============================\nworkspaces/T01_api_development_p1/workspace/tests/test_solution.py::TestCreateUserCRUDAPI::test_input_validation_present\n  C:\\Users\\Admin\\Elysium-Bench\\tasks\\api_development\\T01_api_development\\tests\\test_solution.py:30: PydanticDeprecatedSince20: The `__fields__` attribute is deprecated, use the `model_fields` class property instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/\n    hasattr(getattr(main, name, None), '__fields__') or\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n======================== 7 passed, 1 warning in 0.31s =========================\n"
+        },
+        "files": [
+          "__pycache__/main.cpython-311.pyc",
+          "main.py",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 59.9,
+        "mode": "hermes_elysium"
+      },
+      "T01_bug_fixing": {
+        "correctness": 40.0,
+        "completeness": 15.0,
+        "efficiency": 15.0,
+        "robustness": 1.0,
+        "clarity": 10.0,
+        "total": 81.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 14,
+          "total": 14,
+          "output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\Admin\\Elysium-Bench\nconfigfile: pyproject.toml\nplugins: anyio-4.14.1, asyncio-1.4.0\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 14 items\n\ntests\\test_solution.py ..............                                    [100%]\n\n============================= 14 passed in 0.37s ==============================\n"
+        },
+        "files": [
+          "__pycache__/main.cpython-311.pyc",
+          "main.py",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 80.8,
+        "mode": "hermes_elysium"
+      },
+      "T01_algorithm_implementation": {
+        "correctness": 40.0,
+        "completeness": 9.0,
+        "efficiency": 13.0,
+        "robustness": 2.0,
+        "clarity": 10.0,
+        "total": 74.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 7,
+          "total": 7,
+          "output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\Admin\\Elysium-Bench\nconfigfile: pyproject.toml\nplugins: anyio-4.14.1, asyncio-1.4.0\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 7 items\n\ntests\\test_solution.py .......                                           [100%]\n\n============================== 7 passed in 0.02s ==============================\n"
+        },
+        "files": [
+          "__pycache__/main.cpython-311.pyc",
+          "main.py",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 35.2,
+        "mode": "hermes_elysium"
+      },
+      "T01_logical_deduction": {
+        "correctness": 40.0,
+        "completeness": 25.0,
+        "efficiency": 15.0,
+        "robustness": 10.0,
+        "clarity": 10.0,
+        "total": 100.0,
+        "passed": true,
+        "task_type": "text",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 5,
+          "total": 5,
+          "output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\Admin\\Elysium-Bench\nconfigfile: pyproject.toml\nplugins: anyio-4.14.1, asyncio-1.4.0\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 5 items\n\ntests\\test_solution.py .....                                             [100%]\n\n============================== 5 passed in 0.02s ==============================\n"
+        },
+        "files": [
+          "__pycache__/solution.cpython-311.pyc",
+          "solution.md",
+          "solution.py",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/reference.txt",
+          "tests/rubric.yaml",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 92.6,
+        "mode": "hermes_elysium"
+      },
+      "T01_code_review": {
+        "correctness": 40.0,
+        "completeness": 25.0,
+        "efficiency": 15.0,
+        "robustness": 10.0,
+        "clarity": 10.0,
+        "total": 100.0,
+        "passed": true,
+        "task_type": "text",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 13,
+          "total": 13,
+          "output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\Admin\\Elysium-Bench\nconfigfile: pyproject.toml\nplugins: anyio-4.14.1, asyncio-1.4.0\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 13 items\n\ntests\\test_banking.py .............                                      [100%]\n\n============================= 13 passed in 2.41s ==============================\n"
+        },
+        "files": [
+          "__pycache__/banking.cpython-311.pyc",
+          "__pycache__/banking_fixed.cpython-311.pyc",
+          "banking.py",
+          "banking_fixed.py",
+          "tests/__pycache__/test_banking.cpython-311-pytest-9.1.1.pyc",
+          "tests/reference.txt",
+          "tests/rubric.yaml",
+          "tests/test_banking.py"
+        ],
+        "duration_s": 77.7,
+        "mode": "hermes_elysium"
+      }
+    },
+    "loop2": {
+      "T02_api_development": {
+        "correctness": 40.0,
+        "completeness": 11.0,
+        "efficiency": 13.0,
+        "robustness": 1.0,
+        "clarity": 10.0,
+        "total": 75.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 7,
+          "total": 7,
+          "output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\Admin\\Elysium-Bench\nconfigfile: pyproject.toml\nplugins: anyio-4.14.1, asyncio-1.4.0\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 7 items\n\ntests\\test_solution.py .......                                           [100%]\n\n============================== warnings summary ===============================\nworkspaces/T02_api_development_p2/workspace/tests/test_solution.py::TestCreateProductCatalogAPI::test_input_validation_present\n  C:\\Users\\Admin\\Elysium-Bench\\tasks\\api_development\\T02_api_development\\tests\\test_solution.py:30: PydanticDeprecatedSince20: The `__fields__` attribute is deprecated, use the `model_fields` class property instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/\n    hasattr(getattr(main, name, None), '__fields__') or\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n======================== 7 passed, 1 warning in 0.37s =========================\n"
+        },
+        "files": [
+          "__pycache__/main.cpython-311.pyc",
+          "main.py",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 64.9,
+        "mode": "hermes_elysium"
+      },
+      "T02_bug_fixing": {
+        "correctness": 40.0,
+        "completeness": 11.0,
+        "efficiency": 15.0,
+        "robustness": 3.0,
+        "clarity": 10.0,
+        "total": 79.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 6,
+          "total": 6,
+          "output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\Admin\\Elysium-Bench\nconfigfile: pyproject.toml\nplugins: anyio-4.14.1, asyncio-1.4.0\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 6 items\n\ntests\\test_solution.py ......                                            [100%]\n\n============================== 6 passed in 0.42s ==============================\n"
+        },
+        "files": [
+          "__pycache__/main.cpython-311.pyc",
+          "main.py",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 56.3,
+        "mode": "hermes_elysium"
+      },
+      "T02_algorithm_implementation": {
+        "correctness": 40.0,
+        "completeness": 3.0,
+        "efficiency": 5.0,
+        "robustness": 0.0,
+        "clarity": 10.0,
+        "total": 58.0,
+        "passed": false,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 39,
+          "total": 39,
+          "output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\Admin\\Elysium-Bench\nconfigfile: pyproject.toml\nplugins: anyio-4.14.1, asyncio-1.4.0\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 39 items\n\ntests\\test_merge_sort.py ................................                [ 82%]\ntests\\test_solution.py .......                                           [100%]\n\n============================= 39 passed in 1.36s ==============================\n"
+        },
+        "files": [
+          "__pycache__/main.cpython-311.pyc",
+          "__pycache__/merge_sort.cpython-311.pyc",
+          "main.py",
+          "merge_sort.py",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_merge_sort.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_merge_sort.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 94.7,
+        "mode": "hermes_elysium"
+      },
+      "T02_logical_deduction": {
+        "correctness": 40.0,
+        "completeness": 25.0,
+        "efficiency": 15.0,
+        "robustness": 10.0,
+        "clarity": 10.0,
+        "total": 100.0,
+        "passed": true,
+        "task_type": "text",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 0,
+          "total": 0,
+          "output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\Admin\\Elysium-Bench\nconfigfile: pyproject.toml\nplugins: anyio-4.14.1, asyncio-1.4.0\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 0 items\n\n============================ no tests ran in 0.01s ============================\n"
+        },
+        "files": [
+          "SOLUTION.md",
+          "tests/reference.txt",
+          "tests/rubric.yaml",
+          "validate.py"
+        ],
+        "duration_s": 164.5,
+        "mode": "hermes_elysium"
+      },
+      "T02_code_review": {
+        "correctness": 0,
+        "completeness": 0,
+        "efficiency": 0,
+        "robustness": 0,
+        "clarity": 0,
+        "total": 0,
+        "passed": false,
+        "task_type": "text",
+        "gaps": [
+          "Timeout"
+        ],
+        "notes": [],
+        "tests": {
+          "passed": 0,
+          "total": 0,
+          "output": "Timeout"
+        },
+        "files": [],
+        "mode": "timeout",
+        "duration_s": 180.0
+      }
+    },
+    "loop3": {
+      "T03_api_development": {
+        "correctness": 0,
+        "completeness": 0,
+        "efficiency": 0,
+        "robustness": 0,
+        "clarity": 0,
+        "total": 0,
+        "passed": false,
+        "task_type": "code",
+        "gaps": [
+          "Timeout"
+        ],
+        "notes": [],
+        "tests": {
+          "passed": 0,
+          "total": 0,
+          "output": "Timeout"
+        },
+        "files": [],
+        "mode": "timeout",
+        "duration_s": 180.0
+      },
+      "T03_bug_fixing": {
+        "correctness": 40.0,
+        "completeness": 11.0,
+        "efficiency": 15.0,
+        "robustness": 3.0,
+        "clarity": 10.0,
+        "total": 79.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 6,
+          "total": 6,
+          "output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\Admin\\Elysium-Bench\nconfigfile: pyproject.toml\nplugins: anyio-4.14.1, asyncio-1.4.0\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 6 items\n\ntests\\test_solution.py ......                                            [100%]\n\n============================== 6 passed in 0.34s ==============================\n"
+        },
+        "files": [
+          "__pycache__/main.cpython-311.pyc",
+          "main.py",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 94.6,
+        "mode": "hermes_elysium"
+      },
+      "T03_algorithm_implementation": {
+        "correctness": 40.0,
+        "completeness": 9.0,
+        "efficiency": 5.0,
+        "robustness": 0.0,
+        "clarity": 10.0,
+        "total": 64.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 40,
+          "total": 40,
+          "output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\Admin\\Elysium-Bench\nconfigfile: pyproject.toml\nplugins: anyio-4.14.1, asyncio-1.4.0\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 40 items\n\ntests\\test_lru_cache.py .................................                [ 82%]\ntests\\test_solution.py .......                                           [100%]\n\n============================= 40 passed in 0.11s ==============================\n"
+        },
+        "files": [
+          "__pycache__/lru_cache.cpython-311.pyc",
+          "__pycache__/main.cpython-311.pyc",
+          "lru_cache.py",
+          "main.py",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_lru_cache.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_lru_cache.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 135.8,
+        "mode": "hermes_elysium"
+      },
+      "T03_logical_deduction": {
+        "correctness": 40.0,
+        "completeness": 25.0,
+        "efficiency": 15.0,
+        "robustness": 10.0,
+        "clarity": 10.0,
+        "total": 100.0,
+        "passed": true,
+        "task_type": "text",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 0,
+          "total": 0,
+          "output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\Admin\\Elysium-Bench\nconfigfile: pyproject.toml\nplugins: anyio-4.14.1, asyncio-1.4.0\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 0 items\n\n============================ no tests ran in 0.01s ============================\n"
+        },
+        "files": [
+          "solution.md",
+          "tests/reference.txt",
+          "tests/rubric.yaml"
+        ],
+        "duration_s": 124.0,
+        "mode": "hermes_elysium"
+      },
+      "T03_code_review": {
+        "correctness": 40.0,
+        "completeness": 25.0,
+        "efficiency": 15.0,
+        "robustness": 10.0,
+        "clarity": 10.0,
+        "total": 100.0,
+        "passed": true,
+        "task_type": "text",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 0,
+          "total": 0,
+          "output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\Admin\\Elysium-Bench\nconfigfile: pyproject.toml\nplugins: anyio-4.14.1, asyncio-1.4.0\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 0 items\n\n============================ no tests ran in 0.01s ============================\n"
+        },
+        "files": [
+          "__pycache__/code_with_anti_patterns.cpython-311.pyc",
+          "code_with_anti_patterns.py",
+          "review_report.md",
+          "tests/reference.txt",
+          "tests/rubric.yaml"
+        ],
+        "duration_s": 146.8,
+        "mode": "hermes_elysium"
+      }
+    },
+    "loop4": {
+      "T04_api_development": {
+        "correctness": 40.0,
+        "completeness": 11.0,
+        "efficiency": 9.0,
+        "robustness": 1.0,
+        "clarity": 10.0,
+        "total": 71.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 7,
+          "total": 7,
+          "output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\Admin\\Elysium-Bench\nconfigfile: pyproject.toml\nplugins: anyio-4.14.1, asyncio-1.4.0\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 7 items\n\ntests\\test_solution.py .......                                           [100%]\n\n============================== warnings summary ===============================\nworkspaces/T04_api_development_p4/workspace/tests/test_solution.py::TestCreateBlogPostAPIwithComments::test_input_validation_present\n  C:\\Users\\Admin\\Elysium-Bench\\workspaces\\T04_api_development_p4\\workspace\\tests\\test_solution.py:30: PydanticDeprecatedSince20: The `__fields__` attribute is deprecated, use the `model_fields` class property instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/\n    hasattr(getattr(main, name, None), '__fields__') or\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n======================== 7 passed, 1 warning in 0.35s =========================\n"
+        },
+        "files": [
+          "__pycache__/main.cpython-311.pyc",
+          "main.py",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 85.4,
+        "mode": "hermes_elysium"
+      },
+      "T04_bug_fixing": {
+        "correctness": 40.0,
+        "completeness": 11.0,
+        "efficiency": 15.0,
+        "robustness": 5.0,
+        "clarity": 10.0,
+        "total": 81.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 6,
+          "total": 6,
+          "output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\Admin\\Elysium-Bench\nconfigfile: pyproject.toml\nplugins: anyio-4.14.1, asyncio-1.4.0\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 6 items\n\ntests\\test_solution.py ......                                            [100%]\n\n============================== 6 passed in 0.34s ==============================\n"
+        },
+        "files": [
+          "__pycache__/main.cpython-311.pyc",
+          "main.py",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 61.2,
+        "mode": "hermes_elysium"
+      },
+      "T04_algorithm_implementation": {
+        "correctness": 40.0,
+        "completeness": 9.0,
+        "efficiency": 5.0,
+        "robustness": 2.0,
+        "clarity": 10.0,
+        "total": 66.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 7,
+          "total": 7,
+          "output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\Admin\\Elysium-Bench\nconfigfile: pyproject.toml\nplugins: anyio-4.14.1, asyncio-1.4.0\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 7 items\n\ntests\\test_solution.py .......                                           [100%]\n\n============================== 7 passed in 0.27s ==============================\n"
+        },
+        "files": [
+          "__pycache__/main.cpython-311.pyc",
+          "main.py",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 119.9,
+        "mode": "hermes_elysium"
+      },
+      "T04_logical_deduction": {
+        "correctness": 40.0,
+        "completeness": 25.0,
+        "efficiency": 15.0,
+        "robustness": 10.0,
+        "clarity": 10.0,
+        "total": 100.0,
+        "passed": true,
+        "task_type": "text",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 5,
+          "total": 5,
+          "output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\Admin\\Elysium-Bench\nconfigfile: pyproject.toml\nplugins: anyio-4.14.1, asyncio-1.4.0\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 5 items\n\ntests\\test_truth_table.py .....                                          [100%]\n\n============================== 5 passed in 0.02s ==============================\n"
+        },
+        "files": [
+          "__pycache__/truth_table_solution.cpython-311.pyc",
+          "tests/__pycache__/test_truth_table.cpython-311-pytest-9.1.1.pyc",
+          "tests/reference.txt",
+          "tests/rubric.yaml",
+          "tests/test_truth_table.py",
+          "truth_table_report.txt",
+          "truth_table_solution.py"
+        ],
+        "duration_s": 77.7,
+        "mode": "hermes_elysium"
+      },
+      "T04_code_review": {
+        "correctness": 40.0,
+        "completeness": 25.0,
+        "efficiency": 15.0,
+        "robustness": 10.0,
+        "clarity": 10.0,
+        "total": 100.0,
+        "passed": true,
+        "task_type": "text",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 0,
+          "total": 0,
+          "output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\Admin\\Elysium-Bench\nconfigfile: pyproject.toml\nplugins: anyio-4.14.1, asyncio-1.4.0\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 0 items\n\n============================ no tests ran in 0.01s ============================\n"
+        },
+        "files": [
+          "solution.md",
+          "tests/reference.txt",
+          "tests/rubric.yaml"
+        ],
+        "duration_s": 98.8,
+        "mode": "hermes_elysium"
+      }
+    },
+    "retest": {
+      "T01_api_development": {
+        "correctness": 40.0,
+        "completeness": 11.0,
+        "efficiency": 13.0,
+        "robustness": 0.0,
+        "clarity": 10.0,
+        "total": 74.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 7,
+          "total": 7,
+          "output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\Admin\\Elysium-Bench\nconfigfile: pyproject.toml\nplugins: anyio-4.14.1, asyncio-1.4.0\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 7 items\n\ntests\\test_solution.py .......                                           [100%]\n\n============================== warnings summary ===============================\nworkspaces/T01_api_development_p5/workspace/tests/test_solution.py::TestCreateUserCRUDAPI::test_input_validation_present\n  C:\\Users\\Admin\\Elysium-Bench\\tasks\\api_development\\T01_api_development\\tests\\test_solution.py:30: PydanticDeprecatedSince20: The `__fields__` attribute is deprecated, use the `model_fields` class property instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/\n    hasattr(getattr(main, name, None), '__fields__') or\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n======================== 7 passed, 1 warning in 0.36s =========================\n"
+        },
+        "files": [
+          "__pycache__/main.cpython-311.pyc",
+          "main.py",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 64.3,
+        "mode": "hermes_elysium"
+      },
+      "T01_bug_fixing": {
+        "correctness": 40.0,
+        "completeness": 9.0,
+        "efficiency": 15.0,
+        "robustness": 0.0,
+        "clarity": 10.0,
+        "total": 74.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 25,
+          "total": 25,
+          "output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\Admin\\Elysium-Bench\nconfigfile: pyproject.toml\nplugins: anyio-4.14.1, asyncio-1.4.0\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 25 items\n\ntests\\test_app.py ...................                                    [ 76%]\ntests\\test_solution.py ......                                            [100%]\n\n============================= 25 passed in 0.55s ==============================\n"
+        },
+        "files": [
+          "__pycache__/app.cpython-311.pyc",
+          "__pycache__/main.cpython-311.pyc",
+          "app.py",
+          "main.py",
+          "tests/__init__.py",
+          "tests/__pycache__/__init__.cpython-311.pyc",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_app.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_app.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 109.6,
+        "mode": "hermes_elysium"
+      },
+      "T01_algorithm_implementation": {
+        "correctness": 40.0,
+        "completeness": 5.0,
+        "efficiency": 11.0,
+        "robustness": 0.0,
+        "clarity": 10.0,
+        "total": 66.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 41,
+          "total": 41,
+          "output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\Admin\\Elysium-Bench\nconfigfile: pyproject.toml\nplugins: anyio-4.14.1, asyncio-1.4.0\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 41 items\n\ntests\\test_binary_search.py ..................................           [ 82%]\ntests\\test_solution.py .......                                           [100%]\n\n============================= 41 passed in 0.13s ==============================\n"
+        },
+        "files": [
+          "__pycache__/binary_search.cpython-311.pyc",
+          "__pycache__/main.cpython-311.pyc",
+          "binary_search.py",
+          "main.py",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_binary_search.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_binary_search.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 80.3,
+        "mode": "hermes_elysium"
+      },
+      "T01_logical_deduction": {
+        "correctness": 40.0,
+        "completeness": 25.0,
+        "efficiency": 15.0,
+        "robustness": 10.0,
+        "clarity": 10.0,
+        "total": 100.0,
+        "passed": true,
+        "task_type": "text",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 8,
+          "total": 8,
+          "output": "============================= test session starts =============================\nplatform win32 -- Python 3.11.15, pytest-9.1.1, pluggy-1.6.0\nrootdir: C:\\Users\\Admin\\Elysium-Bench\nconfigfile: pyproject.toml\nplugins: anyio-4.14.1, asyncio-1.4.0\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 8 items\n\ntests\\test_solve.py ........                                             [100%]\n\n============================== 8 passed in 0.03s ==============================\n"
+        },
+        "files": [
+          "__pycache__/solve.cpython-311.pyc",
+          "solution.md",
+          "solve.py",
+          "tests/__pycache__/test_solve.cpython-311-pytest-9.1.1.pyc",
+          "tests/reference.txt",
+          "tests/rubric.yaml",
+          "tests/test_solve.py"
+        ],
+        "duration_s": 46.5,
+        "mode": "hermes_elysium"
+      },
+      "T01_code_review": {
+        "correctness": 0,
+        "completeness": 0,
+        "efficiency": 0,
+        "robustness": 0,
+        "clarity": 0,
+        "total": 0,
+        "passed": false,
+        "task_type": "text",
+        "gaps": [
+          "Timeout"
+        ],
+        "notes": [],
+        "tests": {
+          "passed": 0,
+          "total": 0,
+          "output": "Timeout"
+        },
+        "files": [],
+        "mode": "timeout",
+        "duration_s": 180.0
+      }
+    }
+  }
+}

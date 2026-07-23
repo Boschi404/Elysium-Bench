@@ -1,0 +1,27 @@
+criteria:
+- checks:
+  - 'merge'
+  - 'groupby'
+  - 'pivot_table'
+  - 'to_csv'
+  - 'read_csv'
+  name: completeness
+  weight: 25
+- checks:
+  - 'apply'
+  - 'sum'
+  - 'tier'
+  name: efficiency
+  weight: 15
+- checks:
+  - 'fillna'
+  - 'left'
+  - 'join'
+  name: robustness
+  weight: 10
+- checks:
+  - '#'
+  - 'print'
+  - 'head'
+  name: clarity
+  weight: 10

@@ -1,0 +1,27 @@
+criteria:
+- checks:
+  - 'read_csv'
+  - 'dropna'
+  - 'fillna'
+  - 'DataFrame'
+  - 'to_csv'
+  name: completeness
+  weight: 25
+- checks:
+  - 'apply'
+  - 'lambda'
+  - 'pipeline'
+  name: efficiency
+  weight: 15
+- checks:
+  - 'try'
+  - 'except'
+  - 'Error'
+  name: robustness
+  weight: 10
+- checks:
+  - '#'
+  - 'print'
+  - 'columns'
+  name: clarity
+  weight: 10

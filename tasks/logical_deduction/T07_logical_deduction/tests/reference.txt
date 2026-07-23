@@ -1,7 +1,1 @@
-# Reference solution for T07_logical_deduction
-
-This is a placeholder for the expected output.
-In production, this contains the gold-standard answer.
-
-Task: Logic Grid: Who Owns What?
-Difficulty: 5/10
+The single truth-teller is C. Analysis: If A tells truth, B lies → C lies, but then 2 truths conflict. If B tells truth, A lies → contradiction with C. If C tells truth, only one truth-teller, consistent.

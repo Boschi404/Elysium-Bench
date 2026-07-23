@@ -1,6 +1,7 @@
 id: "T08_algorithm_implementation"
 category: "algorithm_implementation"
 name: "Implement Concurrent Rate Limiter"
+task_type: "code"
 description: >
   Implement a sliding window rate limiter. Must support: is_allowed(client_id) → bool (max N requests per window of W seconds), get_usage(client_id) → (current_count, remaining, reset_time). Thread-safe. Use deque of timestamps per client. Clean up expired entries periodically. Configurable window_size_seconds and max_requests.
 difficulty: 6

@@ -1,0 +1,121 @@
+{
+  "benchmark": "Quick (Elysium v072)",
+  "skill": "elysium-swarmloop v072",
+  "version": "v072",
+  "categories": [
+    "api_development"
+  ],
+  "total_loops": 2,
+  "per_category": {
+    "api_development": {
+      "loop1": 75.0,
+      "retest": 75.0,
+      "delta": 0.0
+    }
+  },
+  "avg_loop1": 75.0,
+  "avg_retest": 75.0,
+  "avg_delta": 0.0,
+  "duration_minutes": 3.2,
+  "loops": {
+    "loop1": {
+      "T01_api_development": {
+        "correctness": 40.0,
+        "completeness": 11.0,
+        "efficiency": 13.0,
+        "robustness": 1.0,
+        "clarity": 10.0,
+        "total": 75.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 7,
+          "total": 7,
+          "output": ".......                                                                  [100%]\n============================== warnings summary ===============================\ntests/test_solution.py::TestCreateUserCRUDAPI::test_input_validation_present\n  C:\\Users\\Admin\\Elysium-Bench\\tasks\\api_development\\T01_api_development\\tests\\test_solution.py:30: PydanticDeprecatedSince20: The `__fields__` attribute is deprecated, use the `model_fields` class property instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/\n    hasattr(getattr(main, name, None), '__fields__') or\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n7 passed, 1 warning in 0.40s\n"
+        },
+        "files": [
+          ".pytest_cache/.gitignore",
+          ".pytest_cache/CACHEDIR.TAG",
+          ".pytest_cache/README.md",
+          ".pytest_cache/v/cache/nodeids",
+          "__pycache__/main.cpython-311.pyc",
+          "main.py",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 57.8,
+        "mode": "elysium"
+      }
+    },
+    "loop2": {
+      "T02_api_development": {
+        "correctness": 40.0,
+        "completeness": 11.0,
+        "efficiency": 13.0,
+        "robustness": 1.0,
+        "clarity": 10.0,
+        "total": 75.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 7,
+          "total": 7,
+          "output": ".......                                                                  [100%]\n============================== warnings summary ===============================\ntests/test_solution.py::TestCreateProductCatalogAPI::test_input_validation_present\n  C:\\Users\\Admin\\Elysium-Bench\\tasks\\api_development\\T02_api_development\\tests\\test_solution.py:30: PydanticDeprecatedSince20: The `__fields__` attribute is deprecated, use the `model_fields` class property instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/\n    hasattr(getattr(main, name, None), '__fields__') or\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n7 passed, 1 warning in 1.04s\n"
+        },
+        "files": [
+          ".pytest_cache/.gitignore",
+          ".pytest_cache/CACHEDIR.TAG",
+          ".pytest_cache/README.md",
+          ".pytest_cache/v/cache/nodeids",
+          "__pycache__/main.cpython-311.pyc",
+          "main.py",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 75.7,
+        "mode": "elysium"
+      }
+    },
+    "retest": {
+      "T01_api_development": {
+        "correctness": 40.0,
+        "completeness": 11.0,
+        "efficiency": 13.0,
+        "robustness": 1.0,
+        "clarity": 10.0,
+        "total": 75.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 7,
+          "total": 7,
+          "output": ".......                                                                  [100%]\n============================== warnings summary ===============================\ntests/test_solution.py::TestCreateUserCRUDAPI::test_input_validation_present\n  C:\\Users\\Admin\\Elysium-Bench\\tasks\\api_development\\T01_api_development\\tests\\test_solution.py:30: PydanticDeprecatedSince20: The `__fields__` attribute is deprecated, use the `model_fields` class property instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/\n    hasattr(getattr(main, name, None), '__fields__') or\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n7 passed, 1 warning in 0.39s\n"
+        },
+        "files": [
+          ".pytest_cache/.gitignore",
+          ".pytest_cache/CACHEDIR.TAG",
+          ".pytest_cache/README.md",
+          ".pytest_cache/v/cache/nodeids",
+          "__pycache__/main.cpython-311.pyc",
+          "main.py",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 53.0,
+        "mode": "elysium"
+      }
+    }
+  }
+}

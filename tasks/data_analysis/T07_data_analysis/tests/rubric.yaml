@@ -1,0 +1,27 @@
+criteria:
+- checks:
+  - 'WITH RECURSIVE'
+  - 'UNION'
+  - 'SELECT'
+  - 'JOIN'
+  - 'FROM'
+  name: completeness
+  weight: 25
+- checks:
+  - 'level'
+  - 'path'
+  - 'manager'
+  name: efficiency
+  weight: 15
+- checks:
+  - 'NULL'
+  - 'cycle'
+  - 'WHERE'
+  name: robustness
+  weight: 10
+- checks:
+  - '#'
+  - 'employee'
+  - 'hierarchy'
+  name: clarity
+  weight: 10

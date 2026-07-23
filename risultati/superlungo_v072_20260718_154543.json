@@ -1,0 +1,944 @@
+{
+  "benchmark": "Elysium-Bench SUPER LUNGO",
+  "version": "1.0.0",
+  "skill": "elysium-swarmloop v0.7.2",
+  "timestamp": "2026-07-18T14:50:02",
+  "duration_minutes": 55.7,
+  "duration_seconds": 3340.9,
+  "categories": [
+    "api_development",
+    "bug_fixing",
+    "algorithm_implementation",
+    "data_analysis",
+    "mathematical_reasoning",
+    "logical_deduction",
+    "security_analysis",
+    "code_review",
+    "documentation_generation",
+    "configuration_management"
+  ],
+  "total_loops": 2,
+  "total_tasks": 30,
+  "per_category": {
+    "api_development": {
+      "loop1": 73.0,
+      "loop2": 75.0,
+      "retest": 75.0,
+      "delta": 2.0
+    },
+    "bug_fixing": {
+      "loop1": 79.0,
+      "loop2": 76.0,
+      "retest": 79.0,
+      "delta": 0.0
+    },
+    "algorithm_implementation": {
+      "loop1": 66.0,
+      "loop2": 73.0,
+      "retest": 68.0,
+      "delta": 2.0
+    },
+    "data_analysis": {
+      "loop1": 58.0,
+      "loop2": 0,
+      "retest": 58.0,
+      "delta": 0.0
+    },
+    "mathematical_reasoning": {
+      "loop1": 55.1,
+      "loop2": 68.4,
+      "retest": 55.1,
+      "delta": 0.0
+    },
+    "logical_deduction": {
+      "loop1": 100.0,
+      "loop2": 100.0,
+      "retest": 100.0,
+      "delta": 0.0
+    },
+    "security_analysis": {
+      "loop1": 100.0,
+      "loop2": 100.0,
+      "retest": 0,
+      "delta": -100.0
+    },
+    "code_review": {
+      "loop1": 100.0,
+      "loop2": 100.0,
+      "retest": 0,
+      "delta": -100.0
+    },
+    "documentation_generation": {
+      "loop1": 100.0,
+      "loop2": 0,
+      "retest": 0,
+      "delta": -100.0
+    },
+    "configuration_management": {
+      "loop1": 42.1,
+      "loop2": 0,
+      "retest": 35.3,
+      "delta": -6.800000000000004
+    }
+  },
+  "avg_loop1": 77.3,
+  "avg_loop2": 59.2,
+  "avg_retest": 47.0,
+  "avg_delta": -30.3,
+  "improvement_detected": false,
+  "loops": {
+    "loop1": {
+      "T01_api_development": {
+        "correctness": 40.0,
+        "completeness": 9.0,
+        "efficiency": 13.0,
+        "robustness": 1.0,
+        "clarity": 10.0,
+        "total": 73.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 7,
+          "total": 7,
+          "output": ".......                                                                  [100%]\n============================== warnings summary ===============================\ntests/test_solution.py::TestCreateUserCRUDAPI::test_input_validation_present\n  C:\\Users\\Admin\\Elysium-Bench\\tasks\\api_development\\T01_api_development\\tests\\test_solution.py:30: PydanticDeprecatedSince20: The `__fields__` attribute is deprecated, use the `model_fields` class property instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/\n    hasattr(getattr(main, name, None), '__fields__') or\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n7 passed, 1 warning in 0.31s\n"
+        },
+        "files": [
+          ".pytest_cache/.gitignore",
+          ".pytest_cache/CACHEDIR.TAG",
+          ".pytest_cache/README.md",
+          ".pytest_cache/v/cache/nodeids",
+          "__pycache__/main.cpython-311.pyc",
+          "main.py",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 51.9,
+        "mode": "elysium"
+      },
+      "T01_bug_fixing": {
+        "correctness": 40.0,
+        "completeness": 11.0,
+        "efficiency": 15.0,
+        "robustness": 3.0,
+        "clarity": 10.0,
+        "total": 79.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 6,
+          "total": 6,
+          "output": "......                                                                   [100%]\n6 passed in 0.42s\n"
+        },
+        "files": [
+          ".pytest_cache/.gitignore",
+          ".pytest_cache/CACHEDIR.TAG",
+          ".pytest_cache/README.md",
+          ".pytest_cache/v/cache/nodeids",
+          "__pycache__/main.cpython-311.pyc",
+          "main.py",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 92.2,
+        "mode": "elysium"
+      },
+      "T01_algorithm_implementation": {
+        "correctness": 40.0,
+        "completeness": 3.0,
+        "efficiency": 13.0,
+        "robustness": 0.0,
+        "clarity": 10.0,
+        "total": 66.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 30,
+          "total": 30,
+          "output": "..............................                                           [100%]\n30 passed in 0.06s\n"
+        },
+        "files": [
+          ".pytest_cache/.gitignore",
+          ".pytest_cache/CACHEDIR.TAG",
+          ".pytest_cache/README.md",
+          ".pytest_cache/v/cache/nodeids",
+          "__pycache__/binary_search.cpython-311.pyc",
+          "__pycache__/main.cpython-311.pyc",
+          "binary_search.py",
+          "main.py",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_binary_search.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_binary_search.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 89.0,
+        "mode": "elysium"
+      },
+      "T01_data_analysis": {
+        "correctness": 40.0,
+        "completeness": 7.5,
+        "efficiency": 4.5,
+        "robustness": 3.0,
+        "clarity": 3.0,
+        "total": 58.0,
+        "passed": false,
+        "task_type": "data",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 0,
+          "total": 0,
+          "output": "\nno tests ran in 0.00s\n"
+        },
+        "files": [
+          "sales_q4_2024.sql",
+          "tests/validate.py"
+        ],
+        "duration_s": 42.9,
+        "mode": "elysium"
+      },
+      "T01_mathematical_reasoning": {
+        "correctness": 40.0,
+        "completeness": 3.5714285714285716,
+        "efficiency": 4.5,
+        "robustness": 0.0,
+        "clarity": 7.0,
+        "total": 55.1,
+        "passed": false,
+        "task_type": "math",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 0,
+          "total": 0,
+          "output": "\nno tests ran in 0.01s\n"
+        },
+        "files": [
+          "result.json",
+          "solution.md",
+          "solve.py",
+          "tests/expected.json"
+        ],
+        "duration_s": 44.5,
+        "mode": "elysium"
+      },
+      "T01_logical_deduction": {
+        "correctness": 40.0,
+        "completeness": 25.0,
+        "efficiency": 15.0,
+        "robustness": 10.0,
+        "clarity": 10.0,
+        "total": 100.0,
+        "passed": true,
+        "task_type": "text",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 9,
+          "total": 9,
+          "output": ".........                                                                [100%]\n9 passed in 0.01s\n"
+        },
+        "files": [
+          ".pytest_cache/.gitignore",
+          ".pytest_cache/CACHEDIR.TAG",
+          ".pytest_cache/README.md",
+          ".pytest_cache/v/cache/lastfailed",
+          ".pytest_cache/v/cache/nodeids",
+          "__pycache__/solve.cpython-311.pyc",
+          "solution.md",
+          "solve.py",
+          "tests/__pycache__/test_solve.cpython-311-pytest-9.1.1.pyc",
+          "tests/reference.txt",
+          "tests/rubric.yaml",
+          "tests/test_solve.py"
+        ],
+        "duration_s": 65.0,
+        "mode": "elysium"
+      },
+      "T01_security_analysis": {
+        "correctness": 40.0,
+        "completeness": 25.0,
+        "efficiency": 15.0,
+        "robustness": 10.0,
+        "clarity": 10.0,
+        "total": 100.0,
+        "passed": true,
+        "task_type": "text",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 0,
+          "total": 0,
+          "output": "\nno tests ran in 0.01s\n"
+        },
+        "files": [
+          "solution.md",
+          "tests/reference.txt",
+          "tests/rubric.yaml"
+        ],
+        "duration_s": 76.3,
+        "mode": "elysium"
+      },
+      "T01_code_review": {
+        "correctness": 40.0,
+        "completeness": 25.0,
+        "efficiency": 15.0,
+        "robustness": 10.0,
+        "clarity": 10.0,
+        "total": 100.0,
+        "passed": true,
+        "task_type": "text",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 4,
+          "total": 4,
+          "output": "....                                                                     [100%]\n4 passed in 0.17s\n"
+        },
+        "files": [
+          ".pytest_cache/.gitignore",
+          ".pytest_cache/CACHEDIR.TAG",
+          ".pytest_cache/README.md",
+          ".pytest_cache/v/cache/nodeids",
+          "__pycache__/bank_account.cpython-311.pyc",
+          "__pycache__/bank_account_fixed.cpython-311.pyc",
+          "bank_account.py",
+          "bank_account_fixed.py",
+          "tests/__pycache__/test_bank_race.cpython-311-pytest-9.1.1.pyc",
+          "tests/reference.txt",
+          "tests/rubric.yaml",
+          "tests/test_bank_race.py"
+        ],
+        "duration_s": 55.5,
+        "mode": "elysium"
+      },
+      "T01_documentation_generation": {
+        "correctness": 40.0,
+        "completeness": 25.0,
+        "efficiency": 15.0,
+        "robustness": 10.0,
+        "clarity": 10.0,
+        "total": 100.0,
+        "passed": true,
+        "task_type": "text",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 0,
+          "total": 0,
+          "output": "\nno tests ran in 0.01s\n"
+        },
+        "files": [
+          "README.md",
+          "tests/reference.txt",
+          "tests/rubric.yaml"
+        ],
+        "duration_s": 79.7,
+        "mode": "elysium"
+      },
+      "T01_configuration_management": {
+        "correctness": 0.0,
+        "completeness": 25.0,
+        "efficiency": 3.75,
+        "robustness": 3.333333333333333,
+        "clarity": 10.0,
+        "total": 42.1,
+        "passed": false,
+        "task_type": "plan",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 0,
+          "total": 0,
+          "output": "\nno tests ran in 0.01s\n"
+        },
+        "files": [
+          ".dockerignore",
+          "Dockerfile",
+          "requirements.txt",
+          "tests/constraints.yaml",
+          "tests/rubric.yaml"
+        ],
+        "duration_s": 86.1,
+        "mode": "elysium"
+      }
+    },
+    "loop2": {
+      "T02_api_development": {
+        "correctness": 40.0,
+        "completeness": 11.0,
+        "efficiency": 13.0,
+        "robustness": 1.0,
+        "clarity": 10.0,
+        "total": 75.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 7,
+          "total": 7,
+          "output": ".......                                                                  [100%]\n============================== warnings summary ===============================\ntests/test_solution.py::TestCreateProductCatalogAPI::test_input_validation_present\n  C:\\Users\\Admin\\Elysium-Bench\\tasks\\api_development\\T02_api_development\\tests\\test_solution.py:30: PydanticDeprecatedSince20: The `__fields__` attribute is deprecated, use the `model_fields` class property instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/\n    hasattr(getattr(main, name, None), '__fields__') or\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n7 passed, 1 warning in 0.33s\n"
+        },
+        "files": [
+          ".pytest_cache/.gitignore",
+          ".pytest_cache/CACHEDIR.TAG",
+          ".pytest_cache/README.md",
+          ".pytest_cache/v/cache/nodeids",
+          "__pycache__/main.cpython-311.pyc",
+          "main.py",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 109.3,
+        "mode": "elysium"
+      },
+      "T02_bug_fixing": {
+        "correctness": 40.0,
+        "completeness": 9.0,
+        "efficiency": 15.0,
+        "robustness": 2.0,
+        "clarity": 10.0,
+        "total": 76.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 6,
+          "total": 6,
+          "output": "......                                                                   [100%]\n6 passed in 0.42s\n"
+        },
+        "files": [
+          ".pytest_cache/.gitignore",
+          ".pytest_cache/CACHEDIR.TAG",
+          ".pytest_cache/README.md",
+          ".pytest_cache/v/cache/nodeids",
+          "__pycache__/main.cpython-311.pyc",
+          "main.py",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 85.1,
+        "mode": "elysium"
+      },
+      "T02_algorithm_implementation": {
+        "correctness": 40.0,
+        "completeness": 9.0,
+        "efficiency": 11.0,
+        "robustness": 3.0,
+        "clarity": 10.0,
+        "total": 73.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 7,
+          "total": 7,
+          "output": ".......                                                                  [100%]\n7 passed in 0.02s\n"
+        },
+        "files": [
+          ".pytest_cache/.gitignore",
+          ".pytest_cache/CACHEDIR.TAG",
+          ".pytest_cache/README.md",
+          ".pytest_cache/v/cache/nodeids",
+          "__pycache__/main.cpython-311.pyc",
+          "main.py",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 119.3,
+        "mode": "elysium"
+      },
+      "T02_data_analysis": {
+        "correctness": 0,
+        "completeness": 0,
+        "efficiency": 0,
+        "robustness": 0,
+        "clarity": 0,
+        "total": 0,
+        "passed": false,
+        "task_type": "data",
+        "gaps": [
+          "Timeout"
+        ],
+        "tests": {
+          "passed": 0,
+          "total": 0,
+          "output": "Timeout"
+        },
+        "files": [],
+        "mode": "timeout",
+        "duration_s": 180.0
+      },
+      "T02_mathematical_reasoning": {
+        "correctness": 40.0,
+        "completeness": 8.928571428571429,
+        "efficiency": 4.5,
+        "robustness": 5.0,
+        "clarity": 10.0,
+        "total": 68.4,
+        "passed": true,
+        "task_type": "math",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 8,
+          "total": 8,
+          "output": "........                                                                 [100%]\n8 passed in 0.01s\n"
+        },
+        "files": [
+          ".pytest_cache/.gitignore",
+          ".pytest_cache/CACHEDIR.TAG",
+          ".pytest_cache/README.md",
+          ".pytest_cache/v/cache/lastfailed",
+          ".pytest_cache/v/cache/nodeids",
+          "__pycache__/bayes_solver.cpython-311.pyc",
+          "bayes_solver.py",
+          "bayes_theorem_solution.md",
+          "tests/__pycache__/test_bayes_solver.cpython-311-pytest-9.1.1.pyc",
+          "tests/expected.json",
+          "tests/test_bayes_solver.py"
+        ],
+        "duration_s": 103.2,
+        "mode": "elysium"
+      },
+      "T02_logical_deduction": {
+        "correctness": 40.0,
+        "completeness": 25.0,
+        "efficiency": 15.0,
+        "robustness": 10.0,
+        "clarity": 10.0,
+        "total": 100.0,
+        "passed": true,
+        "task_type": "text",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 10,
+          "total": 10,
+          "output": "..........                                                               [100%]\n10 passed in 0.02s\n"
+        },
+        "files": [
+          ".pytest_cache/.gitignore",
+          ".pytest_cache/CACHEDIR.TAG",
+          ".pytest_cache/README.md",
+          ".pytest_cache/v/cache/lastfailed",
+          ".pytest_cache/v/cache/nodeids",
+          "__pycache__/solve_zebra.cpython-311.pyc",
+          "solution.md",
+          "solve_zebra.py",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/reference.txt",
+          "tests/rubric.yaml",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 156.1,
+        "mode": "elysium"
+      },
+      "T02_security_analysis": {
+        "correctness": 40.0,
+        "completeness": 25.0,
+        "efficiency": 15.0,
+        "robustness": 10.0,
+        "clarity": 10.0,
+        "total": 100.0,
+        "passed": true,
+        "task_type": "text",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 17,
+          "total": 17,
+          "output": ".................                                                        [100%]\n17 passed in 0.02s\n"
+        },
+        "files": [
+          ".pytest_cache/.gitignore",
+          ".pytest_cache/CACHEDIR.TAG",
+          ".pytest_cache/README.md",
+          ".pytest_cache/v/cache/lastfailed",
+          ".pytest_cache/v/cache/nodeids",
+          "fixed.html",
+          "solution.md",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/reference.txt",
+          "tests/rubric.yaml",
+          "tests/test_solution.py",
+          "vulnerable.html"
+        ],
+        "duration_s": 127.2,
+        "mode": "elysium"
+      },
+      "T02_code_review": {
+        "correctness": 40.0,
+        "completeness": 25.0,
+        "efficiency": 15.0,
+        "robustness": 10.0,
+        "clarity": 10.0,
+        "total": 100.0,
+        "passed": true,
+        "task_type": "text",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 13,
+          "total": 13,
+          "output": ".............                                                            [100%]\n13 passed in 0.12s\n"
+        },
+        "files": [
+          ".pytest_cache/.gitignore",
+          ".pytest_cache/CACHEDIR.TAG",
+          ".pytest_cache/README.md",
+          ".pytest_cache/v/cache/nodeids",
+          "__pycache__/code_fixed.cpython-311.pyc",
+          "__pycache__/code_with_leak.cpython-311.pyc",
+          "code_fixed.py",
+          "code_review_report.md",
+          "code_with_leak.py",
+          "tests/__init__.py",
+          "tests/__pycache__/__init__.cpython-311.pyc",
+          "tests/__pycache__/test_code_review.cpython-311-pytest-9.1.1.pyc",
+          "tests/reference.txt",
+          "tests/rubric.yaml",
+          "tests/test_code_review.py"
+        ],
+        "duration_s": 147.8,
+        "mode": "elysium"
+      },
+      "T02_documentation_generation": {
+        "correctness": 0,
+        "completeness": 0,
+        "efficiency": 0,
+        "robustness": 0,
+        "clarity": 0,
+        "total": 0,
+        "passed": false,
+        "task_type": "text",
+        "gaps": [
+          "Timeout"
+        ],
+        "tests": {
+          "passed": 0,
+          "total": 0,
+          "output": "Timeout"
+        },
+        "files": [],
+        "mode": "timeout",
+        "duration_s": 180.0
+      },
+      "T02_configuration_management": {
+        "correctness": 0,
+        "completeness": 0,
+        "efficiency": 0,
+        "robustness": 0,
+        "clarity": 0,
+        "total": 0,
+        "passed": false,
+        "task_type": "plan",
+        "gaps": [
+          "Timeout"
+        ],
+        "tests": {
+          "passed": 0,
+          "total": 0,
+          "output": "Timeout"
+        },
+        "files": [],
+        "mode": "timeout",
+        "duration_s": 180.0
+      }
+    },
+    "retest": {
+      "T01_api_development": {
+        "correctness": 40.0,
+        "completeness": 11.0,
+        "efficiency": 13.0,
+        "robustness": 1.0,
+        "clarity": 10.0,
+        "total": 75.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 7,
+          "total": 7,
+          "output": ".......                                                                  [100%]\n============================== warnings summary ===============================\ntests/test_solution.py::TestCreateUserCRUDAPI::test_input_validation_present\n  C:\\Users\\Admin\\Elysium-Bench\\tasks\\api_development\\T01_api_development\\tests\\test_solution.py:30: PydanticDeprecatedSince20: The `__fields__` attribute is deprecated, use the `model_fields` class property instead. Deprecated in Pydantic V2.0 to be removed in V3.0. See Pydantic V2 Migration Guide at https://errors.pydantic.dev/2.13/migration/\n    hasattr(getattr(main, name, None), '__fields__') or\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n7 passed, 1 warning in 0.52s\n"
+        },
+        "files": [
+          ".pytest_cache/.gitignore",
+          ".pytest_cache/CACHEDIR.TAG",
+          ".pytest_cache/README.md",
+          ".pytest_cache/v/cache/nodeids",
+          "__pycache__/main.cpython-311.pyc",
+          "main.py",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 98.9,
+        "mode": "elysium"
+      },
+      "T01_bug_fixing": {
+        "correctness": 40.0,
+        "completeness": 11.0,
+        "efficiency": 15.0,
+        "robustness": 3.0,
+        "clarity": 10.0,
+        "total": 79.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 6,
+          "total": 6,
+          "output": "......                                                                   [100%]\n6 passed in 0.51s\n"
+        },
+        "files": [
+          ".pytest_cache/.gitignore",
+          ".pytest_cache/CACHEDIR.TAG",
+          ".pytest_cache/README.md",
+          ".pytest_cache/v/cache/nodeids",
+          "__pycache__/main.cpython-311.pyc",
+          "main.py",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 67.3,
+        "mode": "elysium"
+      },
+      "T01_algorithm_implementation": {
+        "correctness": 40.0,
+        "completeness": 5.0,
+        "efficiency": 13.0,
+        "robustness": 0.0,
+        "clarity": 10.0,
+        "total": 68.0,
+        "passed": true,
+        "task_type": "code",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 27,
+          "total": 27,
+          "output": "...........................                                              [100%]\n27 passed in 0.12s\n"
+        },
+        "files": [
+          ".pytest_cache/.gitignore",
+          ".pytest_cache/CACHEDIR.TAG",
+          ".pytest_cache/README.md",
+          ".pytest_cache/v/cache/nodeids",
+          "__pycache__/binary_search.cpython-311.pyc",
+          "__pycache__/main.cpython-311.pyc",
+          "binary_search.py",
+          "main.py",
+          "tests/__pycache__/conftest.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_binary_search.cpython-311-pytest-9.1.1.pyc",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/conftest.py",
+          "tests/test_binary_search.py",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 119.9,
+        "mode": "elysium"
+      },
+      "T01_data_analysis": {
+        "correctness": 40.0,
+        "completeness": 7.5,
+        "efficiency": 4.5,
+        "robustness": 3.0,
+        "clarity": 3.0,
+        "total": 58.0,
+        "passed": false,
+        "task_type": "data",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 6,
+          "total": 6,
+          "output": "......                                                                   [100%]\n6 passed in 0.04s\n"
+        },
+        "files": [
+          "queries/sales_report_q4_2024.sql",
+          "tests/test_sales_report.py",
+          "tests/validate.py"
+        ],
+        "duration_s": 109.3,
+        "mode": "elysium"
+      },
+      "T01_mathematical_reasoning": {
+        "correctness": 40.0,
+        "completeness": 3.5714285714285716,
+        "efficiency": 4.5,
+        "robustness": 0.0,
+        "clarity": 7.0,
+        "total": 55.1,
+        "passed": false,
+        "task_type": "math",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 0,
+          "total": 0,
+          "output": "\nno tests ran in 0.02s\n"
+        },
+        "files": [
+          "solution.md",
+          "solution.py",
+          "tests/expected.json",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 101.5,
+        "mode": "elysium"
+      },
+      "T01_logical_deduction": {
+        "correctness": 40.0,
+        "completeness": 25.0,
+        "efficiency": 15.0,
+        "robustness": 10.0,
+        "clarity": 10.0,
+        "total": 100.0,
+        "passed": true,
+        "task_type": "text",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 8,
+          "total": 8,
+          "output": "........                                                                 [100%]\n8 passed in 0.04s\n"
+        },
+        "files": [
+          ".pytest_cache/.gitignore",
+          ".pytest_cache/CACHEDIR.TAG",
+          ".pytest_cache/README.md",
+          ".pytest_cache/v/cache/nodeids",
+          "__pycache__/solution.cpython-311.pyc",
+          "solution.py",
+          "tests/__pycache__/test_solution.cpython-311-pytest-9.1.1.pyc",
+          "tests/reference.txt",
+          "tests/rubric.yaml",
+          "tests/test_solution.py"
+        ],
+        "duration_s": 67.3,
+        "mode": "elysium"
+      },
+      "T01_security_analysis": {
+        "correctness": 0,
+        "completeness": 0,
+        "efficiency": 0,
+        "robustness": 0,
+        "clarity": 0,
+        "total": 0,
+        "passed": false,
+        "task_type": "text",
+        "gaps": [
+          "Timeout"
+        ],
+        "tests": {
+          "passed": 0,
+          "total": 0,
+          "output": "Timeout"
+        },
+        "files": [],
+        "mode": "timeout",
+        "duration_s": 180.0
+      },
+      "T01_code_review": {
+        "correctness": 0,
+        "completeness": 0,
+        "efficiency": 0,
+        "robustness": 0,
+        "clarity": 0,
+        "total": 0,
+        "passed": false,
+        "task_type": "text",
+        "gaps": [
+          "Timeout"
+        ],
+        "tests": {
+          "passed": 0,
+          "total": 0,
+          "output": "Timeout"
+        },
+        "files": [],
+        "mode": "timeout",
+        "duration_s": 180.0
+      },
+      "T01_documentation_generation": {
+        "correctness": 0,
+        "completeness": 0,
+        "efficiency": 0,
+        "robustness": 0,
+        "clarity": 0,
+        "total": 0,
+        "passed": false,
+        "task_type": "text",
+        "gaps": [
+          "Timeout"
+        ],
+        "tests": {
+          "passed": 0,
+          "total": 0,
+          "output": "Timeout"
+        },
+        "files": [],
+        "mode": "timeout",
+        "duration_s": 180.0
+      },
+      "T01_configuration_management": {
+        "correctness": 0.0,
+        "completeness": 25.0,
+        "efficiency": 0.0,
+        "robustness": 3.333333333333333,
+        "clarity": 7.0,
+        "total": 35.3,
+        "passed": false,
+        "task_type": "plan",
+        "gaps": [],
+        "notes": [],
+        "tests": {
+          "passed": 18,
+          "total": 18,
+          "output": "..................                                                       [100%]\n18 passed in 0.02s\n"
+        },
+        "files": [
+          ".dockerignore",
+          ".pytest_cache/.gitignore",
+          ".pytest_cache/CACHEDIR.TAG",
+          ".pytest_cache/README.md",
+          ".pytest_cache/v/cache/lastfailed",
+          ".pytest_cache/v/cache/nodeids",
+          "Dockerfile",
+          "tests/__pycache__/test_dockerfile.cpython-311-pytest-9.1.1.pyc",
+          "tests/constraints.yaml",
+          "tests/rubric.yaml",
+          "tests/test_dockerfile.py"
+        ],
+        "duration_s": 141.8,
+        "mode": "elysium"
+      }
+    }
+  }
+}

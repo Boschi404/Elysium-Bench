@@ -1,7 +1,1 @@
-# Reference solution for T04_security_analysis
-
-This is a placeholder for the expected output.
-In production, this contains the gold-standard answer.
-
-Task: OWASP Top 10 Checklist
-Difficulty: 6/10
+No CSRF protection on POST /api/data endpoint. Missing CSRF token validation. Fix: add CSRF middleware or token validation.

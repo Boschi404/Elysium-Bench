@@ -1,6 +1,7 @@
 id: "T03_api_development"
 category: "api_development"
 name: "Create Task/TODO API"
+task_type: "code"
 description: >
   Implement a task management API. Must include: GET /tasks (list with ?status=todo|done|all), GET /tasks/{id}, POST /tasks (create with title, description, due_date), PUT /tasks/{id} (update fields), PATCH /tasks/{id}/status (toggle status), DELETE /tasks/{id}. Use FastAPI. Validate dates, title required, status enum. Return tasks sorted by due_date ascending.
 difficulty: 4

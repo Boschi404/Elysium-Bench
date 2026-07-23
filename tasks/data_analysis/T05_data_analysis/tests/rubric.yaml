@@ -1,0 +1,27 @@
+criteria:
+- checks:
+  - 'RANK'
+  - 'OVER'
+  - 'PARTITION BY'
+  - 'LAG'
+  - 'ORDER BY'
+  name: completeness
+  weight: 25
+- checks:
+  - 'AVG'
+  - 'SUM'
+  - 'running'
+  name: efficiency
+  weight: 15
+- checks:
+  - 'NULL'
+  - 'COALESCE'
+  - 'WHEN'
+  name: robustness
+  weight: 10
+- checks:
+  - '#'
+  - 'salary'
+  - 'department'
+  name: clarity
+  weight: 10

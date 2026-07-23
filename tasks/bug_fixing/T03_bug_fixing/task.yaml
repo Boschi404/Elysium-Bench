@@ -1,6 +1,7 @@
 id: "T03_bug_fixing"
 category: "bug_fixing"
 name: "Fix SQL Injection Vulnerability"
+task_type: "code"
 description: >
   Given a search endpoint that concatenates user input directly into SQL queries (e.g., f"SELECT * FROM items WHERE name LIKE '%{query}%'"). Convert to parameterized queries. The endpoint is GET /search?q=term. Must still return correct results after the fix.
 difficulty: 4

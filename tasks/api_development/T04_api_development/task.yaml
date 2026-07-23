@@ -1,6 +1,7 @@
 id: "T04_api_development"
 category: "api_development"
 name: "Create Blog Post API with Comments"
+task_type: "code"
 description: >
   Implement a blog API with posts and nested comments. Must include: GET /posts (list with ?author=&tag=), GET /posts/{id} (post with comments), POST /posts (create), PUT /posts/{id}, DELETE /posts/{id}, POST /posts/{id}/comments (add comment), DELETE /comments/{id} (delete comment). Use FastAPI. Validate content length > 10 for posts, > 1 for comments. Include created_at timestamps.
 difficulty: 5

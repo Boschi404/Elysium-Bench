@@ -1,7 +1,1 @@
-# Reference solution for T04_code_review
-
-This is a placeholder for the expected output.
-In production, this contains the gold-standard answer.
-
-Task: Review: Security Vulnerabilities
-Difficulty: 4/10
+Anti-pattern: God object at class DataManager. Too many responsibilities. Break into separate classes: DataFetcher, DataValidator, DataProcessor.

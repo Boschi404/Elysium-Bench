@@ -1,7 +1,1 @@
-# Reference solution for T09_documentation_generation
-
-This is a placeholder for the expected output.
-In production, this contains the gold-standard answer.
-
-Task: Write Contributing Guide
-Difficulty: 4/10
+Changelog v2.0.0. Breaking: deprecated /v1/ endpoints. New: GraphQL API, WebSocket support. Fixed: race condition in order processing, memory leak in session manager.

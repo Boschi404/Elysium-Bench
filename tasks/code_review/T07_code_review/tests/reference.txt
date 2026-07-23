@@ -1,7 +1,1 @@
-# Reference solution for T07_code_review
-
-This is a placeholder for the expected output.
-In production, this contains the gold-standard answer.
-
-Task: Review: Test Coverage Analysis
-Difficulty: 5/10
+Deadlock potential: locks acquired in different order in two methods. Thread A locks X then Y, thread B locks Y then X. Fix: consistent lock ordering.

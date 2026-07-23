@@ -1,6 +1,7 @@
 id: "T06_bug_fixing"
 category: "bug_fixing"
 name: "Fix Infinite Loop in Pagination"
+task_type: "code"
 description: >
   Given a paginated endpoint GET /items?page=N&limit=M that enters an infinite loop when page > total_pages. The pagination logic doesn't check bounds. Fix by returning an empty list for out-of-range pages with proper metadata (total, page, total_pages). Also handle limit=0 edge case.
 difficulty: 4

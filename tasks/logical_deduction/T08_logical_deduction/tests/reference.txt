@@ -1,7 +1,1 @@
-# Reference solution for T08_logical_deduction
-
-This is a placeholder for the expected output.
-In production, this contains the gold-standard answer.
-
-Task: Predicate Logic Translation
-Difficulty: 5/10
+Statement: If P then Q. Inverse: If not P then not Q. For truth values P=F Q=T: the conditional is true but its inverse is false, demonstrating they are not equivalent.

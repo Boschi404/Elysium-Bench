@@ -1,7 +1,1 @@
-# Reference solution for T02_code_review
-
-This is a placeholder for the expected output.
-In production, this contains the gold-standard answer.
-
-Task: Review: Memory Leak Pattern
-Difficulty: 5/10
+Memory leak: file handle not closed after open() on line 45. Use context manager: with open() as f. Resource leak in loop.

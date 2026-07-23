@@ -1,7 +1,1 @@
-# Reference solution for T05_logical_deduction
-
-This is a placeholder for the expected output.
-In production, this contains the gold-standard answer.
-
-Task: Constraint Satisfaction: Seating
-Difficulty: 6/10
+The missing number is 36. Pattern: each number is the square of its position. Positions: 1²=1, 2²=4, 3²=9, 4²=16, 5²=25, 6²=36, 7²=49.

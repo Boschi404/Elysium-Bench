@@ -1,6 +1,7 @@
 id: "T07_api_development"
 category: "api_development"
 name: "Create File Upload API"
+task_type: "code"
 description: >
   Implement a file upload/management API. Must include: POST /upload (multipart file upload, return file metadata), GET /files (list uploaded files), GET /files/{id} (download file), DELETE /files/{id} (remove file). Store files on disk in a configurable directory. Track: filename, size, content_type, upload_date. Validate file size < 10MB, allowed types: jpg, png, pdf, txt. Generate unique filenames to prevent collisions.
 difficulty: 5

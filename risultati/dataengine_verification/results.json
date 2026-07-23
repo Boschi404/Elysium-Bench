@@ -1,0 +1,117 @@
+[
+  {
+    "name": "SQL_sales_report",
+    "scores": {
+      "GOOD": {
+        "correctness": 40.0,
+        "completeness": 25.0,
+        "efficiency": 10.0,
+        "robustness": 6.666666666666666,
+        "clarity": 10.0,
+        "total": 91.66666666666667
+      },
+      "BAD": {
+        "correctness": 40.0,
+        "completeness": 0.0,
+        "efficiency": 0.0,
+        "robustness": 0.0,
+        "clarity": 0.0,
+        "total": 40.0
+      }
+    },
+    "delta": 51.66666666666667,
+    "differentiated": true
+  },
+  {
+    "name": "Pandas_data_cleaning",
+    "scores": {
+      "GOOD": {
+        "correctness": 40.0,
+        "completeness": 0.0,
+        "efficiency": 0.0,
+        "robustness": 3.333333333333333,
+        "clarity": 3.333333333333333,
+        "total": 46.66666666666667
+      },
+      "BAD": {
+        "correctness": 40.0,
+        "completeness": 0.0,
+        "efficiency": 0.0,
+        "robustness": 0.0,
+        "clarity": 0.0,
+        "total": 40.0
+      }
+    },
+    "delta": 6.666666666666671,
+    "differentiated": true
+  },
+  {
+    "name": "SQL_JOIN_complex",
+    "scores": {
+      "GOOD": {
+        "correctness": 40.0,
+        "completeness": 15.0,
+        "efficiency": 5.0,
+        "robustness": 6.666666666666666,
+        "clarity": 3.333333333333333,
+        "total": 70.0
+      },
+      "BAD": {
+        "correctness": 40.0,
+        "completeness": 5.0,
+        "efficiency": 0.0,
+        "robustness": 0.0,
+        "clarity": 0.0,
+        "total": 45.0
+      }
+    },
+    "delta": 25.0,
+    "differentiated": true
+  },
+  {
+    "name": "Pandas_merge_transform",
+    "scores": {
+      "GOOD": {
+        "correctness": 40.0,
+        "completeness": 5.0,
+        "efficiency": 0.0,
+        "robustness": 3.333333333333333,
+        "clarity": 3.333333333333333,
+        "total": 51.66666666666667
+      },
+      "BAD": {
+        "correctness": 40.0,
+        "completeness": 0.0,
+        "efficiency": 0.0,
+        "robustness": 0.0,
+        "clarity": 0.0,
+        "total": 40.0
+      }
+    },
+    "delta": 11.666666666666671,
+    "differentiated": true
+  },
+  {
+    "name": "SQL_subquery_analysis",
+    "scores": {
+      "GOOD": {
+        "correctness": 40.0,
+        "completeness": 25.0,
+        "efficiency": 0.0,
+        "robustness": 3.333333333333333,
+        "clarity": 3.333333333333333,
+        "total": 71.66666666666666
+      },
+      "BAD": {
+        "correctness": 40.0,
+        "completeness": 0.0,
+        "efficiency": 0.0,
+        "robustness": 0.0,
+        "clarity": 0.0,
+        "total": 40.0
+      }
+    },
+    "delta": 31.666666666666657,
+    "differentiated": true
+  }
+]

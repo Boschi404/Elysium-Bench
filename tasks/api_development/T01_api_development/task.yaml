@@ -1,6 +1,7 @@
 id: "T01_api_development"
 category: "api_development"
 name: "Create User CRUD API"
+task_type: "code"
 description: >
   Implement a REST API for user management with CRUD operations. Must include: GET /users (list), GET /users/{id} (get), POST /users (create), PUT /users/{id} (update), DELETE /users/{id} (delete). Use FastAPI. Store data in memory (no DB required). Include input validation (email format, name length > 2, age > 0). Return proper HTTP status codes.
 difficulty: 3

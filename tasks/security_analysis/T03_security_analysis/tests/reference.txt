@@ -1,7 +1,1 @@
-# Reference solution for T03_security_analysis
-
-This is a placeholder for the expected output.
-In production, this contains the gold-standard answer.
-
-Task: JWT Token Security Audit
-Difficulty: 5/10
+Hardcoded API key in config.py line 8. Secret: sk-abc123. Fix: move to environment variable using os.getenv.

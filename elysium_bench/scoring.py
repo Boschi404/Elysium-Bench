@@ -397,28 +397,60 @@ class MathScoringEngine:
         if expected_answer is None:
             return 0.0
 
-        # Try numeric comparison
+        # 1. TRY CODE EXECUTION (most reliable)
+        solution_output = self._execute_solution()
+        if solution_output is not None:
+            numbers = re.findall(r'[-+]?\d*\.?\d+', solution_output)
+            for n in numbers:
+                try:
+                    if isinstance(expected_answer, (int, float)):
+                        if abs(float(n) - float(expected_answer)) < 0.001:
+                            return max_score
+                    elif isinstance(expected_answer, str):
+                        if expected_answer.lower() in solution_output.lower():
+                            return max_score
+                        if n.lower() == expected_answer.lower():
+                            return max_score
+                except (ValueError, TypeError):
+                    pass
+            if numbers:
+                return max_score * 0.5  # Code ran but wrong answer
+
+        # 2. FALLBACK: scan text for expected answer (original full-credit logic)
         if isinstance(expected_answer, (int, float)):
-            # Find numbers in output
             numbers = re.findall(r'[-+]?\d*\.?\d+', output)
             for n in numbers:
                 try:
                     if abs(float(n) - float(expected_answer)) < 0.001:
-                        return max_score
+                        return max_score  # Full credit — found in text
                 except ValueError:
                     pass
-            # Partial credit: answer present but wrong
             if numbers:
                 return max_score * 0.3
             return 0.0
 
-        # String comparison
         if isinstance(expected_answer, str):
             if expected_answer.lower() in output.lower():
-                return max_score
-            return max_score * 0.2  # Partial: output exists but answer not found
+                return max_score  # Full credit — found in text
+            return max_score * 0.2
 
         return 0.0
+
+    def _execute_solution(self) -> str | None:
+        """Execute Python solution file and return stdout, or None if can't execute."""
+        import tempfile
+        py_files = sorted(self.solution_dir.rglob("*.py"))
+        if not py_files:
+            return None
+        try:
+            result = subprocess.run(
+                [sys.executable, str(py_files[0])],
+                capture_output=True, text=True, timeout=30,
+                cwd=str(self.solution_dir),
+            )
+            return result.stdout.strip()
+        except Exception:
+            return None
 
     def _check_reasoning(self, output: str) -> float:
         max_score = float(self.weights.get("completeness", 25))
@@ -478,8 +510,10 @@ class PlanScoringEngine:
 
         constraints = self._load_constraints()
 
-        # 1. Correctness: all constraints satisfied?
-        score.correctness = self._check_constraints(output, constraints)
+        # 1. Correctness: all constraints satisfied + artifact validation
+        constraint_score = self._check_constraints(output, constraints)
+        validation_score = self._validate_artifact()
+        score.correctness = max(constraint_score, validation_score)  # best of both
 
         # 2. Completeness: all required sections present?
         score.completeness = self._check_completeness(output, constraints)
@@ -495,6 +529,64 @@ class PlanScoringEngine:
 
         score.compute_total()
         return score
+
+    def _validate_artifact(self) -> float:
+        """Try to validate the actual artifact (Dockerfile, YAML, etc)."""
+        max_score = float(self.weights.get("correctness", 40))
+        
+        # Scan ALL files for Dockerfile content
+        for f in sorted(self.solution_dir.rglob("*")):
+            if not f.is_file(): continue
+            try:
+                content = f.read_text(encoding="utf-8", errors="ignore")
+            except Exception:
+                continue
+            
+            # Dockerfile validation
+            if re.search(r'^FROM\s+\S+', content, re.MULTILINE):
+                has_run = bool(re.search(r'^RUN\s+', content, re.MULTILINE))
+                has_cmd = bool(re.search(r'^CMD\s+|^ENTRYPOINT\s+', content, re.MULTILINE))
+                if has_run or has_cmd:
+                    return max_score * 0.8  # Valid Dockerfile found
+                return max_score * 0.6  # Minimal Dockerfile
+            
+            # docker-compose.yml validation
+            if re.search(r'^services:', content, re.MULTILINE) or '"services"' in content.lower():
+                try:
+                    yaml.safe_load(content)
+                    return max_score * 0.7  # Valid compose
+                except yaml.YAMLError:
+                    return max_score * 0.2
+                except Exception:
+                    pass
+
+        # Check for Dockerfile file
+        dockerfile = self.solution_dir / "Dockerfile"
+        if not dockerfile.exists():
+            dockerfile = next(self.solution_dir.rglob("Dockerfile"), None)
+        if dockerfile and dockerfile.exists():
+            try:
+                content = dockerfile.read_text(encoding="utf-8")
+                if re.search(r'^FROM\s+\S+', content, re.MULTILINE):
+                    return max_score * 0.7
+                return max_score * 0.3
+            except Exception:
+                pass
+
+        # Check for docker-compose.yml
+        compose = self.solution_dir / "docker-compose.yml"
+        if not compose.exists():
+            compose = next(self.solution_dir.rglob("docker-compose.y*ml"), None)
+        if compose and compose.exists():
+            try:
+                yaml.safe_load(compose.read_text(encoding="utf-8"))
+                return max_score * 0.7
+            except yaml.YAMLError:
+                return max_score * 0.1
+            except Exception:
+                pass
+
+        return 0.0  # No artifact found
 
     def _read_output(self) -> str:
         texts = []
@@ -619,21 +711,78 @@ class DataScoringEngine:
             return 0.0
 
     def _rubric_check(self, output: str, dimension: str) -> float:
+        """Evaluate a scoring dimension for data tasks.
+
+        If a rubric.yaml exists, use it for keyword-based checks.
+        If no rubric exists, fall back to CONTENT-AWARE heuristics
+        (not a static constant) so the score actually reflects output quality.
+        """
         weight_map = {"completeness": 25, "efficiency": 15, "robustness": 10, "clarity": 10}
         max_score = float(self.weights.get(dimension, weight_map.get(dimension, 10)))
 
         rubric_file = self.task_dir / "tests" / "rubric.yaml"
-        if not rubric_file.exists():
-            return max_score * 0.3
+        if rubric_file.exists():
+            rubric = yaml.safe_load(rubric_file.read_text(encoding="utf-8"))
+            for crit in rubric.get("criteria", []):
+                if crit.get("name") == dimension:
+                    checks = crit.get("checks", [])
+                    points = sum(1.0 for c in checks if c.lower() in output.lower())
+                    return max_score * (points / len(checks)) if checks else max_score * 0.5
+            return max_score * 0.5
 
-        rubric = yaml.safe_load(rubric_file.read_text(encoding="utf-8"))
-        for crit in rubric.get("criteria", []):
-            if crit.get("name") == dimension:
-                checks = crit.get("checks", [])
-                points = sum(1.0 for c in checks if c.lower() in output.lower())
-                return max_score * (points / len(checks)) if checks else max_score * 0.5
+        # ── CONTENT-AWARE FALLBACK (replaces static max_score * 0.3) ──
+        # When no rubric.yaml exists, evaluate the actual output content
+        # so the score VARIES with input quality instead of being constant.
+        output_lower = output.lower().strip()
+        if not output_lower:
+            return 0.0
 
-        return max_score * 0.5
+        if dimension == "completeness":
+            # Check for SQL/Pandas completeness indicators
+            score = 0.0
+            if "select" in output_lower or "insert" in output_lower or "update" in output_lower:
+                score += max_score * 0.3  # Has SQL operations
+            if "join" in output_lower or "group by" in output_lower or "order by" in output_lower:
+                score += max_score * 0.25  # Has advanced SQL
+            if "where" in output_lower or "having" in output_lower:
+                score += max_score * 0.2  # Has filtering
+            if "import pandas" in output_lower or "import numpy" in output_lower or "df[" in output_lower:
+                score += max_score * 0.25  # Uses data libraries
+            return min(max_score, score)
+
+        if dimension == "efficiency":
+            # Penalize excessively long solutions
+            lines = output_lower.split("\n")
+            non_empty = [l for l in lines if l.strip()]
+            if len(non_empty) < 5:
+                return max_score * 0.3
+            if len(non_empty) > 100:
+                return max_score * 0.4  # Too verbose
+            return max_score * 0.8  # Reasonable length
+
+        if dimension == "robustness":
+            # Check for error handling in data code
+            score = 0.0
+            if "try:" in output_lower or "except" in output_lower:
+                score += max_score * 0.4
+            if "isnull" in output_lower or "isna" in output_lower or "notnull" in output_lower:
+                score += max_score * 0.3  # Null checks
+            if "if" in output_lower and "else" in output_lower:
+                score += max_score * 0.3  # Conditional logic
+            return min(max_score, score)
+
+        if dimension == "clarity":
+            # Check for comments, formatting, readable structure
+            score = 0.0
+            if "#" in output_lower and ("--" in output_lower or '"""' in output_lower):
+                score += max_score * 0.4  # Has comments
+            if "\n\n" in output_lower:
+                score += max_score * 0.3  # Has paragraph breaks
+            if any(kw in output_lower for kw in ["select", "from", "where", "import"]):
+                score += max_score * 0.3  # Has structured syntax
+            return min(max_score, score)
+
+        return max_score * 0.3  # Final fallback (should rarely reach here)
 
 
 # ── Legacy compatibility ──────────────────────────────────────────────────

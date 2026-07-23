@@ -1,0 +1,27 @@
+criteria:
+- checks:
+  - 'read_csv'
+  - 'merge'
+  - 'groupby'
+  - 'to_csv'
+  - 'DataFrame'
+  name: completeness
+  weight: 25
+- checks:
+  - 'sum'
+  - 'mean'
+  - 'revenue'
+  name: efficiency
+  weight: 15
+- checks:
+  - 'try'
+  - 'except'
+  - 'isdir'
+  name: robustness
+  weight: 10
+- checks:
+  - '#'
+  - 'print'
+  - 'KPI'
+  name: clarity
+  weight: 10

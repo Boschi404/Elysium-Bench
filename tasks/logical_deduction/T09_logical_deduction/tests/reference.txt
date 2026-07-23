@@ -1,7 +1,1 @@
-# Reference solution for T09_logical_deduction
-
-This is a placeholder for the expected output.
-In production, this contains the gold-standard answer.
-
-Task: Logical Fallacy Detection
-Difficulty: 4/10
+∃x∀y P(x,y) is true, ∀y∃x P(x,y) is false. The quantifier order changes meaning: first says there is one x that works for all y, second says for each y there exists some x.

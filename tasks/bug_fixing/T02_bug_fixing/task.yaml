@@ -1,6 +1,7 @@
 id: "T02_bug_fixing"
 category: "bug_fixing"
 name: "Fix Race Condition in Counter"
+task_type: "code"
 description: >
   Given a counter service with a race condition: multiple concurrent requests to POST /increment can lose counts. The counter uses a simple variable without locking. Fix by adding proper thread-safe operations. Ensure GET /counter returns the correct total after concurrent increments.
 difficulty: 5

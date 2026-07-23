@@ -1,0 +1,27 @@
+criteria:
+- checks:
+  - 'describe'
+  - 'corr'
+  - 'skew'
+  - 'kurtosis'
+  - 'shapiro'
+  name: completeness
+  weight: 25
+- checks:
+  - 'mean'
+  - 'median'
+  - 'report'
+  name: efficiency
+  weight: 15
+- checks:
+  - 'dropna'
+  - 'isnull'
+  - 'Error'
+  name: robustness
+  weight: 10
+- checks:
+  - '#'
+  - 'print'
+  - 'numeric'
+  name: clarity
+  weight: 10
