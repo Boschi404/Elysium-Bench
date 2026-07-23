@@ -43,6 +43,13 @@ class TaskExecutor:
         # 0. Force baseline mode (skip LLM, run tests directly)
         if force_baseline:
             result = self._run_baseline(workspace, timeout)
+            result["mode"] = "baseline"
+            elapsed = time.time() - start
+            result["elapsed_seconds"] = round(elapsed, 1)
+            result["task_id"] = task_id
+            result["attempt"] = attempt
+            result["workspace"] = str(workspace)
+            return result
 
         # 1. Try Hermes CLI — runs task through Elysium Swarmloop skill
         result = self._try_hermes_cli(task_id, task_description, workspace, timeout)
@@ -71,7 +78,8 @@ class TaskExecutor:
         prompt_content = prompt_file.read_text(encoding="utf-8")
 
         cmd = [
-            "hermes", "chat",
+            r"C:\Users\Admin\AppData\Local\hermes\hermes-agent\venv\Scripts\hermes.exe",
+            "chat",
             "-q", prompt_content,
             "--skills", "elysium-swarmloop",
             "-Q",  # Quiet mode for programmatic use
