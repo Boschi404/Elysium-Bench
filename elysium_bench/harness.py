@@ -40,8 +40,11 @@ class Harness:
 
         workspace = base / f"bench_{task_id}"
         if workspace.exists():
-            import shutil
-            shutil.rmtree(workspace)
+            import shutil, os
+            # Use os.system for Windows .git permission issues
+            os.system(f'rmdir /S /Q "{workspace}" 2>nul')
+            if workspace.exists():
+                shutil.rmtree(workspace, ignore_errors=True)
         workspace.mkdir(parents=True, exist_ok=True)
         self._temp_dirs.append(workspace)
 
