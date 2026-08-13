@@ -1,0 +1,21 @@
+id: text_T01_code_review
+category: realbench_text
+name: "Code Review of a Flawed Auth Module"
+description: |
+  The workspace contains `diff.patch` — a proposed change to an
+  authentication module. Write a code review of this diff in `review.md`.
+
+  The review MUST:
+  - Identify the planted issues in the diff, each with: file/line region,
+    severity (critical/high/medium/low), and a concrete fix suggestion.
+  - Contain NO false positives: every claimed issue must be real.
+  - Be specific: reference actual identifiers/line content from the diff,
+    not generic advice ("use parameterized queries" without pointing at
+    the vulnerable line is too weak).
+
+  There are exactly 5 planted issues of severity >= medium in the diff.
+  A review that finds all 5 without false positives scores highest.
+task_type: text
+difficulty: 6
+timeout_seconds: 900
+expected_files: ["review.md"]

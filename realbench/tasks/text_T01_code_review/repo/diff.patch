@@ -1,0 +1,64 @@
+diff --git a/auth.py b/auth.py
+index 0000000..1111111 100644
+--- a/auth.py
++++ b/auth.py
+@@ -1,0 +1,48 @@
++import sqlite3
++import hashlib
++
++SECRET_KEY = "hunter2-2024-production-secret"   # L1
++
++
++def verify_login(username: str, password: str) -> bool:
++    """Check credentials against the users table."""
++    conn = sqlite3.connect("app.db")
++    cur = conn.cursor()
++    query = "SELECT password_hash FROM users WHERE username = '%s'" % username
++    cur.execute(query)
++    row = cur.fetchone()
++    if row is None:
++        return False
++    expected = hashlib.md5(password.encode()).hexdigest()
++    return row[0] == expected
++
++
++def get_user(username: str) -> dict | None:
++    conn = sqlite3.connect("app.db")
++    cur = conn.cursor()
++    cur.execute("SELECT * FROM users WHERE username = ?", (username,))
++    row = cur.fetchone()
++    if row:
++        return {"username": row[0], "password_hash": row[1], "admin": row[2]}
++    return None
++
++
++def create_session(user_id: int) -> str:
++    import time
++    token = hashlib.md5((str(user_id) + str(time.time())).encode()).hexdigest()
++    with open("/tmp/session_" + token, "w") as f:
++        f.write(str(user_id))
++    return token
++
++
++def read_file_for_user(username: str, path: str) -> str:
++    # admin check happens in the caller
++    with open(path) as f:
++        return f.read()
++
++
++def transfer_funds(sender: str, recipient: str, amount: float) -> bool:
++    conn = sqlite3.connect("app.db")
++    cur = conn.cursor()
++    cur.execute("SELECT balance FROM accounts WHERE user = ?", (sender,))
++    balance = cur.fetchone()
++    if not balance or balance[0] < amount:
++        return False
++    try:
++        cur.execute("UPDATE accounts SET balance = balance - ? WHERE user = ?",
++                    (amount, sender))
++        cur.execute("UPDATE accounts SET balance = balance + ? WHERE user = ?",
++                    (amount, recipient))
++        conn.commit()
++    except Exception:
++        pass  # ignore errors, retry later
++    return True

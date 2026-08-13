@@ -1,0 +1,35 @@
+id: code_T02_task_scheduler
+category: realbench_code
+name: "Priority Task Scheduler with Dependencies"
+description: |
+  Implement a priority task scheduler in `scheduler.py`.
+
+  SPEC:
+  - class Task:
+      - id: str
+      - priority: int  (higher = more important)
+      - deps: list[str] (ids of tasks that must run BEFORE this one; direct
+        dependencies only)
+
+  - class Scheduler:
+      - __init__(self) — empty scheduler
+      - add_task(self, task: Task) -> None
+      - run_order(self) -> list[str]
+          Returns a valid execution order satisfying ALL constraints:
+          1. dependencies before dependents (topological order)
+          2. among ready tasks, highest priority first
+          3. ties broken by task id ascending (lexicographic)
+          If the graph contains a cycle, raise ValueError.
+      - is_valid(self) -> bool
+          False if: a task depends on an unknown id, a self-loop exists,
+          or the graph has a cycle. True otherwise (empty graph is valid).
+      - detect_cycle(self) -> list[str]
+          Task ids involved in a cycle, or [] if acyclic. Order not required
+          to be deterministic, but must include all cycle participants.
+
+  Constraints: standard library only. Large graphs (1000+ nodes) must be
+  handled in under a few seconds.
+task_type: code
+difficulty: 5
+timeout_seconds: 900
+expected_files: ["scheduler.py"]

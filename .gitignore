@@ -36,3 +36,7 @@ docker-compose.override.yml
 *.key
 *.pem
 workspace_test/
+
+# RealBench: never commit isolated hermes homes (contain auth/config)
+_isolated_homes/
+realbench_ws/

@@ -1,0 +1,36 @@
+# Rubric for text_T01_code_review — used by the blind critic.
+# Each planted issue: id, anchor strings that MUST be referenced for credit,
+# severity, points.
+task_type: text
+criteria:
+  - name: planted_issues
+    weight: 70
+    planted:
+      - id: hardcoded_secret
+        anchors: ["SECRET_KEY", "hunter2"]
+        severity: critical
+      - id: sql_injection
+        anchors: ["% username", "SELECT password_hash"]
+        severity: critical
+      - id: md5_hashing
+        anchors: ["md5"]
+        severity: high
+      - id: toctou_transfer
+        anchors: ["transfer_funds", "balance"]
+        severity: high
+      - id: weak_token_path_traversal
+        anchors: ["read_file_for_user", "create_session", "time.time"]
+        severity: high
+  - name: specificity
+    weight: 15
+    description: "Review references specific file/line regions and identifiers, not generic advice"
+  - name: no_false_positives
+    weight: 15
+    description: "Every claimed issue is real and present in the diff"
+scoring_notes: |
+  The critic grades review.md against this rubric. For each planted issue:
+  2 points if identified with a correct severity AND a concrete fix,
+  1 point if identified without severity/fix,
+  0 points if missed. False positive on a non-planted claim: -3 points each
+  (floor 0). Specificity and no_false_positives scaled 0-15.
+  Total = planted (0-70) + specificity (0-15) + no_false_positives (0-15).

@@ -1,0 +1,24 @@
+id: code_T01_lru_cache
+category: realbench_code
+name: "LRU Cache (O(1) get/put)"
+description: |
+  Implement an LRU (Least Recently Used) cache in a single Python file `lru.py`.
+
+  SPEC:
+  - class LRUCache:
+      - __init__(self, capacity: int) — capacity >= 1
+      - get(self, key: int) -> int — returns the value, or -1 if key absent.
+        Accessing a key refreshes its recency.
+      - put(self, key: int, value: int) -> None — inserts/updates key->value.
+        Updating an existing key does NOT count as eviction and makes it
+        most-recently-used. If the cache is full, evict the LEAST recently
+        used key before inserting a new key.
+  - Both get and put MUST be O(1) average time. A linear-scan implementation
+    will fail the performance test on 100,000 operations.
+  - Write the file to the workspace root: lru.py
+
+  Constraints: no external dependencies beyond the standard library.
+task_type: code
+difficulty: 3
+timeout_seconds: 900
+expected_files: ["lru.py"]

@@ -1,0 +1,256 @@
+{
+  "timestamp": "2026-08-13T20:32:50.946522",
+  "tasks": {
+    "code_T01_lru_cache": {
+      "baseline": {
+        "score": 100.0,
+        "passed": 9,
+        "failed": 0,
+        "elapsed_seconds": 60.5,
+        "timed_out": false,
+        "session_id": "20260813_195417_ad1107",
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": false,
+        "terminal_calls": 0,
+        "write_file_calls": 0,
+        "notes": [],
+        "failed_tests": []
+      },
+      "swarmloop": {
+        "score": 100.0,
+        "passed": 9,
+        "failed": 0,
+        "elapsed_seconds": 148.6,
+        "timed_out": false,
+        "session_id": "20260813_195517_d38868",
+        "input_tokens": 48246,
+        "output_tokens": 1085,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": true,
+        "terminal_calls": 1,
+        "write_file_calls": 1,
+        "notes": [],
+        "failed_tests": []
+      }
+    },
+    "code_T03_service_suite": {
+      "baseline": {
+        "score": 96.2,
+        "passed": 25,
+        "failed": 1,
+        "elapsed_seconds": 70.6,
+        "timed_out": false,
+        "session_id": "20260813_200016_3142ef",
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": false,
+        "terminal_calls": 0,
+        "write_file_calls": 0,
+        "notes": [],
+        "failed_tests": [
+          "_realbench_hidden/test_parser_hidden.py::test_unknown_fields_tolerated"
+        ]
+      },
+      "swarmloop": {
+        "score": 100.0,
+        "passed": 26,
+        "failed": 0,
+        "elapsed_seconds": 169.4,
+        "timed_out": false,
+        "session_id": "20260813_200132_ad77f7",
+        "input_tokens": 54063,
+        "output_tokens": 8326,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": true,
+        "terminal_calls": 3,
+        "write_file_calls": 5,
+        "notes": [],
+        "failed_tests": []
+      },
+      "swarmloop+nudge": {
+        "score": 100.0,
+        "passed": 26,
+        "failed": 0,
+        "elapsed_seconds": 196.2,
+        "timed_out": false,
+        "session_id": "20260813_201853_f6766f",
+        "delegate_calls": 1,
+        "subagents_dispatched": 1,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": true,
+        "input_tokens": 55783,
+        "output_tokens": 0,
+        "notes": [
+          "supplementary run: explicit parallel-decomposition nudge"
+        ]
+      }
+    },
+    "math_T01_knapsack": {
+      "baseline": {
+        "score": 100.0,
+        "passed": 9,
+        "failed": 0,
+        "elapsed_seconds": 72.4,
+        "timed_out": false,
+        "session_id": "20260813_195749_136e09",
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": false,
+        "terminal_calls": 0,
+        "write_file_calls": 0,
+        "notes": [],
+        "failed_tests": []
+      },
+      "swarmloop": {
+        "score": 100.0,
+        "passed": 9,
+        "failed": 0,
+        "elapsed_seconds": 68.7,
+        "timed_out": false,
+        "session_id": "20260813_195902_234d3e",
+        "input_tokens": 48304,
+        "output_tokens": 1458,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": true,
+        "terminal_calls": 1,
+        "write_file_calls": 1,
+        "notes": [],
+        "failed_tests": []
+      }
+    }
+  },
+  "verdicts": [
+    {
+      "claim": "Benchmark discriminative (gold=100, junk<40, gap\u226560)",
+      "verdict": "PASS",
+      "detail": "code_T01_lru_cache: gold=100.0 junk=0.0; math_T01_knapsack: gold=100.0 junk=0.0; code_T03_service_suite: gold=100.0 junk=0.0"
+    },
+    {
+      "claim": "code_T01_lru_cache: control valid (baseline: no skill, no subagents)",
+      "verdict": "INCONCLUSIVE",
+      "detail": "baseline session evidence lost (isolated db overwritten \u2014 harness bug, fixed); delegation was impossible by construction (-t file,terminal removes the delegation toolset)"
+    },
+    {
+      "claim": "code_T01_lru_cache: swarmloop actually used subagents",
+      "verdict": "FAIL",
+      "detail": "delegate_calls=0 dispatched=0 batched=0 retries=0 skill_loaded=True"
+    },
+    {
+      "claim": "code_T01_lru_cache: swarmloop quality \u2265 baseline",
+      "verdict": "INCONCLUSIVE",
+      "detail": "margin 0.0 pts (100.0 \u2192 100.0) \u2014 within noise"
+    },
+    {
+      "claim": "code_T01_lru_cache: swarmloop wall-time \u2264 baseline",
+      "verdict": "FAIL",
+      "detail": "base 60.5s vs swarm 148.6s (2.5x slower)"
+    },
+    {
+      "claim": "code_T01_lru_cache: cost accounting",
+      "verdict": "INFO",
+      "detail": "base n/a vs swarm ~$0.000/49331tok"
+    },
+    {
+      "claim": "code_T03_service_suite: control valid (baseline: no skill, no subagents)",
+      "verdict": "INCONCLUSIVE",
+      "detail": "baseline session evidence lost (isolated db overwritten \u2014 harness bug, fixed); delegation was impossible by construction (-t file,terminal removes the delegation toolset)"
+    },
+    {
+      "claim": "code_T03_service_suite: swarmloop actually used subagents",
+      "verdict": "FAIL",
+      "detail": "delegate_calls=0 dispatched=0 batched=0 retries=0 skill_loaded=True"
+    },
+    {
+      "claim": "code_T03_service_suite: swarmloop quality \u2265 baseline",
+      "verdict": "INCONCLUSIVE",
+      "detail": "margin 3.8 pts (96.2 \u2192 100.0) \u2014 within noise"
+    },
+    {
+      "claim": "code_T03_service_suite: swarmloop wall-time \u2264 baseline",
+      "verdict": "FAIL",
+      "detail": "base 70.6s vs swarm 169.4s (2.4x slower)"
+    },
+    {
+      "claim": "code_T03_service_suite: cost accounting",
+      "verdict": "INFO",
+      "detail": "base n/a vs swarm ~$0.000/62389tok"
+    },
+    {
+      "claim": "math_T01_knapsack: control valid (baseline: no skill, no subagents)",
+      "verdict": "INCONCLUSIVE",
+      "detail": "baseline session evidence lost (isolated db overwritten \u2014 harness bug, fixed); delegation was impossible by construction (-t file,terminal removes the delegation toolset)"
+    },
+    {
+      "claim": "math_T01_knapsack: swarmloop actually used subagents",
+      "verdict": "FAIL",
+      "detail": "delegate_calls=0 dispatched=0 batched=0 retries=0 skill_loaded=True"
+    },
+    {
+      "claim": "math_T01_knapsack: swarmloop quality \u2265 baseline",
+      "verdict": "INCONCLUSIVE",
+      "detail": "margin 0.0 pts (100.0 \u2192 100.0) \u2014 within noise"
+    },
+    {
+      "claim": "math_T01_knapsack: swarmloop wall-time \u2264 baseline",
+      "verdict": "PASS",
+      "detail": "base 72.4s vs swarm 68.7s"
+    },
+    {
+      "claim": "math_T01_knapsack: cost accounting",
+      "verdict": "INFO",
+      "detail": "base n/a vs swarm ~$0.000/49762tok"
+    },
+    {
+      "claim": "Blind critic valid (gold ranked > junk)",
+      "verdict": "PASS",
+      "detail": "gold=99.0 junk=22.0 margin=77.0"
+    }
+  ],
+  "calibration": {
+    "code_T01_lru_cache": {
+      "gold": 100.0
+    },
+    "math_T01_knapsack": {
+      "gold": 100.0
+    },
+    "code_T03_service_suite": {
+      "gold": 100.0
+    }
+  },
+  "critic_meta": {
+    "ok": true,
+    "gold_score": 99.0,
+    "junk_score": 22.0,
+    "margin": 77.0,
+    "elapsed_seconds": 169.1
+  }
+}

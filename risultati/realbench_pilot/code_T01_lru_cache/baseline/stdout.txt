@@ -1,0 +1,79 @@
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\baseline\lru.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\baseline\lru.py[0m
+[38;2;139;134;130m@@ -0,0 +1,75 @@[0m
+[38;2;255;255;255;48;2;19;87;20m+"""LRU (Least Recently Used) cache with O(1) get/put operations."""[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+class LRUCache:[0m
+[38;2;255;255;255;48;2;19;87;20m+    """A fixed-capacity LRU cache.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    Both get and put run in O(1) average time by combining a hash map[0m
+[38;2;255;255;255;48;2;19;87;20m+    (for O(1) lookups) with an ordered structure that maintains recency.[0m
+[38;2;255;255;255;48;2;19;87;20m+    """[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def __init__(self, capacity: int):[0m
+[38;2;255;255;255;48;2;19;87;20m+        if capacity < 1:[0m
+[38;2;255;255;255;48;2;19;87;20m+            raise ValueError("capacity must be >= 1")[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.capacity = capacity[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._map = {}          # key -> doubly-linked-list node[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._size = 0[0m
+[38;2;255;255;255;48;2;19;87;20m+        # Dummy head and tail to simplify linking/unlinking.[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._head = _Node(0, 0)  # most-recently-used sentinel[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._tail = _Node(0, 0)  # least-recently-used sentinel[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._head.next = self._tail[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._tail.prev = self._head[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def get(self, key: int) -> int:[0m
+[38;2;255;255;255;48;2;19;87;20m+        node = self._map.get(key)[0m
+[38;2;255;255;255;48;2;19;87;20m+        if node is None:[0m
+[38;2;255;255;255;48;2;19;87;20m+            return -1[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._move_to_front(node)[0m
+[38;2;255;255;255;48;2;19;87;20m+        return node.value[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def put(self, key: int, value: int) -> None:[0m
+[38;2;255;255;255;48;2;19;87;20m+        node = self._map.get(key)[0m
+[38;2;255;255;255;48;2;19;87;20m+        if node is not None:[0m
+[38;2;255;255;255;48;2;19;87;20m+            node.value = value[0m
+[38;2;255;255;255;48;2;19;87;20m+            self._move_to_front(node)[0m
+[38;2;255;255;255;48;2;19;87;20m+            return[0m
+[38;2;255;255;255;48;2;19;87;20m+        node = _Node(key, value)[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._map[key] = node[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._add_to_front(node)[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._size += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+        if self._size > self.capacity:[0m
+[38;2;255;255;255;48;2;19;87;20m+            self._evict()[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    # --- internal helpers (all O(1)) ---[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _add_to_front(self, node: "_Node") -> None:[0m
+[38;2;255;255;255;48;2;19;87;20m+        node.prev = self._head[0m
+[38;2;255;255;255;48;2;19;87;20m+        node.next = self._head.next[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._head.next.prev = node[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._head.next = node[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _remove(self, node: "_Node") -> None:[0m
+[38;2;255;255;255;48;2;19;87;20m+        node.prev.next = node.next[0m
+[38;2;255;255;255;48;2;19;87;20m+        node.next.prev = node.prev[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _move_to_front(self, node: "_Node") -> None:[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._remove(node)[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._add_to_front(node)[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _evict(self) -> None:[0m
+[38;2;255;255;255;48;2;19;87;20m+        lru = self._tail.prev[0m
+[38;2;255;255;255;48;2;19;87;20m+        if lru is self._head:[0m
+[38;2;255;255;255;48;2;19;87;20m+            return[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._remove(lru)[0m
+[38;2;255;255;255;48;2;19;87;20m+        del self._map[lru.key][0m
+[38;2;255;255;255;48;2;19;87;20m+        self._size -= 1[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+class _Node:[0m
+[38;2;255;255;255;48;2;19;87;20m+    __slots__ = ("key", "value", "prev", "next")[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def __init__(self, key: int, value: int):[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.key = key[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.value = value[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.prev = None[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.next = None[0m
+DONE

@@ -1,0 +1,25 @@
+id: math_T01_knapsack
+category: realbench_math
+name: "0/1 Knapsack — exact optimum"
+description: |
+  Implement `knapsack.py` with:
+
+    def solve_knapsack(values: list[int], weights: list[int],
+                       capacity: int) -> int
+      Returns the MAXIMUM total value achievable by selecting a subset of
+      items (each item at most once) whose total weight is <= capacity.
+
+  The grader will call your function on instances YOU HAVE NEVER SEEN:
+  they are generated at grading time from fixed random seeds and compared
+  against precomputed exact optima. Hardcoding specific instances is
+  impossible; a greedy heuristic will fail the medium/large instances.
+
+  Constraints:
+  - A dynamic-programming solution is expected: large instances reach
+    n=300, capacity=8000 and must finish in a few seconds.
+  - values/weights are positive ints; capacity >= 0.
+  - Return an int.
+task_type: code
+difficulty: 5
+timeout_seconds: 900
+expected_files: ["knapsack.py"]

@@ -1,0 +1,67 @@
+TASK: Event Pipeline Service (4 modules + integration)
+
+Implement a 4-module event pipeline service. Each module goes in its own
+file at the workspace root. The modules are INDEPENDENT except for the
+documented interface contracts below — they can be implemented in parallel.
+
+MODULE 1 — `parser.py`:
+  def parse_event(text: str) -> dict
+    Parse a line of the form:  "TS=<int> TYPE=<word> VAL=<number>"
+    Fields may appear in any order, separated by one or more spaces.
+    Returns {"ts": int, "type": str, "val": float}.
+    Raises ValueError if: malformed format, missing field, or non-numeric
+    TS/VAL. Leading/trailing whitespace must be tolerated.
+
+MODULE 2 — `validator.py`:
+  def validate_event(event: dict, rules: dict) -> bool
+    rules is a dict possibly containing:
+      - "allowed_types": list[str]  -> event type must be in it
+      - "min_ts": int               -> event ts must be >= min_ts
+      - "max_val": float            -> val must be <= max_val
+    Any rule key absent = no constraint on that dimension.
+    Non-dict event -> False.
+
+MODULE 3 — `store.py`:
+  class EventStore:
+    __init__(self, capacity: int)
+    insert(self, event: dict) -> bool
+      If the store is NOT full: accept the event (append), return True.
+      If the store IS full: accept ONLY IF the incoming event's ts is
+      STRICTLY GREATER than the ts of EVERY event currently stored
+      (i.e., the incoming event is newer than all present events). In
+      that case evict the event with the SMALLEST ts (oldest) and insert
+      the incoming one, return True.
+      Otherwise (incoming ts is equal to or older than at least one
+      stored event): REJECT, return False, store unchanged.
+    query_since(self, ts: int) -> list[dict]
+      Events with ts >= ts, sorted ascending by ts (stable by insertion
+      order for equal ts).
+    count(self) -> int
+
+MODULE 4 — `api.py`:
+  def process_line(line: str, store: EventStore, rules: dict) -> dict
+    Pipeline: parse_event -> validate_event -> store.insert.
+    Returns {"status": "ok"} on success;
+            {"status": "rejected"} if validation fails or store rejects;
+            {"status": "error", "error": <str>} if parsing raises ValueError
+    (error message must contain the reason).
+
+INTERFACE CONTRACTS (signatures are final — do not change them):
+  parser.parse_event(text: str) -> dict
+  validator.validate_event(event: dict, rules: dict) -> bool
+  store.EventStore(capacity: int) / .insert(event) / .query_since(ts) / .count()
+  api.process_line(line: str, store: EventStore, rules: dict) -> dict
+
+Constraints: standard library only. All 4 files required.
+
+
+YOUR ONLY DELIVERABLE — do not do anything else:
+Create the file(s): `parser.py`, `validator.py`, `store.py`, `api.py`.
+Write them into EXACTLY this directory (use this absolute path):
+C:\Users\leob3\AppData\Local\Temp\realbench_ws\realbench_pilot_extra_nudge
+
+Do NOT explore other directories, do NOT copy files around, do NOT create
+subdirectories, do NOT run any benchmark or pipeline you may find nearby,
+do NOT attempt git operations. Work autonomously, do not ask questions
+(fai tu). When the deliverable file(s) are written, reply DONE.
+You have the elysium-swarmloop skill loaded. This task has FOUR INDEPENDENT modules (parser, validator, store, api). USE IT AS DESIGNED: dispatch ONE subagent PER MODULE, all in parallel via delegate_task — every subagent MUST write its deliverable into the exact directory above. Then integrate and judge the final files against the spec before replying DONE.

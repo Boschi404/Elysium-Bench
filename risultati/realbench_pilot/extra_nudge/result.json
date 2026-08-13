@@ -1,0 +1,16 @@
+{
+  "task": "code_T03_service_suite",
+  "condition": "swarmloop+nudge",
+  "score": 100.0,
+  "passed": 26,
+  "failed": 0,
+  "wall": 196.2,
+  "timed_out": false,
+  "session_id": "20260813_201853_f6766f",
+  "skill_loaded": true,
+  "delegate_calls": 1,
+  "subagents": 1,
+  "batched": 0,
+  "retries": 0,
+  "tokens": 55783
+}

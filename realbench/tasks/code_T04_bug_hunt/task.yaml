@@ -1,0 +1,31 @@
+id: code_T04_bug_hunt
+category: realbench_code
+name: "Fix 3 Planted Bugs (stats, finance, textutil)"
+description: |
+  The workspace contains a small Python library with THREE planted bugs, one
+  in each file. Find and fix them WITHOUT breaking existing behavior.
+
+  `stats.py`:
+    - mean(values) -> float
+    - median(values) -> float   [BUG somewhere in the even-length case]
+    - stddev(values) -> float   (sample standard deviation, n-1 denominator)
+
+  `finance.py`:
+    - compound_interest(principal, rate, years) -> float
+        Final amount after `years` with annual rate `rate` (0.05 = 5%).
+        [BUG somewhere in the formula]
+
+  `textutil.py`:
+    - slugify(text) -> str
+        Lowercase, split into word tokens, join with '-'.
+        Example: "Hello World" -> "hello-world"
+        [BUG somewhere in the token handling]
+
+  Sanity behavior (imports, types, basic cases) already works; the bugs are
+  subtle — one wrong formula, one wrong index choice, one off-by-one slice.
+
+  Fix the files IN PLACE in the workspace. Do not rename functions.
+task_type: code
+difficulty: 6
+timeout_seconds: 900
+expected_files: ["stats.py", "finance.py", "textutil.py"]
