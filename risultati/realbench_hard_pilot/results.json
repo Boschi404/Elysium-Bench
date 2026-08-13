@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-14T00:04:14.969336",
+  "timestamp": "2026-08-14T00:12:03.875977",
   "tasks": {
     "hard_T01_mini_regex": {
       "baseline": {
@@ -9,16 +9,16 @@
         "elapsed_seconds": 759.0,
         "timed_out": false,
         "session_id": "20260813_215854_be7746",
-        "input_tokens": 9164,
-        "output_tokens": 31019,
+        "input_tokens": 0,
+        "output_tokens": 0,
         "estimated_cost_usd": 0.0,
         "delegate_calls": 0,
         "subagents_dispatched": 0,
         "batched_dispatches": 0,
         "retries": 0,
         "skill_loaded": false,
-        "terminal_calls": 2,
-        "write_file_calls": 1,
+        "terminal_calls": 0,
+        "write_file_calls": 0,
         "notes": [],
         "failed_tests": []
       },
@@ -71,16 +71,16 @@
         "elapsed_seconds": 201.7,
         "timed_out": false,
         "session_id": "20260813_221120_13c854",
-        "input_tokens": 7827,
-        "output_tokens": 10132,
+        "input_tokens": 0,
+        "output_tokens": 0,
         "estimated_cost_usd": 0.0,
         "delegate_calls": 0,
         "subagents_dispatched": 0,
         "batched_dispatches": 0,
         "retries": 0,
         "skill_loaded": false,
-        "terminal_calls": 2,
-        "write_file_calls": 1,
+        "terminal_calls": 0,
+        "write_file_calls": 0,
         "notes": [],
         "failed_tests": []
       }
@@ -93,16 +93,16 @@
         "elapsed_seconds": 627.4,
         "timed_out": false,
         "session_id": "20260813_221442_cec996",
-        "input_tokens": 8243,
-        "output_tokens": 32872,
+        "input_tokens": 0,
+        "output_tokens": 0,
         "estimated_cost_usd": 0.0,
         "delegate_calls": 0,
         "subagents_dispatched": 0,
         "batched_dispatches": 0,
         "retries": 0,
         "skill_loaded": false,
-        "terminal_calls": 2,
-        "write_file_calls": 4,
+        "terminal_calls": 0,
+        "write_file_calls": 0,
         "notes": [],
         "failed_tests": []
       },
@@ -175,16 +175,16 @@
         "elapsed_seconds": 53.9,
         "timed_out": false,
         "session_id": "20260813_222515_ceb0e7",
-        "input_tokens": 5973,
-        "output_tokens": 1366,
+        "input_tokens": 0,
+        "output_tokens": 0,
         "estimated_cost_usd": 0.0,
         "delegate_calls": 0,
         "subagents_dispatched": 0,
         "batched_dispatches": 0,
         "retries": 0,
         "skill_loaded": false,
-        "terminal_calls": 1,
-        "write_file_calls": 1,
+        "terminal_calls": 0,
+        "write_file_calls": 0,
         "notes": [],
         "failed_tests": []
       }
@@ -197,16 +197,16 @@
         "elapsed_seconds": 254.5,
         "timed_out": false,
         "session_id": "20260813_222611_3efb5f",
-        "input_tokens": 9681,
-        "output_tokens": 12545,
+        "input_tokens": 0,
+        "output_tokens": 0,
         "estimated_cost_usd": 0.0,
         "delegate_calls": 0,
         "subagents_dispatched": 0,
         "batched_dispatches": 0,
         "retries": 0,
         "skill_loaded": false,
-        "terminal_calls": 2,
-        "write_file_calls": 2,
+        "terminal_calls": 0,
+        "write_file_calls": 0,
         "notes": [],
         "failed_tests": []
       },
@@ -279,16 +279,16 @@
         "elapsed_seconds": 67.5,
         "timed_out": false,
         "session_id": "20260813_223026_489f10",
-        "input_tokens": 6185,
-        "output_tokens": 1350,
+        "input_tokens": 0,
+        "output_tokens": 0,
         "estimated_cost_usd": 0.0,
         "delegate_calls": 0,
         "subagents_dispatched": 0,
         "batched_dispatches": 0,
         "retries": 0,
         "skill_loaded": false,
-        "terminal_calls": 1,
-        "write_file_calls": 1,
+        "terminal_calls": 0,
+        "write_file_calls": 0,
         "notes": [],
         "failed_tests": []
       }
@@ -301,16 +301,16 @@
         "elapsed_seconds": 85.2,
         "timed_out": false,
         "session_id": "20260813_223151_ab28c0",
-        "input_tokens": 7028,
-        "output_tokens": 3794,
+        "input_tokens": 0,
+        "output_tokens": 0,
         "estimated_cost_usd": 0.0,
         "delegate_calls": 0,
         "subagents_dispatched": 0,
         "batched_dispatches": 0,
         "retries": 0,
         "skill_loaded": false,
-        "terminal_calls": 2,
-        "write_file_calls": 2,
+        "terminal_calls": 0,
+        "write_file_calls": 0,
         "notes": [],
         "failed_tests": []
       }
@@ -323,16 +323,16 @@
         "elapsed_seconds": 82.9,
         "timed_out": false,
         "session_id": "20260813_223318_444df8",
-        "input_tokens": 6018,
-        "output_tokens": 2764,
+        "input_tokens": 0,
+        "output_tokens": 0,
         "estimated_cost_usd": 0.0,
         "delegate_calls": 0,
         "subagents_dispatched": 0,
         "batched_dispatches": 0,
         "retries": 0,
         "skill_loaded": false,
-        "terminal_calls": 1,
-        "write_file_calls": 1,
+        "terminal_calls": 0,
+        "write_file_calls": 0,
         "notes": [],
         "failed_tests": []
       }
@@ -345,16 +345,16 @@
         "elapsed_seconds": 148.3,
         "timed_out": false,
         "session_id": "20260813_224304_809b5b",
-        "input_tokens": 7538,
-        "output_tokens": 5625,
+        "input_tokens": 0,
+        "output_tokens": 0,
         "estimated_cost_usd": 0.0,
         "delegate_calls": 0,
         "subagents_dispatched": 0,
         "batched_dispatches": 0,
         "retries": 0,
         "skill_loaded": false,
-        "terminal_calls": 2,
-        "write_file_calls": 1,
+        "terminal_calls": 0,
+        "write_file_calls": 0,
         "notes": [],
         "failed_tests": []
       }
@@ -367,16 +367,16 @@
         "elapsed_seconds": 332.4,
         "timed_out": false,
         "session_id": "20260813_224534_71740c",
-        "input_tokens": 9598,
-        "output_tokens": 14134,
+        "input_tokens": 0,
+        "output_tokens": 0,
         "estimated_cost_usd": 0.0,
         "delegate_calls": 0,
         "subagents_dispatched": 0,
         "batched_dispatches": 0,
         "retries": 0,
         "skill_loaded": false,
-        "terminal_calls": 4,
-        "write_file_calls": 2,
+        "terminal_calls": 0,
+        "write_file_calls": 0,
         "notes": [],
         "failed_tests": []
       },
@@ -430,8 +430,8 @@
     },
     {
       "claim": "hard_T01_mini_regex: control valid (baseline: no skill, no subagents)",
-      "verdict": "PASS",
-      "detail": "baseline skill_loaded=False subagents=0 (transcript-verified)"
+      "verdict": "INCONCLUSIVE",
+      "detail": "baseline session evidence unavailable; delegation was impossible by construction (-t file,terminal removes the delegation toolset)"
     },
     {
       "claim": "hard_T01_mini_regex [elysium base]: actually used subagents",
@@ -451,7 +451,7 @@
     {
       "claim": "hard_T01_mini_regex [elysium base]: cost accounting",
       "verdict": "INFO",
-      "detail": "base ~$0.000/40183tok vs elysium base ~$0.000/115472tok"
+      "detail": "base n/a vs elysium base ~$0.000/115472tok"
     },
     {
       "claim": "hard_T01_mini_regex [MAX EFFORT]: actually used subagents",
@@ -471,17 +471,17 @@
     {
       "claim": "hard_T01_mini_regex [MAX EFFORT]: cost accounting",
       "verdict": "INFO",
-      "detail": "base ~$0.000/40183tok vs MAX EFFORT ~$0.000/89393tok"
+      "detail": "base n/a vs MAX EFFORT ~$0.000/89393tok"
     },
     {
       "claim": "hard_T02_dag_executor: control valid (baseline: no skill, no subagents)",
-      "verdict": "PASS",
-      "detail": "baseline skill_loaded=False subagents=0 (transcript-verified)"
+      "verdict": "INCONCLUSIVE",
+      "detail": "baseline session evidence unavailable; delegation was impossible by construction (-t file,terminal removes the delegation toolset)"
     },
     {
       "claim": "hard_T03_service_suite_v2: control valid (baseline: no skill, no subagents)",
-      "verdict": "PASS",
-      "detail": "baseline skill_loaded=False subagents=0 (transcript-verified)"
+      "verdict": "INCONCLUSIVE",
+      "detail": "baseline session evidence unavailable; delegation was impossible by construction (-t file,terminal removes the delegation toolset)"
     },
     {
       "claim": "hard_T03_service_suite_v2 [elysium base]: actually used subagents",
@@ -501,7 +501,7 @@
     {
       "claim": "hard_T03_service_suite_v2 [elysium base]: cost accounting",
       "verdict": "INFO",
-      "detail": "base ~$0.000/41115tok vs elysium base ~$0.000/101004tok"
+      "detail": "base n/a vs elysium base ~$0.000/101004tok"
     },
     {
       "claim": "hard_T03_service_suite_v2 [MAX EFFORT]: actually used subagents",
@@ -521,7 +521,7 @@
     {
       "claim": "hard_T03_service_suite_v2 [MAX EFFORT]: cost accounting",
       "verdict": "INFO",
-      "detail": "base ~$0.000/41115tok vs MAX EFFORT ~$0.000/93988tok"
+      "detail": "base n/a vs MAX EFFORT ~$0.000/93988tok"
     },
     {
       "claim": "hard_T03_service_suite_v2 [MESM]: actually used subagents",
@@ -541,17 +541,17 @@
     {
       "claim": "hard_T03_service_suite_v2 [MESM]: cost accounting",
       "verdict": "INFO",
-      "detail": "base ~$0.000/41115tok vs MESM ~$0.000/90367tok"
+      "detail": "base n/a vs MESM ~$0.000/90367tok"
     },
     {
       "claim": "hard_T04_lfu_cache: control valid (baseline: no skill, no subagents)",
-      "verdict": "PASS",
-      "detail": "baseline skill_loaded=False subagents=0 (transcript-verified)"
+      "verdict": "INCONCLUSIVE",
+      "detail": "baseline session evidence unavailable; delegation was impossible by construction (-t file,terminal removes the delegation toolset)"
     },
     {
       "claim": "hard_T05_json_parser: control valid (baseline: no skill, no subagents)",
-      "verdict": "PASS",
-      "detail": "baseline skill_loaded=False subagents=0 (transcript-verified)"
+      "verdict": "INCONCLUSIVE",
+      "detail": "baseline session evidence unavailable; delegation was impossible by construction (-t file,terminal removes the delegation toolset)"
     },
     {
       "claim": "hard_T05_json_parser [elysium base]: actually used subagents",
@@ -571,7 +571,7 @@
     {
       "claim": "hard_T05_json_parser [elysium base]: cost accounting",
       "verdict": "INFO",
-      "detail": "base ~$0.000/22226tok vs elysium base ~$0.000/66138tok"
+      "detail": "base n/a vs elysium base ~$0.000/66138tok"
     },
     {
       "claim": "hard_T05_json_parser [MAX EFFORT]: actually used subagents",
@@ -591,7 +591,7 @@
     {
       "claim": "hard_T05_json_parser [MAX EFFORT]: cost accounting",
       "verdict": "INFO",
-      "detail": "base ~$0.000/22226tok vs MAX EFFORT ~$0.000/72719tok"
+      "detail": "base n/a vs MAX EFFORT ~$0.000/72719tok"
     },
     {
       "claim": "hard_T05_json_parser [MESM]: actually used subagents",
@@ -611,32 +611,32 @@
     {
       "claim": "hard_T05_json_parser [MESM]: cost accounting",
       "verdict": "INFO",
-      "detail": "base ~$0.000/22226tok vs MESM ~$0.000/70042tok"
+      "detail": "base n/a vs MESM ~$0.000/70042tok"
     },
     {
       "claim": "hard_T06_segment_tree: control valid (baseline: no skill, no subagents)",
-      "verdict": "PASS",
-      "detail": "baseline skill_loaded=False subagents=0 (transcript-verified)"
+      "verdict": "INCONCLUSIVE",
+      "detail": "baseline session evidence unavailable; delegation was impossible by construction (-t file,terminal removes the delegation toolset)"
     },
     {
       "claim": "hard_T07_concurrent_token_bucket: control valid (baseline: no skill, no subagents)",
-      "verdict": "PASS",
-      "detail": "baseline skill_loaded=False subagents=0 (transcript-verified)"
+      "verdict": "INCONCLUSIVE",
+      "detail": "baseline session evidence unavailable; delegation was impossible by construction (-t file,terminal removes the delegation toolset)"
     },
     {
       "claim": "hard_T08_trie_autocomplete: control valid (baseline: no skill, no subagents)",
-      "verdict": "PASS",
-      "detail": "baseline skill_loaded=False subagents=0 (transcript-verified)"
+      "verdict": "INCONCLUSIVE",
+      "detail": "baseline session evidence unavailable; delegation was impossible by construction (-t file,terminal removes the delegation toolset)"
     },
     {
       "claim": "night_T01_binary_codec: control valid (baseline: no skill, no subagents)",
-      "verdict": "PASS",
-      "detail": "baseline skill_loaded=False subagents=0 (transcript-verified)"
+      "verdict": "INCONCLUSIVE",
+      "detail": "baseline session evidence unavailable; delegation was impossible by construction (-t file,terminal removes the delegation toolset)"
     },
     {
       "claim": "night_T02_btree: control valid (baseline: no skill, no subagents)",
-      "verdict": "PASS",
-      "detail": "baseline skill_loaded=False subagents=0 (transcript-verified)"
+      "verdict": "INCONCLUSIVE",
+      "detail": "baseline session evidence unavailable; delegation was impossible by construction (-t file,terminal removes the delegation toolset)"
     },
     {
       "claim": "night_T02_btree [elysium base]: actually used subagents",
@@ -656,7 +656,7 @@
     {
       "claim": "night_T02_btree [elysium base]: cost accounting",
       "verdict": "INFO",
-      "detail": "base ~$0.000/23732tok vs elysium base ~$0.000/61098tok"
+      "detail": "base n/a vs elysium base ~$0.000/61098tok"
     },
     {
       "claim": "night_T02_btree [MAX EFFORT]: actually used subagents",
@@ -676,7 +676,7 @@
     {
       "claim": "night_T02_btree [MAX EFFORT]: cost accounting",
       "verdict": "INFO",
-      "detail": "base ~$0.000/23732tok vs MAX EFFORT ~$0.000/62274tok"
+      "detail": "base n/a vs MAX EFFORT ~$0.000/62274tok"
     }
   ],
   "calibration": {
