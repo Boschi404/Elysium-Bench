@@ -102,6 +102,14 @@ def score_workspace(task: RealTask, workspace: Path) -> ScoreResult:
     if tests_dir is None or not list(tests_dir.rglob("test_*.py")):
         res.gap = "task has no hidden tests"
         return res
+    # If NONE of the expected solution files exist, the solver produced
+    # nothing: score 0 without running tests. (Also prevents a hidden-test
+    # import from accidentally resolving to an unrelated installed package
+    # with the same module name.)
+    if task.expected_files and not any(
+            (workspace / f).exists() for f in task.expected_files):
+        res.gap = "no expected solution files present in workspace"
+        return res
 
     # Copy hidden tests into the workspace at scoring time only.
     hidden = workspace / "_realbench_hidden"

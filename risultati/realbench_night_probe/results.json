@@ -1,0 +1,63 @@
+{
+  "timestamp": "2026-08-13T22:51:02.177408",
+  "tasks": {
+    "night_T01_binary_codec": {
+      "baseline": {
+        "score": 100.0,
+        "passed": 17,
+        "failed": 0,
+        "elapsed_seconds": 148.3,
+        "timed_out": false,
+        "session_id": "20260813_224304_809b5b",
+        "input_tokens": 7538,
+        "output_tokens": 5625,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": false,
+        "terminal_calls": 2,
+        "write_file_calls": 1,
+        "notes": [],
+        "failed_tests": []
+      }
+    },
+    "night_T02_btree": {
+      "baseline": {
+        "score": 100.0,
+        "passed": 13,
+        "failed": 0,
+        "elapsed_seconds": 332.4,
+        "timed_out": false,
+        "session_id": "20260813_224534_71740c",
+        "input_tokens": 9598,
+        "output_tokens": 14134,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": false,
+        "terminal_calls": 4,
+        "write_file_calls": 2,
+        "notes": [],
+        "failed_tests": []
+      }
+    }
+  },
+  "verdicts": [
+    {
+      "claim": "night_T01_binary_codec: control valid (baseline: no skill, no subagents)",
+      "verdict": "PASS",
+      "detail": "baseline skill_loaded=False subagents=0 (transcript-verified)"
+    },
+    {
+      "claim": "night_T02_btree: control valid (baseline: no skill, no subagents)",
+      "verdict": "PASS",
+      "detail": "baseline skill_loaded=False subagents=0 (transcript-verified)"
+    }
+  ],
+  "calibration": {},
+  "critic_meta": {}
+}

@@ -24,7 +24,21 @@ from .scoring import ScoreResult, score_workspace
 from .task_loader import RealTask
 from .transcript import SessionEvidence, collect_evidence, parse_session_id_from_stdout
 
-CONDITIONS = ("baseline", "swarmloop")
+CONDITIONS = ("baseline", "swarmloop", "maxeffort", "mesm")
+
+BASELINE_TOOLSETS = "file,terminal"          # delegation physically unavailable
+
+# per-condition mode data: skill preload, toolset restriction, trigger line
+_MODE = {
+    "baseline": {"skill": False, "toolsets": BASELINE_TOOLSETS,
+                 "trigger": None, "label": "baseline (no skill, no delegation)"},
+    "swarmloop": {"skill": True, "toolsets": None, "trigger": None,
+                  "label": "elysium base"},
+    "maxeffort": {"skill": True, "toolsets": None, "trigger": "MAX EFFORT",
+                  "label": "elysium MAX EFFORT (Quality-First, threshold 9/10)"},
+    "mesm": {"skill": True, "toolsets": None, "trigger": "MESM",
+             "label": "elysium MESM (Quality-First + Swarmloop, threshold 9.5/10)"},
+}
 
 DEFAULT_HERMES_HOME = Path(os.environ.get("HERMES_HOME",
                          os.environ.get("APPDATA", str(Path.home())) + r"\hermes"))
@@ -88,12 +102,14 @@ def _isolated_home(parent: Path, main_home: Path) -> Path:
 
 
 def build_prompt(task: RealTask, workspace: Path, condition: str) -> str:
+    mode = _MODE[condition]
     files = ", ".join(f"`{f}`" for f in task.expected_files)
     deliverable = f"Create the file(s): {files}."
     if task.repo_dir is not None:
         deliverable = (f"Modify the existing files ({files}) IN PLACE in the "
                        f"directory below — they already contain code.")
-    common = f"""TASK: {task.name}
+    trigger = f"{mode['trigger']}\n" if mode["trigger"] else ""
+    common = f"""{trigger}TASK: {task.name}
 
 {task.description}
 
@@ -110,6 +126,17 @@ do NOT attempt git operations. Work autonomously, do not ask questions
     if condition == "baseline":
         return common + ("IMPORTANT: solve it yourself as a single agent — "
                          "do not load skills, do not delegate to subagents.")
+    if condition == "mesm":
+        return common + (
+            "You have the elysium-swarmloop skill loaded and the MESM mode "
+            "active (highest quality standard). Benchmark auto-approval: the "
+            "pre-flight cost check is CONFIRMED and every round check-in is "
+            "answered CONTINUE — never stop to ask. You may decompose the "
+            "task and dispatch parallel subagents via delegate_task — every "
+            "subagent MUST also write its deliverable into the exact "
+            "directory above. Judge the final files against the spec before "
+            "replying DONE."
+        )
     return common + (
         "You have the elysium-swarmloop skill loaded. You may decompose the "
         "task and dispatch parallel subagents via delegate_task — if you do, "
@@ -122,12 +149,13 @@ do NOT attempt git operations. Work autonomously, do not ask questions
 def build_cmd(task: RealTask, condition: str, workspace: Path,
               max_turns: int) -> list[str]:
     """The exact hermes CLI invocation for a condition (testable)."""
+    mode = _MODE[condition]
     cmd = ["hermes", "chat", "-q", build_prompt(task, workspace, condition),
            "-Q", "--pass-session-id", "--max-turns", str(max_turns)]
-    if condition == "swarmloop":
+    if mode["skill"]:
         cmd += ["-s", "elysium-swarmloop"]
     else:
-        cmd += ["-t", BASELINE_TOOLSETS]
+        cmd += ["-t", mode["toolsets"]]
     return cmd
 
 

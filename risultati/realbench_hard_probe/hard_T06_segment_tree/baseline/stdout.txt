@@ -1,0 +1,83 @@
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T06_segment_tree_baseline\segtree.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T06_segment_tree_baseline\segtree.py[0m
+[38;2;139;134;130m@@ -0,0 +1,105 @@[0m
+[38;2;255;255;255;48;2;19;87;20m+"""Segment tree supporting range sum, range min, and point updates in O(log n)."""[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+import math[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+class SegmentTree:[0m
+[38;2;255;255;255;48;2;19;87;20m+    """A segment tree over a list of integers.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    Supports:[0m
+[38;2;255;255;255;48;2;19;87;20m+      - range_sum(left, right): sum of values[left..right] inclusive[0m
+[38;2;255;255;255;48;2;19;87;20m+      - range_min(left, right): min of values[left..right] inclusive[0m
+[38;2;255;255;255;48;2;19;87;20m+      - update(index, value): set values[index] = value[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    All range operations are O(log n); build is O(n).[0m
+[38;2;255;255;255;48;2;19;87;20m+    """[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def __init__(self, values: list[int]):[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.n = len(values)[0m
+[38;2;255;255;255;48;2;19;87;20m+        if self.n == 0:[0m
+[38;2;255;255;255;48;2;19;87;20m+            # Empty tree: no storage needed, but keep a leaf buffer for uniformity.[0m
+[38;2;255;255;255;48;2;19;87;20m+            self.size = 0[0m
+[38;2;255;255;255;48;2;19;87;20m+            self.tree = [][0m
+[38;2;255;255;255;48;2;19;87;20m+            self.lazy_unused = None[0m
+[38;2;255;255;255;48;2;19;87;20m+            return[0m
+[38;2;255;255;255;48;2;19;87;20m+        # Next power of two for a simple, fast array-backed tree.[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.size = 1[0m
+[38;2;255;255;255;48;2;19;87;20m+        while self.size < self.n:[0m
+[38;2;255;255;255;48;2;19;87;20m+            self.size <<= 1[0m
+[38;2;255;255;255;48;2;19;87;20m+        # Each node stores (sum, min).[0m
+[38;2;255;255;255;48;2;19;87;20m+        # Use two parallel arrays for speed instead of tuples.[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.sum = [0] * (2 * self.size)[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.min = [0] * (2 * self.size)[0m
+[38;2;255;255;255;48;2;19;87;20m+        # Initialize leaves.[0m
+[38;2;255;255;255;48;2;19;87;20m+        for i in range(self.n):[0m
+[38;2;255;255;255;48;2;19;87;20m+            self.sum[self.size + i] = values[i][0m
+[38;2;255;255;255;48;2;19;87;20m+            self.min[self.size + i] = values[i][0m
+[38;2;255;255;255;48;2;19;87;20m+        # Fill the remaining leaves (size..2*size-1) with neutral values.[0m
+[38;2;255;255;255;48;2;19;87;20m+        # For min, use a large sentinel so it doesn't affect min over real data.[0m
+[38;2;255;255;255;48;2;19;87;20m+        INF = float("inf")[0m
+[38;2;255;255;255;48;2;19;87;20m+        for i in range(self.n, self.size):[0m
+[38;2;255;255;255;48;2;19;87;20m+            self.sum[self.size + i] = 0[0m
+[38;2;255;255;255;48;2;19;87;20m+            self.min[self.size + i] = INF[0m
+[38;2;255;255;255;48;2;19;87;20m+        # Build internal nodes bottom-up.[0m
+[38;2;255;255;255;48;2;19;87;20m+        for i in range(self.size - 1, 0, -1):[0m
+[38;2;255;255;255;48;2;19;87;20m+            self._pull(i)[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _pull(self, i: int) -> None:[0m
+[38;2;255;255;255;48;2;19;87;20m+        l = 2 * i[0m
+[38;2;255;255;255;48;2;19;87;20m+        r = 2 * i + 1[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.sum[i] = self.sum[l] + self.sum[r][0m
+[38;2;255;255;255;48;2;19;87;20m+        self.min[i] = self.min[l] if self.min[l] < self.min[r] else self.min[r][0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _check_range(self, left: int, right: int) -> None:[0m
+[38;2;255;255;255;48;2;19;87;20m+        if left > right:[0m
+[38;2;255;255;255;48;2;19;87;20m+            raise ValueError("left must be <= right")[0m
+[38;2;255;255;255;48;2;19;87;20m+        if left < 0 or right >= self.n:[0m
+[38;2;255;255;255;48;2;19;87;20m+            raise IndexError("index out of range")[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def range_sum(self, left: int, right: int) -> int:[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._check_range(left, right)[0m
+[38;2;255;255;255;48;2;19;87;20m+        size = self.size[0m
+[38;2;255;255;255;48;2;19;87;20m+        l = left + size[0m
+[38;2;255;255;255;48;2;19;87;20m+        r = right + size[0m
+[38;2;255;255;255;48;2;19;87;20m+        total = 0[0m
+[38;2;255;255;255;48;2;19;87;20m+        while l <= r:[0m
+[38;2;255;255;255;48;2;19;87;20m+            if l & 1:[0m
+[38;2;255;255;255;48;2;19;87;20m+                total += self.sum[l][0m
+[38;2;255;255;255;48;2;19;87;20m+                l += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+            if not (r & 1):[0m
+[38;2;255;255;255;48;2;19;87;20m+                total += self.sum[r][0m
+[38;2;255;255;255;48;2;19;87;20m+                r -= 1[0m
+[38;2;255;255;255;48;2;19;87;20m+            l >>= 1[0m
+[38;2;255;255;255;48;2;19;87;20m+            r >>= 1[0m
+[38;2;255;255;255;48;2;19;87;20m+        return total[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def range_min(self, left: int, right: int) -> int:[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._check_range(left, right)[0m
+[38;2;255;255;255;48;2;19;87;20m+        size = self.size[0m
+[38;2;139;134;130m… omitted 27 diff line(s) across 1 additional file(s)/section(s)[0m
+DONE

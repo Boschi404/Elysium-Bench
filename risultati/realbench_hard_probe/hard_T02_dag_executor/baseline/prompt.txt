@@ -1,0 +1,46 @@
+TASK: DAG Scheduler: Critical Path, ES/LS, Topological Order
+
+Implement a DAG analysis library in `dag.py`.
+
+SPEC:
+- class Dag:
+    - __init__(self) — empty DAG
+    - add_task(self, task_id: str, duration: int, deps: list[str]) -> None
+      duration must be >= 1, else ValueError. Duplicate id → ValueError.
+    - is_valid(self) -> bool
+      False if a task depends on an unknown id or the graph has a cycle
+      (self-loops included). True otherwise (empty graph is valid).
+    - topological_order(self) -> list[str]
+      A valid order (dependencies before dependents); among ready tasks,
+      lexicographically smallest id first. Raises ValueError on cycle.
+    - critical_path_length(self) -> int
+      Total duration of the longest path in the DAG (path duration = sum
+      of durations of its tasks). Empty DAG → 0. Raises ValueError on
+      cycle or missing dependency.
+    - earliest_start(self, task_id: str) -> int
+      Longest path duration ENDING at (but excluding) task_id — i.e. the
+      earliest time the task can start, counting only its predecessors'
+      durations. Tasks with no (transitive) predecessors → 0.
+      Unknown id → KeyError.
+    - latest_start(self, task_id: str) -> int
+      critical_path_length - (duration of the longest path STARTING at
+      task_id, including the task's own duration). So a task ON a critical
+      path has latest_start == earliest_start.
+      Unknown id → KeyError.
+
+PERFORMANCE: 2000-task DAGs (chain + random edges) must complete
+topological_order + critical_path_length + ES/LS in under 5 seconds.
+
+Standard library only.
+
+
+YOUR ONLY DELIVERABLE — do not do anything else:
+Create the file(s): `dag.py`.
+Write them into EXACTLY this directory (use this absolute path):
+C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T02_dag_executor_baseline
+
+Do NOT explore other directories, do NOT copy files around, do NOT create
+subdirectories, do NOT run any benchmark or pipeline you may find nearby,
+do NOT attempt git operations. Work autonomously, do not ask questions
+(fai tu). When the deliverable file(s) are written, reply DONE.
+IMPORTANT: solve it yourself as a single agent — do not load skills, do not delegate to subagents.

@@ -1,0 +1,36 @@
+TASK: LFU Cache (O(1) get/put, LRU tie-break)
+
+Implement an LFU (Least Frequently Used) cache in `lfu.py`.
+
+SPEC:
+- class LFUCache:
+    - __init__(self, capacity: int) — capacity >= 1
+    - get(self, key: int) -> int
+      Returns the value, or -1 if the key is absent. A hit increments the
+      key's use-frequency.
+    - put(self, key: int, value: int) -> None
+      Inserting a NEW key starts it at frequency 1.
+      Updating an EXISTING key replaces the value and increments its
+      frequency.
+      When the cache is full and a NEW key arrives, evict the key with the
+      LOWEST frequency; among those, evict the LEAST RECENTLY USED one
+      (recency = time of last get/put on that key).
+
+PERFORMANCE: get and put MUST be O(1) average time. A linear-scan
+implementation will fail the performance test on 100,000 operations.
+The classic design (dict key→(value, freq) + dict freq→OrderedDict of
+keys) is recommended.
+
+Standard library only.
+
+
+YOUR ONLY DELIVERABLE — do not do anything else:
+Create the file(s): `lfu.py`.
+Write them into EXACTLY this directory (use this absolute path):
+C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T04_lfu_cache_baseline
+
+Do NOT explore other directories, do NOT copy files around, do NOT create
+subdirectories, do NOT run any benchmark or pipeline you may find nearby,
+do NOT attempt git operations. Work autonomously, do not ask questions
+(fai tu). When the deliverable file(s) are written, reply DONE.
+IMPORTANT: solve it yourself as a single agent — do not load skills, do not delegate to subagents.

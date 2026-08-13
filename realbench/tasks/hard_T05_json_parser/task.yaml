@@ -1,0 +1,35 @@
+id: hard_T05_json_parser
+category: realbench_hard
+name: "Strict JSON Parser + Serializer (round-trip, escapes, errors)"
+description: |
+  Implement a strict JSON codec in `jsoncodec.py` — do NOT import the stdlib
+  `json` module, implement it yourself.
+
+  SPEC:
+  - def parse(text: str) -> object
+    Parses strict JSON into Python objects:
+    object→dict, array→list, string→str, number→int (if no fraction/
+    exponent) or float, true→True, false→False, null→None.
+    - strings support escapes: \" \\ \/ \b \f \n \r \t and \uXXXX
+      (including surrogate pairs — combine into the real character).
+    - numbers: optional minus, int part required, optional fraction,
+      optional exponent. No leading zeros (except "0" itself). No ".5",
+      no "5.", no "+5", no Infinity/NaN, no hex.
+    - rejects: trailing commas, missing commas, single quotes, comments,
+      trailing content after the top value.
+    - any violation → ValueError whose message contains the position.
+
+  - def dumps(obj: object) -> str
+    Serializes the Python objects above to COMPACT JSON (no extra spaces).
+    Non-ASCII characters are emitted as-is (UTF-8). Keys of dicts must be
+    strings. Sets and other types → TypeError.
+    Round-trip guarantee: parse(dumps(x)) == x for any valid x.
+
+  PERFORMANCE: parsing a JSON array of 100,000 numbers must finish in
+  under 5 seconds. Nesting is guaranteed to be at most 200 deep in tests.
+
+  Standard library only (no `json`).
+task_type: code
+difficulty: 8
+timeout_seconds: 1200
+expected_files: ["jsoncodec.py"]

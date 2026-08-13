@@ -1,0 +1,174 @@
+{
+  "timestamp": "2026-08-13T22:31:32.315663",
+  "tasks": {
+    "hard_T01_mini_regex": {
+      "baseline": {
+        "score": 100.0,
+        "passed": 17,
+        "failed": 0,
+        "elapsed_seconds": 759.0,
+        "timed_out": false,
+        "session_id": "20260813_215854_be7746",
+        "input_tokens": 9164,
+        "output_tokens": 31019,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": false,
+        "terminal_calls": 2,
+        "write_file_calls": 1,
+        "notes": [],
+        "failed_tests": []
+      }
+    },
+    "hard_T02_dag_executor": {
+      "baseline": {
+        "score": 100.0,
+        "passed": 12,
+        "failed": 0,
+        "elapsed_seconds": 201.7,
+        "timed_out": false,
+        "session_id": "20260813_221120_13c854",
+        "input_tokens": 7827,
+        "output_tokens": 10132,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": false,
+        "terminal_calls": 2,
+        "write_file_calls": 1,
+        "notes": [],
+        "failed_tests": []
+      }
+    },
+    "hard_T03_service_suite_v2": {
+      "baseline": {
+        "score": 100.0,
+        "passed": 34,
+        "failed": 0,
+        "elapsed_seconds": 627.4,
+        "timed_out": false,
+        "session_id": "20260813_221442_cec996",
+        "input_tokens": 8243,
+        "output_tokens": 32872,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": false,
+        "terminal_calls": 2,
+        "write_file_calls": 4,
+        "notes": [],
+        "failed_tests": []
+      }
+    },
+    "hard_T04_lfu_cache": {
+      "baseline": {
+        "score": 100.0,
+        "passed": 11,
+        "failed": 0,
+        "elapsed_seconds": 53.9,
+        "timed_out": false,
+        "session_id": "20260813_222515_ceb0e7",
+        "input_tokens": 5973,
+        "output_tokens": 1366,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": false,
+        "terminal_calls": 1,
+        "write_file_calls": 1,
+        "notes": [],
+        "failed_tests": []
+      }
+    },
+    "hard_T05_json_parser": {
+      "baseline": {
+        "score": 83.3,
+        "passed": 10,
+        "failed": 2,
+        "elapsed_seconds": 254.5,
+        "timed_out": false,
+        "session_id": "20260813_222611_3efb5f",
+        "input_tokens": 9681,
+        "output_tokens": 12545,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": false,
+        "terminal_calls": 2,
+        "write_file_calls": 2,
+        "notes": [],
+        "failed_tests": [
+          "_realbench_hidden/test_hidden.py::test_string_escapes",
+          "_realbench_hidden/test_hidden.py::test_roundtrip_random"
+        ]
+      }
+    },
+    "hard_T06_segment_tree": {
+      "baseline": {
+        "score": 100.0,
+        "passed": 9,
+        "failed": 0,
+        "elapsed_seconds": 67.5,
+        "timed_out": false,
+        "session_id": "20260813_223026_489f10",
+        "input_tokens": 6185,
+        "output_tokens": 1350,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": false,
+        "terminal_calls": 1,
+        "write_file_calls": 1,
+        "notes": [],
+        "failed_tests": []
+      }
+    }
+  },
+  "verdicts": [
+    {
+      "claim": "hard_T01_mini_regex: control valid (baseline: no skill, no subagents)",
+      "verdict": "PASS",
+      "detail": "baseline skill_loaded=False subagents=0 (transcript-verified)"
+    },
+    {
+      "claim": "hard_T02_dag_executor: control valid (baseline: no skill, no subagents)",
+      "verdict": "PASS",
+      "detail": "baseline skill_loaded=False subagents=0 (transcript-verified)"
+    },
+    {
+      "claim": "hard_T03_service_suite_v2: control valid (baseline: no skill, no subagents)",
+      "verdict": "PASS",
+      "detail": "baseline skill_loaded=False subagents=0 (transcript-verified)"
+    },
+    {
+      "claim": "hard_T04_lfu_cache: control valid (baseline: no skill, no subagents)",
+      "verdict": "PASS",
+      "detail": "baseline skill_loaded=False subagents=0 (transcript-verified)"
+    },
+    {
+      "claim": "hard_T05_json_parser: control valid (baseline: no skill, no subagents)",
+      "verdict": "PASS",
+      "detail": "baseline skill_loaded=False subagents=0 (transcript-verified)"
+    },
+    {
+      "claim": "hard_T06_segment_tree: control valid (baseline: no skill, no subagents)",
+      "verdict": "PASS",
+      "detail": "baseline skill_loaded=False subagents=0 (transcript-verified)"
+    }
+  ],
+  "calibration": {},
+  "critic_meta": {}
+}

@@ -1,0 +1,63 @@
+{
+  "timestamp": "2026-08-13T22:34:42.619182",
+  "tasks": {
+    "hard_T07_concurrent_token_bucket": {
+      "baseline": {
+        "score": 100.0,
+        "passed": 10,
+        "failed": 0,
+        "elapsed_seconds": 85.2,
+        "timed_out": false,
+        "session_id": "20260813_223151_ab28c0",
+        "input_tokens": 7028,
+        "output_tokens": 3794,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": false,
+        "terminal_calls": 2,
+        "write_file_calls": 2,
+        "notes": [],
+        "failed_tests": []
+      }
+    },
+    "hard_T08_trie_autocomplete": {
+      "baseline": {
+        "score": 100.0,
+        "passed": 10,
+        "failed": 0,
+        "elapsed_seconds": 82.9,
+        "timed_out": false,
+        "session_id": "20260813_223318_444df8",
+        "input_tokens": 6018,
+        "output_tokens": 2764,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": false,
+        "terminal_calls": 1,
+        "write_file_calls": 1,
+        "notes": [],
+        "failed_tests": []
+      }
+    }
+  },
+  "verdicts": [
+    {
+      "claim": "hard_T07_concurrent_token_bucket: control valid (baseline: no skill, no subagents)",
+      "verdict": "PASS",
+      "detail": "baseline skill_loaded=False subagents=0 (transcript-verified)"
+    },
+    {
+      "claim": "hard_T08_trie_autocomplete: control valid (baseline: no skill, no subagents)",
+      "verdict": "PASS",
+      "detail": "baseline skill_loaded=False subagents=0 (transcript-verified)"
+    }
+  ],
+  "calibration": {},
+  "critic_meta": {}
+}

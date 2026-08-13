@@ -44,6 +44,7 @@ def run_benchmark(args) -> int:
     print(f"   timeout={args.timeout}s max_turns={args.max_turns}\n")
 
     results: dict[str, dict] = {}
+    jsonl_path = out_root / "results.jsonl"
     for task_id in selected:
         results[task_id] = {}
         for cond in conds:
@@ -67,6 +68,26 @@ def run_benchmark(args) -> int:
             if r.notes:
                 for n in r.notes:
                     print(f"   ⚠ {n}")
+            # incremental durability: append after every condition
+            rec = {
+                "task": task_id, "condition": cond,
+                "score": r.score.score if r.score else None,
+                "passed": r.score.passed if r.score else 0,
+                "failed": r.score.failed if r.score else 0,
+                "elapsed_seconds": r.elapsed_seconds,
+                "timed_out": r.timed_out,
+                "session_id": r.session_id,
+                "skill_loaded": ev.skill_loaded if ev else None,
+                "delegate_calls": ev.delegate_calls if ev else None,
+                "subagents": ev.subagents_dispatched if ev else None,
+                "batched": ev.batched_dispatches if ev else None,
+                "retries": ev.retries if ev else None,
+                "tokens": (ev.input_tokens + ev.output_tokens) if ev else None,
+                "estimated_cost_usd": ev.estimated_cost_usd if ev else None,
+                "notes": r.notes,
+            }
+            with open(jsonl_path, "a", encoding="utf-8") as fh:
+                fh.write(json.dumps(rec) + "\n")
 
     calibration = None
     if args.calibrate:

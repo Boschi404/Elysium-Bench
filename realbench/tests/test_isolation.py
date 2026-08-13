@@ -20,6 +20,27 @@ def test_baseline_cmd_strips_delegation_and_skill(tmp_path):
     assert "file" in cmd[ti + 1] and "delegation" not in cmd[ti + 1]
 
 
+def test_elysium_modes_preload_skill(tmp_path):
+    task = get_task("code_T01_lru_cache")
+    ws = Path(tmp_path)
+    for mode in ("swarmloop", "maxeffort", "mesm"):
+        cmd = build_cmd(task, mode, ws, 15)
+        assert "-s" in cmd and "elysium-swarmloop" in cmd, mode
+        assert "-t" not in cmd, mode  # full toolset
+
+
+def test_trigger_keywords_exact_caps():
+    task = get_task("hard_T01_mini_regex")
+    p_max = build_prompt(task, Path("ws"), "maxeffort")
+    p_mesm = build_prompt(task, Path("ws"), "mesm")
+    p_base = build_prompt(task, Path("ws"), "swarmloop")
+    assert p_max.startswith("MAX EFFORT\n")
+    assert p_mesm.startswith("MESM\n")
+    assert "MAX EFFORT" not in p_base
+    assert "MESM" not in p_base
+    assert "CONFIRMED" in p_mesm and "CONTINUE" in p_mesm
+
+
 def test_swarmloop_cmd_preloads_skill_and_full_tools(tmp_path):
     task = get_task("code_T01_lru_cache")
     ws = Path(tmp_path)

@@ -1,0 +1,30 @@
+id: hard_T04_lfu_cache
+category: realbench_hard
+name: "LFU Cache (O(1) get/put, LRU tie-break)"
+description: |
+  Implement an LFU (Least Frequently Used) cache in `lfu.py`.
+
+  SPEC:
+  - class LFUCache:
+      - __init__(self, capacity: int) — capacity >= 1
+      - get(self, key: int) -> int
+        Returns the value, or -1 if the key is absent. A hit increments the
+        key's use-frequency.
+      - put(self, key: int, value: int) -> None
+        Inserting a NEW key starts it at frequency 1.
+        Updating an EXISTING key replaces the value and increments its
+        frequency.
+        When the cache is full and a NEW key arrives, evict the key with the
+        LOWEST frequency; among those, evict the LEAST RECENTLY USED one
+        (recency = time of last get/put on that key).
+
+  PERFORMANCE: get and put MUST be O(1) average time. A linear-scan
+  implementation will fail the performance test on 100,000 operations.
+  The classic design (dict key→(value, freq) + dict freq→OrderedDict of
+  keys) is recommended.
+
+  Standard library only.
+task_type: code
+difficulty: 8
+timeout_seconds: 1200
+expected_files: ["lfu.py"]

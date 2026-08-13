@@ -1,0 +1,28 @@
+id: hard_T06_segment_tree
+category: realbench_hard
+name: "Segment Tree: range sum/min + point update, O(log n)"
+description: |
+  Implement a segment tree in `segtree.py`.
+
+  SPEC:
+  - class SegmentTree:
+      - __init__(self, values: list[int]) — builds the tree in O(n).
+        Empty list allowed.
+      - range_sum(self, left: int, right: int) -> int
+        Sum of values[left..right] INCLUSIVE.
+        left > right → ValueError; out-of-range indices → IndexError.
+      - range_min(self, left: int, right: int) -> int
+        Minimum of values[left..right] inclusive. Same index rules.
+      - update(self, index: int, value: int) -> None
+        Sets values[index] = value and updates the tree in O(log n).
+        Out-of-range → IndexError.
+
+  PERFORMANCE: building on 1,000,000 values and running 100,000 random
+  queries/updates must complete in under 10 seconds. A naive recompute
+  (O(n) per query) cannot pass.
+
+  Standard library only.
+task_type: code
+difficulty: 7
+timeout_seconds: 1200
+expected_files: ["segtree.py"]

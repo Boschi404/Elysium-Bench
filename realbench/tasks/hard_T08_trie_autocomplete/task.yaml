@@ -1,0 +1,30 @@
+id: hard_T08_trie_autocomplete
+category: realbench_hard
+name: "Trie: insert/search/prefix-count/autocomplete, 100k words"
+description: |
+  Implement a Trie-based autocomplete in `trie.py`.
+
+  SPEC:
+  - class Trie:
+      - __init__(self) — empty trie
+      - insert(self, word: str) -> None — adds a word (duplicates allowed;
+        presence is boolean, not counted). Word may be any string including
+        empty ("" is a valid word: search("") is True after insert("")).
+      - search(self, word: str) -> bool — exact membership
+      - starts_with(self, prefix: str) -> bool — any word has this prefix
+        ("" prefix is True iff at least one word inserted)
+      - count_prefix(self, prefix: str) -> int — number of DISTINCT words
+        having this prefix
+      - autocomplete(self, prefix: str, k: int) -> list[str]
+        Up to k distinct words with this prefix, sorted lexicographically.
+        k <= 0 → ValueError.
+
+  PERFORMANCE: inserting 100,000 words (avg length ~12) and answering
+  50,000 mixed queries must complete in under 10 seconds total. A
+  list-scan implementation cannot pass.
+
+  Standard library only.
+task_type: code
+difficulty: 8
+timeout_seconds: 1200
+expected_files: ["trie.py"]

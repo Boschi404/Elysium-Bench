@@ -42,7 +42,7 @@ def test_multiagent_claim_pass_and_fail():
         "swarmloop": _res(90, 300, 12, True, delegate_calls=3, retries=1),
     }}
     v = next(x for x in evaluate_claims(ok)
-             if x.claim.startswith("t: swarmloop actually used subagents"))
+             if x.claim.startswith("t [elysium base]: actually used subagents"))
     assert v.verdict == "PASS" and "12" in v.detail and "retries=1" in v.detail
 
     no_sub = {"t": {
@@ -50,8 +50,27 @@ def test_multiagent_claim_pass_and_fail():
         "swarmloop": _res(90, 300, 0, True),
     }}
     v = next(x for x in evaluate_claims(no_sub)
-             if x.claim.startswith("t: swarmloop actually used subagents"))
+             if x.claim.startswith("t [elysium base]: actually used subagents"))
     assert v.verdict == "FAIL"
+
+
+def test_modes_get_separate_claims():
+    results = {"t": {
+        "baseline": _res(50, 100, 0, False),
+        "swarmloop": _res(60, 200, 0, True),
+        "maxeffort": _res(90, 500, 3, True, delegate_calls=2),
+        "mesm": _res(100, 900, 7, True, delegate_calls=4, retries=2),
+    }}
+    verdicts = evaluate_claims(results)
+    by_mode = {v.claim.split("[")[1].split("]")[0]: v for v in verdicts
+               if "quality" in v.claim and "[" in v.claim}
+    assert by_mode["elysium base"].verdict == "PASS"           # +10 exactly
+    assert by_mode["MAX EFFORT"].verdict == "PASS"             # +40
+    assert by_mode["MESM"].verdict == "PASS"                   # +50
+    m = {v.claim.split("[")[1].split("]")[0]: v for v in verdicts
+         if "subagents" in v.claim and "actually used" in v.claim
+         and "[" in v.claim}
+    assert m["MESM"].verdict == "PASS" and "retries=2" in m["MESM"].detail
 
 
 def test_quality_margins():
@@ -60,7 +79,7 @@ def test_quality_margins():
         "swarmloop": _res(90, 300, 4, True),
     }}
     v = next(x for x in evaluate_claims(better)
-             if x.claim.startswith("t: swarmloop quality"))
+             if x.claim.startswith("t [elysium base]: quality"))
     assert v.verdict == "PASS"
 
     worse = {"t": {
@@ -68,7 +87,7 @@ def test_quality_margins():
         "swarmloop": _res(60, 300, 4, True),
     }}
     v = next(x for x in evaluate_claims(worse)
-             if x.claim.startswith("t: swarmloop quality"))
+             if x.claim.startswith("t [elysium base]: quality"))
     assert v.verdict == "FAIL"
 
     noise = {"t": {
@@ -76,7 +95,7 @@ def test_quality_margins():
         "swarmloop": _res(90, 300, 4, True),
     }}
     v = next(x for x in evaluate_claims(noise)
-             if x.claim.startswith("t: swarmloop quality"))
+             if x.claim.startswith("t [elysium base]: quality"))
     assert v.verdict == "INCONCLUSIVE"
 
 
@@ -86,7 +105,7 @@ def test_wall_time_verdict():
         "swarmloop": _res(85, 300, 8, True),
     }}
     v = next(x for x in evaluate_claims(fast)
-             if x.claim.startswith("t: swarmloop wall-time"))
+             if x.claim.startswith("t [elysium base]: wall-time"))
     assert v.verdict == "PASS"
 
     slow = {"t": {
@@ -94,7 +113,7 @@ def test_wall_time_verdict():
         "swarmloop": _res(85, 400, 8, True),
     }}
     v = next(x for x in evaluate_claims(slow)
-             if x.claim.startswith("t: swarmloop wall-time"))
+             if x.claim.startswith("t [elysium base]: wall-time"))
     assert v.verdict == "FAIL"
 
 

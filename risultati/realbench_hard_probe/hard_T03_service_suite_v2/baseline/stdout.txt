@@ -1,0 +1,278 @@
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_baseline\lexer.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_baseline\lexer.py[0m
+[38;2;139;134;130m@@ -0,0 +1,151 @@[0m
+[38;2;255;255;255;48;2;19;87;20m+"""Lexer for the mini expression language.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+tokenize(text) -> list of (kind, value) tuples, where kind is one of[0m
+[38;2;255;255;255;48;2;19;87;20m+{"num", "str", "ident", "op", "kw"}.[0m
+[38;2;255;255;255;48;2;19;87;20m+"""[0m
+[38;2;255;255;255;48;2;19;87;20m+import re  # noqa: F401  (kept for potential reuse; not required)[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# Comparison / arithmetic operator sets used by the lexer.[0m
+[38;2;255;255;255;48;2;19;87;20m+_MULTI_OPS = ("<=", ">=", "==", "!=")[0m
+[38;2;255;255;255;48;2;19;87;20m+_SINGLE_OPS = set("+-*/%(),<>")[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+_KEYWORDS = ("true", "false", "none", "and", "or", "not")[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+def tokenize(text: str):[0m
+[38;2;255;255;255;48;2;19;87;20m+    """Return a list of (kind, value) tokens.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    Raises ValueError on illegal characters, unterminated strings,[0m
+[38;2;255;255;255;48;2;19;87;20m+    and malformed numbers (message includes the character position).[0m
+[38;2;255;255;255;48;2;19;87;20m+    """[0m
+[38;2;255;255;255;48;2;19;87;20m+    tokens, _positions = _lex(text)[0m
+[38;2;255;255;255;48;2;19;87;20m+    return tokens[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+def _lex(text: str):[0m
+[38;2;255;255;255;48;2;19;87;20m+    """Internal lexer that also returns start positions for each token."""[0m
+[38;2;255;255;255;48;2;19;87;20m+    tokens = [][0m
+[38;2;255;255;255;48;2;19;87;20m+    positions = [][0m
+[38;2;255;255;255;48;2;19;87;20m+    i = 0[0m
+[38;2;255;255;255;48;2;19;87;20m+    n = len(text)[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    while i < n:[0m
+[38;2;255;255;255;48;2;19;87;20m+        c = text[i][0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+        # Whitespace[0m
+[38;2;255;255;255;48;2;19;87;20m+        if c in " \t\r\n\f\v":[0m
+[38;2;255;255;255;48;2;19;87;20m+            i += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+            continue[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+        # Comment: '#' to end of line[0m
+[38;2;255;255;255;48;2;19;87;20m+        if c == "#":[0m
+[38;2;255;255;255;48;2;19;87;20m+            while i < n and text[i] != "\n":[0m
+[38;2;255;255;255;48;2;19;87;20m+                i += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+            continue[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+        # Number[0m
+[38;2;255;255;255;48;2;19;87;20m+        if c.isdigit():[0m
+[38;2;255;255;255;48;2;19;87;20m+            start = i[0m
+[38;2;255;255;255;48;2;19;87;20m+            i += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+            is_float = False[0m
+[38;2;255;255;255;48;2;19;87;20m+            while i < n and text[i].isdigit():[0m
+[38;2;255;255;255;48;2;19;87;20m+                i += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+            if i < n and text[i] == ".":[0m
+[38;2;255;255;255;48;2;19;87;20m+                is_float = True[0m
+[38;2;255;255;255;48;2;19;87;20m+                i += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+                while i < n and text[i].isdigit():[0m
+[38;2;255;255;255;48;2;19;87;20m+                    i += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+            if i < n and text[i] in "eE":[0m
+[38;2;255;255;255;48;2;19;87;20m+                is_float = True[0m
+[38;2;255;255;255;48;2;19;87;20m+                i += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+                if i < n and text[i] in "+-":[0m
+[38;2;255;255;255;48;2;19;87;20m+                    i += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+                if not (i < n and text[i].isdigit()):[0m
+[38;2;255;255;255;48;2;19;87;20m+                    raise ValueError([0m
+[38;2;255;255;255;48;2;19;87;20m+                        "malformed number (missing exponent digits) at position %d" % start[0m
+[38;2;255;255;255;48;2;19;87;20m+                    )[0m
+[38;2;255;255;255;48;2;19;87;20m+                while i < n and text[i].isdigit():[0m
+[38;2;255;255;255;48;2;19;87;20m+                    i += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+            numtext = text[start:i][0m
+[38;2;255;255;255;48;2;19;87;20m+            value = float(numtext) if is_float else int(numtext)[0m
+[38;2;255;255;255;48;2;19;87;20m+            tokens.append(("num", value))[0m
+[38;2;255;255;255;48;2;19;87;20m+            positions.append(start)[0m
+[38;2;255;255;255;48;2;19;87;20m+            continue[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+        # Single-quoted string[0m
+[38;2;255;255;255;48;2;19;87;20m+        if c == "'":[0m
+[38;2;255;255;255;48;2;19;87;20m+            start = i[0m
+[38;2;139;134;130m… omitted 73 diff line(s) across 1 additional file(s)/section(s)[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_baseline\parser.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_baseline\parser.py[0m
+[38;2;139;134;130m@@ -0,0 +1,204 @@[0m
+[38;2;255;255;255;48;2;19;87;20m+"""Recursive-descent parser for the mini expression language.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+parse(tokens, positions=None) -> AST[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+AST node shapes (a tuple tagged by its first element):[0m
+[38;2;255;255;255;48;2;19;87;20m+  ("num", value)[0m
+[38;2;255;255;255;48;2;19;87;20m+  ("str", value)[0m
+[38;2;255;255;255;48;2;19;87;20m+  ("bool", True|False)[0m
+[38;2;255;255;255;48;2;19;87;20m+  ("none",)[0m
+[38;2;255;255;255;48;2;19;87;20m+  ("name", name)[0m
+[38;2;255;255;255;48;2;19;87;20m+  ("unary", "-", operand) | ("unary", "not", operand)[0m
+[38;2;255;255;255;48;2;19;87;20m+  ("binop", op, left, right)        op in + - * / %[0m
+[38;2;255;255;255;48;2;19;87;20m+  ("cmp", [operands...], [ops...])  chained comparison[0m
+[38;2;255;255;255;48;2;19;87;20m+  ("and", left, right)[0m
+[38;2;255;255;255;48;2;19;87;20m+  ("or", left, right)[0m
+[38;2;255;255;255;48;2;19;87;20m+  ("call", name, [args...])[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+Precedence (low -> high): or, and, not, comparison, +- , * / %, unary -, primary.[0m
+[38;2;255;255;255;48;2;19;87;20m+"""[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+_CMP_OPS = ("<", "<=", ">", ">=", "==", "!=")[0m
+[38;2;255;255;255;48;2;19;87;20m+_ADD_OPS = ("+", "-")[0m
+[38;2;255;255;255;48;2;19;87;20m+_MUL_OPS = ("*", "/", "%")[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+class _Parser:[0m
+[38;2;255;255;255;48;2;19;87;20m+    def __init__(self, tokens, positions):[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.tokens = tokens[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.positions = ([0m
+[38;2;255;255;255;48;2;19;87;20m+            positions if positions is not None else list(range(len(tokens)))[0m
+[38;2;255;255;255;48;2;19;87;20m+        )[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.idx = 0[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _cur(self):[0m
+[38;2;255;255;255;48;2;19;87;20m+        if self.idx < len(self.tokens):[0m
+[38;2;255;255;255;48;2;19;87;20m+            return self.tokens[self.idx][0m
+[38;2;255;255;255;48;2;19;87;20m+        return None[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _pos(self):[0m
+[38;2;255;255;255;48;2;19;87;20m+        if self.idx < len(self.positions):[0m
+[38;2;255;255;255;48;2;19;87;20m+            return self.positions[self.idx][0m
+[38;2;255;255;255;48;2;19;87;20m+        return self.positions[-1] if self.positions else 0[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _advance(self):[0m
+[38;2;255;255;255;48;2;19;87;20m+        t = self.tokens[self.idx][0m
+[38;2;255;255;255;48;2;19;87;20m+        self.idx += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+        return t[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _err(self, msg):[0m
+[38;2;255;255;255;48;2;19;87;20m+        raise ValueError("%s at position %d" % (msg, self._pos()))[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    # ---- grammar ----[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def parse(self):[0m
+[38;2;255;255;255;48;2;19;87;20m+        if not self.tokens:[0m
+[38;2;255;255;255;48;2;19;87;20m+            raise ValueError("empty expression at position 0")[0m
+[38;2;255;255;255;48;2;19;87;20m+        node = self._parse_or()[0m
+[38;2;255;255;255;48;2;19;87;20m+        if self._cur() is not None:[0m
+[38;2;255;255;255;48;2;19;87;20m+            self._err("trailing tokens")[0m
+[38;2;255;255;255;48;2;19;87;20m+        return node[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _parse_or(self):[0m
+[38;2;255;255;255;48;2;19;87;20m+        node = self._parse_and()[0m
+[38;2;255;255;255;48;2;19;87;20m+        while self._is_kw("or"):[0m
+[38;2;255;255;255;48;2;19;87;20m+            self._advance()[0m
+[38;2;255;255;255;48;2;19;87;20m+            right = self._parse_and()[0m
+[38;2;255;255;255;48;2;19;87;20m+            node = ("or", node, right)[0m
+[38;2;255;255;255;48;2;19;87;20m+        return node[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _parse_and(self):[0m
+[38;2;255;255;255;48;2;19;87;20m+        node = self._parse_not()[0m
+[38;2;255;255;255;48;2;19;87;20m+        while self._is_kw("and"):[0m
+[38;2;255;255;255;48;2;19;87;20m+            self._advance()[0m
+[38;2;255;255;255;48;2;19;87;20m+            right = self._parse_not()[0m
+[38;2;255;255;255;48;2;19;87;20m+            node = ("and", node, right)[0m
+[38;2;255;255;255;48;2;19;87;20m+        return node[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _parse_not(self):[0m
+[38;2;139;134;130m… omitted 126 diff line(s) across 1 additional file(s)/section(s)[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_baseline\eval.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_baseline\eval.py[0m
+[38;2;139;134;130m@@ -0,0 +1,177 @@[0m
+[38;2;255;255;255;48;2;19;87;20m+"""Evaluator for the mini expression language.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+eval_text(text, env) -> value : lexes, parses, and evaluates.[0m
+[38;2;255;255;255;48;2;19;87;20m+"""[0m
+[38;2;255;255;255;48;2;19;87;20m+import os[0m
+[38;2;255;255;255;48;2;19;87;20m+import sys[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+import lexer[0m
+[38;2;255;255;255;48;2;19;87;20m+import parser[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+_NUM = (int, float)[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+def _truthy(v):[0m
+[38;2;255;255;255;48;2;19;87;20m+    if isinstance(v, bool):[0m
+[38;2;255;255;255;48;2;19;87;20m+        return v[0m
+[38;2;255;255;255;48;2;19;87;20m+    if v is None:[0m
+[38;2;255;255;255;48;2;19;87;20m+        return False[0m
+[38;2;255;255;255;48;2;19;87;20m+    if isinstance(v, _NUM):[0m
+[38;2;255;255;255;48;2;19;87;20m+        return v != 0[0m
+[38;2;255;255;255;48;2;19;87;20m+    if isinstance(v, str):[0m
+[38;2;255;255;255;48;2;19;87;20m+        return v != ""[0m
+[38;2;255;255;255;48;2;19;87;20m+    return True[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+def _evaluate(node, env):[0m
+[38;2;255;255;255;48;2;19;87;20m+    tag = node[0][0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    if tag == "num":[0m
+[38;2;255;255;255;48;2;19;87;20m+        return node[1][0m
+[38;2;255;255;255;48;2;19;87;20m+    if tag == "str":[0m
+[38;2;255;255;255;48;2;19;87;20m+        return node[1][0m
+[38;2;255;255;255;48;2;19;87;20m+    if tag == "bool":[0m
+[38;2;255;255;255;48;2;19;87;20m+        return node[1][0m
+[38;2;255;255;255;48;2;19;87;20m+    if tag == "none":[0m
+[38;2;255;255;255;48;2;19;87;20m+        return None[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    if tag == "name":[0m
+[38;2;255;255;255;48;2;19;87;20m+        name = node[1][0m
+[38;2;255;255;255;48;2;19;87;20m+        if name in env:[0m
+[38;2;255;255;255;48;2;19;87;20m+            return env[name][0m
+[38;2;255;255;255;48;2;19;87;20m+        raise NameError("undefined variable '%s'" % name)[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    if tag == "unary":[0m
+[38;2;255;255;255;48;2;19;87;20m+        op = node[1][0m
+[38;2;255;255;255;48;2;19;87;20m+        v = _evaluate(node[2], env)[0m
+[38;2;255;255;255;48;2;19;87;20m+        if op == "not":[0m
+[38;2;255;255;255;48;2;19;87;20m+            return not _truthy(v)[0m
+[38;2;255;255;255;48;2;19;87;20m+        # unary minus[0m
+[38;2;255;255;255;48;2;19;87;20m+        if isinstance(v, _NUM):[0m
+[38;2;255;255;255;48;2;19;87;20m+            return -v[0m
+[38;2;255;255;255;48;2;19;87;20m+        raise TypeError("unary '-' requires a number")[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    if tag == "binop":[0m
+[38;2;255;255;255;48;2;19;87;20m+        op = node[1][0m
+[38;2;255;255;255;48;2;19;87;20m+        l = _evaluate(node[2], env)[0m
+[38;2;255;255;255;48;2;19;87;20m+        r = _evaluate(node[3], env)[0m
+[38;2;255;255;255;48;2;19;87;20m+        if op == "+":[0m
+[38;2;255;255;255;48;2;19;87;20m+            if isinstance(l, _NUM) and isinstance(r, _NUM):[0m
+[38;2;255;255;255;48;2;19;87;20m+                return l + r[0m
+[38;2;255;255;255;48;2;19;87;20m+            if isinstance(l, str) and isinstance(r, str):[0m
+[38;2;255;255;255;48;2;19;87;20m+                return l + r[0m
+[38;2;255;255;255;48;2;19;87;20m+            raise TypeError("'+' requires two numbers or two strings")[0m
+[38;2;255;255;255;48;2;19;87;20m+        if op in ("-", "*", "/", "%"):[0m
+[38;2;255;255;255;48;2;19;87;20m+            if not (isinstance(l, _NUM) and isinstance(r, _NUM)):[0m
+[38;2;255;255;255;48;2;19;87;20m+                raise TypeError("'%s' requires numbers" % op)[0m
+[38;2;255;255;255;48;2;19;87;20m+            if op == "-":[0m
+[38;2;255;255;255;48;2;19;87;20m+                return l - r[0m
+[38;2;255;255;255;48;2;19;87;20m+            if op == "*":[0m
+[38;2;255;255;255;48;2;19;87;20m+                return l * r[0m
+[38;2;255;255;255;48;2;19;87;20m+            if op == "/":[0m
+[38;2;255;255;255;48;2;19;87;20m+                return l / r[0m
+[38;2;255;255;255;48;2;19;87;20m+            if op == "%":[0m
+[38;2;255;255;255;48;2;19;87;20m+                return l % r[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    if tag == "cmp":[0m
+[38;2;139;134;130m… omitted 99 diff line(s) across 1 additional file(s)/section(s)[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_baseline\repl.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_baseline\repl.py[0m
+[38;2;139;134;130m@@ -0,0 +1,21 @@[0m
+[38;2;255;255;255;48;2;19;87;20m+"""REPL helper for the mini expression language.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+run(text, env=None) -> dict[0m
+[38;2;255;255;255;48;2;19;87;20m+  On success: {"status": "ok", "value": v}[0m
+[38;2;255;255;255;48;2;19;87;20m+  On any exception: {"status": "error", "error": "<message>"}[0m
+[38;2;255;255;255;48;2;19;87;20m+Never raises.[0m
+[38;2;255;255;255;48;2;19;87;20m+"""[0m
+[38;2;255;255;255;48;2;19;87;20m+import os[0m
+[38;2;255;255;255;48;2;19;87;20m+import sys[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+import eval as _eval[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+def run(text: str, env=None) -> dict:[0m
+[38;2;255;255;255;48;2;19;87;20m+    try:[0m
+[38;2;255;255;255;48;2;19;87;20m+        value = _eval.eval_text(text, env)[0m
+[38;2;255;255;255;48;2;19;87;20m+        return {"status": "ok", "value": value}[0m
+[38;2;255;255;255;48;2;19;87;20m+    except Exception as e:  # never raise[0m
+[38;2;255;255;255;48;2;19;87;20m+        return {"status": "error", "error": str(e)}[0m
+All behaviors verified against the spec. The two earlier "FAIL" lines were malformed test inputs, not bugs:
+
+- The escape string I wrote was a broken Python literal; the corrected test (`'a\'b\n\tc'`) correctly yields `a'b\n\tc`.
+- `false or 1/0 == 0` correctly raises: per the stated precedence (or < comparison), it parses as `false or (1/0 == 0)`, and since `false` is falsy the `or` *must* evaluate its right branch. The spec's short-circuit guarantee is the opposite case (`3 or 1/0 → 3` and `0 and 1/0 → 0` both correctly skip the right branch without raising), which I confirmed passes.
+
+Verified working cases include: number/string/escape lexing, unary minus (`--2 == 2`, `2 * -3 == -6`), precedence, chained comparisons with short-circuit (`1 < 2 < 3`, `1 < 2 == 2`), lazy and/or returning operand values, `not` truthiness, true/false/none, string concat, all builtins (len/abs/int/str/min/max with type rules), and every error path (NameError, TypeError, ZeroDivisionError, unterminated string, missing operand/`)`/trailing tokens, illegal character).
+
+DONE

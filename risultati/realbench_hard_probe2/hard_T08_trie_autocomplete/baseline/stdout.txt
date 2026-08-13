@@ -1,0 +1,92 @@
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T08_trie_autocomplete_baseline\trie.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T08_trie_autocomplete_baseline\trie.py[0m
+[38;2;139;134;130m@@ -0,0 +1,99 @@[0m
+[38;2;255;255;255;48;2;19;87;20m+"""Trie-based autocomplete with prefix counting.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+Standard library only. Designed to handle ~100k insertions and tens of[0m
+[38;2;255;255;255;48;2;19;87;20m+thousands of mixed queries well under 10 seconds.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+Each node tracks:[0m
+[38;2;255;255;255;48;2;19;87;20m+  - is_end: whether a word terminates at this node (presence is boolean;[0m
+[38;2;255;255;255;48;2;19;87;20m+    duplicates do not change anything).[0m
+[38;2;255;255;255;48;2;19;87;20m+  - subtree_count: number of DISTINCT words in the subtree rooted here[0m
+[38;2;255;255;255;48;2;19;87;20m+    (i.e. number of words having the prefix represented by this node).[0m
+[38;2;255;255;255;48;2;19;87;20m+    Maintained incrementally on insert so count_prefix and starts_with[0m
+[38;2;255;255;255;48;2;19;87;20m+    are O(|prefix|) and autocomplete only descends into relevant branches.[0m
+[38;2;255;255;255;48;2;19;87;20m+  - children: dict mapping a character to its child node.[0m
+[38;2;255;255;255;48;2;19;87;20m+"""[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+class _Node:[0m
+[38;2;255;255;255;48;2;19;87;20m+    __slots__ = ("children", "is_end", "subtree_count")[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def __init__(self):[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.children = {}[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.is_end = False[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.subtree_count = 0[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+class Trie:[0m
+[38;2;255;255;255;48;2;19;87;20m+    def __init__(self):[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.root = _Node()[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def insert(self, word: str) -> None:[0m
+[38;2;255;255;255;48;2;19;87;20m+        node = self.root[0m
+[38;2;255;255;255;48;2;19;87;20m+        path = [node][0m
+[38;2;255;255;255;48;2;19;87;20m+        for ch in word:[0m
+[38;2;255;255;255;48;2;19;87;20m+            child = node.children.get(ch)[0m
+[38;2;255;255;255;48;2;19;87;20m+            if child is None:[0m
+[38;2;255;255;255;48;2;19;87;20m+                child = _Node()[0m
+[38;2;255;255;255;48;2;19;87;20m+                node.children[ch] = child[0m
+[38;2;255;255;255;48;2;19;87;20m+            node = child[0m
+[38;2;255;255;255;48;2;19;87;20m+            path.append(node)[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+        # Duplicates are allowed but presence is boolean: if the word is[0m
+[38;2;255;255;255;48;2;19;87;20m+        # already present, nothing changes.[0m
+[38;2;255;255;255;48;2;19;87;20m+        if node.is_end:[0m
+[38;2;255;255;255;48;2;19;87;20m+            return[0m
+[38;2;255;255;255;48;2;19;87;20m+        node.is_end = True[0m
+[38;2;255;255;255;48;2;19;87;20m+        for n in path:[0m
+[38;2;255;255;255;48;2;19;87;20m+            n.subtree_count += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def search(self, word: str) -> bool:[0m
+[38;2;255;255;255;48;2;19;87;20m+        node = self.root[0m
+[38;2;255;255;255;48;2;19;87;20m+        for ch in word:[0m
+[38;2;255;255;255;48;2;19;87;20m+            node = node.children.get(ch)[0m
+[38;2;255;255;255;48;2;19;87;20m+            if node is None:[0m
+[38;2;255;255;255;48;2;19;87;20m+                return False[0m
+[38;2;255;255;255;48;2;19;87;20m+        return node.is_end[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def starts_with(self, prefix: str) -> bool:[0m
+[38;2;255;255;255;48;2;19;87;20m+        node = self.root[0m
+[38;2;255;255;255;48;2;19;87;20m+        for ch in prefix:[0m
+[38;2;255;255;255;48;2;19;87;20m+            node = node.children.get(ch)[0m
+[38;2;255;255;255;48;2;19;87;20m+            if node is None:[0m
+[38;2;255;255;255;48;2;19;87;20m+                return False[0m
+[38;2;255;255;255;48;2;19;87;20m+        return node.subtree_count > 0[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def count_prefix(self, prefix: str) -> int:[0m
+[38;2;255;255;255;48;2;19;87;20m+        node = self.root[0m
+[38;2;255;255;255;48;2;19;87;20m+        for ch in prefix:[0m
+[38;2;255;255;255;48;2;19;87;20m+            node = node.children.get(ch)[0m
+[38;2;255;255;255;48;2;19;87;20m+            if node is None:[0m
+[38;2;255;255;255;48;2;19;87;20m+                return 0[0m
+[38;2;255;255;255;48;2;19;87;20m+        return node.subtree_count[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def autocomplete(self, prefix: str, k: int) -> list:[0m
+[38;2;255;255;255;48;2;19;87;20m+        if k <= 0:[0m
+[38;2;255;255;255;48;2;19;87;20m+            raise ValueError("k must be a positive integer")[0m
+[38;2;255;255;255;48;2;19;87;20m+        node = self.root[0m
+[38;2;255;255;255;48;2;19;87;20m+        for ch in prefix:[0m
+[38;2;255;255;255;48;2;19;87;20m+            node = node.children.get(ch)[0m
+[38;2;139;134;130m… omitted 21 diff line(s) across 1 additional file(s)/section(s)[0m
+All checks pass. DONE.
+
+File written: C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T08_trie_autocomplete_baseline\trie.py
+
+Implementation summary:
+- Trie node uses __slots__ with children dict, is_end flag, and an incremental subtree_count (number of distinct words under each node). This makes insert/search/starts_with/count_prefix all O(|word| or |prefix|).
+- Duplicates are tolerated but presence stays boolean (insert of an already-present word is a no-op, so counts never inflate).
+- Empty string is a valid word; search(""), starts_with(""), and count_prefix("") all behave correctly.
+- autocomplete walks only the relevant subtree and visits children in sorted order, accumulating up to k words in lexicographic order with no final sort (k <= 0 raises ValueError).
+- No list-scan anywhere; standard library only.

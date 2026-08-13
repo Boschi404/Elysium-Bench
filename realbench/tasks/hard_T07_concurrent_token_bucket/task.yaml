@@ -1,0 +1,40 @@
+id: hard_T07_concurrent_token_bucket
+category: realbench_hard
+name: "Thread-Safe Token Bucket (deterministic core + concurrency stress)"
+description: |
+  Implement a thread-safe token bucket rate limiter in `bucket.py`.
+
+  SPEC:
+  - class TokenBucket:
+      - __init__(self, capacity: float, refill_rate: float) -> None
+        capacity = max tokens storable; refill_rate = tokens added per
+        second. Both must be > 0, else ValueError.
+      - try_acquire(self, n: float = 1.0, now: float | None = None) -> bool
+        Attempts to consume n tokens (n >= 0). Returns True if enough tokens
+        are available (consumes them), False otherwise (consumes nothing).
+        Refill happens CONTINUOUSLY: tokens available at time t are computed
+        from the last refill state plus elapsed*refill_rate, capped at
+        capacity.
+        `now` is a wall-clock timestamp in SECONDS (monotonic or epoch —
+        your choice, but internally consistent). When `now` is None, use
+        time.monotonic().
+        All calls MUST be thread-safe: no lost refills or double-spends
+        under concurrency.
+      - available(self, now: float | None = None) -> float
+        Current token count (refilled up to `now`), without consuming.
+
+  DETERMINISM: tests pass explicit `now` values (e.g. 0.0, 1.0, 2.5) and
+  expect EXACT amounts: tokens refill linearly with elapsed time.
+  Example: TokenBucket(capacity=10, refill_rate=2): at t=0 available=10;
+  after try_acquire(8) at t=0 → available 2; at t=3 (3s elapsed) → 2 + 6 = 8.
+
+  CONCURRENCY: a stress test runs 8 threads × 2000 acquisitions against one
+  bucket with real time. Invariants checked: total consumed never exceeds
+  capacity + refill over elapsed time (no over-grant), and no exception is
+  ever raised. A missing lock WILL fail this.
+
+  Standard library only.
+task_type: code
+difficulty: 9
+timeout_seconds: 1200
+expected_files: ["bucket.py"]

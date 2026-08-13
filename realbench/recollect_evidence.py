@@ -16,16 +16,20 @@ from realbench.harness import DEFAULT_HERMES_HOME, RunResult
 from realbench.report import evaluate_claims, write_report
 from realbench.transcript import collect_evidence, parse_session_id_from_stdout
 
-OUT = Path(__file__).resolve().parent.parent / "risultati" / "realbench_pilot"
+OUT = Path(__file__).resolve().parent.parent / "risultati" / (
+    sys.argv[1] if len(sys.argv) > 1 else "realbench_pilot")
 ISOLATED_ROOT = OUT / "_isolated_homes"
 
 results: dict[str, dict[str, RunResult]] = {}
 lost: list[str] = []
 
-for task_dir in sorted(OUT.glob("code_*")) + sorted(OUT.glob("math_*")) + sorted(OUT.glob("text_*")):
+for task_dir in sorted(OUT.rglob("hard_*")) + sorted(OUT.rglob("code_*")) \
+        + sorted(OUT.rglob("math_*")) + sorted(OUT.rglob("text_*")):
     task_id = task_dir.name
     results[task_id] = {}
-    for cond_dir in sorted(task_dir.glob("baseline")) + sorted(task_dir.glob("swarmloop")):
+    for cond_dir in [task_dir / c for c in
+                     ("baseline", "swarmloop", "maxeffort", "mesm")
+                     if (task_dir / c).exists()]:
         cond = cond_dir.name
         r = RunResult(task_id=task_id, condition=cond, workspace=cond_dir)
         stdout_file = cond_dir / "stdout.txt"
@@ -41,10 +45,10 @@ for task_dir in sorted(OUT.glob("code_*")) + sorted(OUT.glob("math_*")) + sorted
             results[task_id][cond] = r
             continue
         # which state.db holds this session?
-        if cond == "swarmloop":
-            db = DEFAULT_HERMES_HOME / "state.db"
-        else:
+        if cond == "baseline":
             db = ISOLATED_ROOT / f"hermes_home_{task_id}_baseline" / "state.db"
+        else:
+            db = DEFAULT_HERMES_HOME / "state.db"
         r.evidence = collect_evidence(db, r.session_id)
         if not r.evidence.found:
             lost.append(f"{task_id}/{cond}: session {r.session_id} not found in {db.name}")
@@ -71,7 +75,7 @@ if pilot_json.exists():
 
 # summary of re-collected evidence
 for task_id, conds in sorted(results.items()):
-    for cond in ("baseline", "swarmloop"):
+    for cond in ("baseline", "swarmloop", "maxeffort", "mesm"):
         r = conds.get(cond)
         if r and r.evidence:
             e = r.evidence

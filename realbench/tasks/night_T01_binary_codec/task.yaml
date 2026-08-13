@@ -1,0 +1,40 @@
+id: night_T01_binary_codec
+category: realbench_nightmare
+name: "Binary Protocol Codec: LEB128 varints, zigzag, CRC32 (bit-exact)"
+description: |
+  Implement a binary protocol codec in `codec.py`. EVERY output byte must be
+  EXACT — the grader compares against golden byte strings; a single wrong
+  byte (endianness, bit order, padding) fails.
+
+  SPEC:
+  - def encode_varint(value: int) -> bytes
+    Unsigned LEB128 (little-endian 7-bit groups, high bit = continuation).
+    value < 0 → ValueError. Examples: 0 → b'\\x00', 127 → b'\\x7f',
+    128 → b'\\x80\\x01', 300 → b'\\xac\\x02'.
+  - def decode_varint(data: bytes, pos: int = 0) -> tuple[int, int]
+    Returns (value, new_position). Malformed input (truncated, more than
+    10 bytes, non-canonical overlong encoding) → ValueError.
+  - def encode_signed(value: int) -> bytes
+    ZigZag then LEB128: 0→0, -1→1, 1→2, -2→3, ...
+  - def decode_signed(data: bytes, pos: int = 0) -> tuple[int, int]
+  - def encode_message(msg: dict) -> bytes
+    msg = {"type": int (0..255), "payload": bytes}. Layout:
+      magic:      b'\\xeb\\x90'          (2 bytes)
+      version:    b'\\x01'               (1 byte)
+      type:       1 byte (0..255)
+      length:     payload length as UNSIGNED varint
+      payload:    raw bytes
+      checksum:   CRC-32 of payload, 4 bytes LITTLE-ENDIAN
+    (use zlib.crc32 from the stdlib)
+  - def decode_message(data: bytes) -> dict
+    Returns {"type": int, "payload": bytes}. Raises ValueError (message
+    states the reason) on: wrong magic, wrong version, truncated data,
+    length field mismatching actual payload length, CRC mismatch, or
+    trailing bytes after the message.
+  - def zigzag(n: int) -> int  (optional helper)
+
+  Standard library only.
+task_type: code
+difficulty: 9
+timeout_seconds: 1200
+expected_files: ["codec.py"]

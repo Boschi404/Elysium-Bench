@@ -24,6 +24,16 @@ JUNK = {
     "code_T03_service_suite": None,  # handled specially below
     "code_T04_bug_hunt": None,       # empty workspace = junk
     "math_T01_knapsack": "knapsack.py",
+    "hard_T01_mini_regex": "regex.py",
+    "hard_T02_dag_executor": "dag.py",
+    "hard_T03_service_suite_v2": None,
+    "hard_T04_lfu_cache": "lfu.py",
+    "hard_T05_json_parser": "jsoncodec.py",
+    "hard_T06_segment_tree": "segtree.py",
+    "hard_T07_concurrent_token_bucket": "bucket.py",
+    "hard_T08_trie_autocomplete": "trie.py",
+    "night_T01_binary_codec": "codec.py",
+    "night_T02_btree": "btree.py",
 }
 
 JUNK_SOURCES = {
@@ -46,6 +56,72 @@ class Scheduler:
     "math_T01_knapsack": """
 def solve_knapsack(values, weights, capacity):
     return 0
+""",
+    "hard_T01_mini_regex": """
+class Regex:
+    def __init__(self, pattern): raise ValueError("nope")
+    def match(self, text): return False
+    def find(self, text): return []
+""",
+    "hard_T02_dag_executor": """
+class Dag:
+    def __init__(self): pass
+    def add_task(self, task_id, duration, deps): pass
+    def is_valid(self): return True
+    def topological_order(self): return []
+    def critical_path_length(self): return 0
+    def earliest_start(self, task_id): return 0
+    def latest_start(self, task_id): return 0
+""",
+    "hard_T04_lfu_cache": """
+class LFUCache:
+    def __init__(self, capacity): pass
+    def get(self, key): return -1
+    def put(self, key, value): pass
+""",
+    "hard_T05_json_parser": """
+def parse(text):
+    return None
+def dumps(obj):
+    return "null"
+""",
+    "hard_T06_segment_tree": """
+class SegmentTree:
+    def __init__(self, values): pass
+    def range_sum(self, left, right): return 0
+    def range_min(self, left, right): return 0
+    def update(self, index, value): pass
+""",
+    "hard_T07_concurrent_token_bucket": """
+class TokenBucket:
+    def __init__(self, capacity, refill_rate): pass
+    def try_acquire(self, n=1.0, now=None): return False
+    def available(self, now=None): return 0.0
+""",
+    "hard_T08_trie_autocomplete": """
+class Trie:
+    def __init__(self): pass
+    def insert(self, word): pass
+    def search(self, word): return False
+    def starts_with(self, prefix): return False
+    def count_prefix(self, prefix): return 0
+    def autocomplete(self, prefix, k): return []
+""",
+    "night_T01_binary_codec": """
+def encode_varint(value): return b"\\x00"
+def decode_varint(data, pos=0): return (0, pos)
+def encode_signed(value): return b"\\x00"
+def decode_signed(data, pos=0): return (0, pos)
+def encode_message(msg): return b""
+def decode_message(data): return {"type": 0, "payload": b""}
+""",
+    "night_T02_btree": """
+class BTree:
+    def __init__(self, min_degree=2): pass
+    def insert(self, key): pass
+    def search(self, key): return False
+    def delete(self, key): return False
+    def keys(self): return []
 """,
 }
 
@@ -79,11 +155,11 @@ def test_junk_scores_low(task_id):
     pass even for a stub; what matters is the gap to gold.)"""
     task = TASKS[task_id]
     junk_file = JUNK[task_id]
-    if junk_file is None or junk_file not in JUNK_SOURCES:
+    if junk_file is None or task_id not in JUNK_SOURCES:
         # junk = totally empty workspace (nothing implemented at all)
         ws = _ws_with({})
     else:
-        ws = _ws_with({junk_file: JUNK_SOURCES[junk_file]})
+        ws = _ws_with({junk_file: JUNK_SOURCES[task_id]})
     res = score_workspace(task, ws)
     shutil.rmtree(ws)
     from realbench.scoring import score_gold
@@ -95,7 +171,15 @@ def test_junk_scores_low(task_id):
 
 @pytest.mark.parametrize("task_id", ["code_T01_lru_cache", "code_T02_task_scheduler",
                                      "code_T04_bug_hunt", "math_T01_knapsack",
-                                     "code_T03_service_suite"])
+                                     "code_T03_service_suite",
+                                     "hard_T01_mini_regex", "hard_T02_dag_executor",
+                                     "hard_T03_service_suite_v2",
+                                     "hard_T04_lfu_cache", "hard_T05_json_parser",
+                                     "hard_T06_segment_tree",
+                                     "hard_T07_concurrent_token_bucket",
+                                     "hard_T08_trie_autocomplete",
+                                     "night_T01_binary_codec",
+                                     "night_T02_btree"])
 def test_gold_scores_full(task_id):
     from realbench.scoring import score_gold
     res = score_gold(TASKS[task_id])
