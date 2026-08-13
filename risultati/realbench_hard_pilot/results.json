@@ -1,0 +1,715 @@
+{
+  "timestamp": "2026-08-14T00:04:14.969336",
+  "tasks": {
+    "hard_T01_mini_regex": {
+      "baseline": {
+        "score": 100.0,
+        "passed": 17,
+        "failed": 0,
+        "elapsed_seconds": 759.0,
+        "timed_out": false,
+        "session_id": "20260813_215854_be7746",
+        "input_tokens": 9164,
+        "output_tokens": 31019,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": false,
+        "terminal_calls": 2,
+        "write_file_calls": 1,
+        "notes": [],
+        "failed_tests": []
+      },
+      "swarmloop": {
+        "score": 100.0,
+        "passed": 17,
+        "failed": 0,
+        "elapsed_seconds": 997.4,
+        "timed_out": false,
+        "session_id": "20260813_231550_c31a7d",
+        "input_tokens": 66565,
+        "output_tokens": 48907,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": true,
+        "terminal_calls": 0,
+        "write_file_calls": 1,
+        "notes": [],
+        "failed_tests": []
+      },
+      "maxeffort": {
+        "score": 100.0,
+        "passed": 17,
+        "failed": 0,
+        "elapsed_seconds": 398.9,
+        "timed_out": false,
+        "session_id": "20260813_233231_fc4bf2",
+        "input_tokens": 57125,
+        "output_tokens": 32268,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": true,
+        "terminal_calls": 6,
+        "write_file_calls": 2,
+        "notes": [],
+        "failed_tests": []
+      }
+    },
+    "hard_T02_dag_executor": {
+      "baseline": {
+        "score": 100.0,
+        "passed": 12,
+        "failed": 0,
+        "elapsed_seconds": 201.7,
+        "timed_out": false,
+        "session_id": "20260813_221120_13c854",
+        "input_tokens": 7827,
+        "output_tokens": 10132,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": false,
+        "terminal_calls": 2,
+        "write_file_calls": 1,
+        "notes": [],
+        "failed_tests": []
+      }
+    },
+    "hard_T03_service_suite_v2": {
+      "baseline": {
+        "score": 100.0,
+        "passed": 34,
+        "failed": 0,
+        "elapsed_seconds": 627.4,
+        "timed_out": false,
+        "session_id": "20260813_221442_cec996",
+        "input_tokens": 8243,
+        "output_tokens": 32872,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": false,
+        "terminal_calls": 2,
+        "write_file_calls": 4,
+        "notes": [],
+        "failed_tests": []
+      },
+      "swarmloop": {
+        "score": 97.1,
+        "passed": 33,
+        "failed": 1,
+        "elapsed_seconds": 452.9,
+        "timed_out": false,
+        "session_id": "20260813_230232_da927f",
+        "input_tokens": 63935,
+        "output_tokens": 37069,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": true,
+        "terminal_calls": 7,
+        "write_file_calls": 5,
+        "notes": [],
+        "failed_tests": []
+      },
+      "maxeffort": {
+        "score": 100.0,
+        "passed": 34,
+        "failed": 0,
+        "elapsed_seconds": 340.3,
+        "timed_out": false,
+        "session_id": "20260813_231006_06a4e2",
+        "input_tokens": 57432,
+        "output_tokens": 36556,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": true,
+        "terminal_calls": 4,
+        "write_file_calls": 5,
+        "notes": [],
+        "failed_tests": []
+      },
+      "mesm": {
+        "score": 97.1,
+        "passed": 33,
+        "failed": 1,
+        "elapsed_seconds": 310.6,
+        "timed_out": false,
+        "session_id": "20260813_234347_19ee0f",
+        "input_tokens": 61839,
+        "output_tokens": 28528,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": true,
+        "terminal_calls": 6,
+        "write_file_calls": 5,
+        "notes": [],
+        "failed_tests": []
+      }
+    },
+    "hard_T04_lfu_cache": {
+      "baseline": {
+        "score": 100.0,
+        "passed": 11,
+        "failed": 0,
+        "elapsed_seconds": 53.9,
+        "timed_out": false,
+        "session_id": "20260813_222515_ceb0e7",
+        "input_tokens": 5973,
+        "output_tokens": 1366,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": false,
+        "terminal_calls": 1,
+        "write_file_calls": 1,
+        "notes": [],
+        "failed_tests": []
+      }
+    },
+    "hard_T05_json_parser": {
+      "baseline": {
+        "score": 83.3,
+        "passed": 10,
+        "failed": 2,
+        "elapsed_seconds": 254.5,
+        "timed_out": false,
+        "session_id": "20260813_222611_3efb5f",
+        "input_tokens": 9681,
+        "output_tokens": 12545,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": false,
+        "terminal_calls": 2,
+        "write_file_calls": 2,
+        "notes": [],
+        "failed_tests": []
+      },
+      "swarmloop": {
+        "score": 100.0,
+        "passed": 12,
+        "failed": 0,
+        "elapsed_seconds": 162.5,
+        "timed_out": false,
+        "session_id": "20260813_225129_36dc3f",
+        "input_tokens": 53612,
+        "output_tokens": 12526,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": true,
+        "terminal_calls": 3,
+        "write_file_calls": 2,
+        "notes": [],
+        "failed_tests": []
+      },
+      "maxeffort": {
+        "score": 100.0,
+        "passed": 12,
+        "failed": 0,
+        "elapsed_seconds": 206.3,
+        "timed_out": false,
+        "session_id": "20260813_225413_b10f33",
+        "input_tokens": 52915,
+        "output_tokens": 19804,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": true,
+        "terminal_calls": 1,
+        "write_file_calls": 1,
+        "notes": [],
+        "failed_tests": []
+      },
+      "mesm": {
+        "score": 100.0,
+        "passed": 12,
+        "failed": 0,
+        "elapsed_seconds": 207.2,
+        "timed_out": false,
+        "session_id": "20260813_234017_9835b3",
+        "input_tokens": 55206,
+        "output_tokens": 14836,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": true,
+        "terminal_calls": 3,
+        "write_file_calls": 2,
+        "notes": [],
+        "failed_tests": []
+      }
+    },
+    "hard_T06_segment_tree": {
+      "baseline": {
+        "score": 100.0,
+        "passed": 9,
+        "failed": 0,
+        "elapsed_seconds": 67.5,
+        "timed_out": false,
+        "session_id": "20260813_223026_489f10",
+        "input_tokens": 6185,
+        "output_tokens": 1350,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": false,
+        "terminal_calls": 1,
+        "write_file_calls": 1,
+        "notes": [],
+        "failed_tests": []
+      }
+    },
+    "hard_T07_concurrent_token_bucket": {
+      "baseline": {
+        "score": 100.0,
+        "passed": 10,
+        "failed": 0,
+        "elapsed_seconds": 85.2,
+        "timed_out": false,
+        "session_id": "20260813_223151_ab28c0",
+        "input_tokens": 7028,
+        "output_tokens": 3794,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": false,
+        "terminal_calls": 2,
+        "write_file_calls": 2,
+        "notes": [],
+        "failed_tests": []
+      }
+    },
+    "hard_T08_trie_autocomplete": {
+      "baseline": {
+        "score": 100.0,
+        "passed": 10,
+        "failed": 0,
+        "elapsed_seconds": 82.9,
+        "timed_out": false,
+        "session_id": "20260813_223318_444df8",
+        "input_tokens": 6018,
+        "output_tokens": 2764,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": false,
+        "terminal_calls": 1,
+        "write_file_calls": 1,
+        "notes": [],
+        "failed_tests": []
+      }
+    },
+    "night_T01_binary_codec": {
+      "baseline": {
+        "score": 100.0,
+        "passed": 17,
+        "failed": 0,
+        "elapsed_seconds": 148.3,
+        "timed_out": false,
+        "session_id": "20260813_224304_809b5b",
+        "input_tokens": 7538,
+        "output_tokens": 5625,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": false,
+        "terminal_calls": 2,
+        "write_file_calls": 1,
+        "notes": [],
+        "failed_tests": []
+      }
+    },
+    "night_T02_btree": {
+      "baseline": {
+        "score": 100.0,
+        "passed": 13,
+        "failed": 0,
+        "elapsed_seconds": 332.4,
+        "timed_out": false,
+        "session_id": "20260813_224534_71740c",
+        "input_tokens": 9598,
+        "output_tokens": 14134,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": false,
+        "terminal_calls": 4,
+        "write_file_calls": 2,
+        "notes": [],
+        "failed_tests": []
+      },
+      "swarmloop": {
+        "score": 100.0,
+        "passed": 13,
+        "failed": 0,
+        "elapsed_seconds": 153.3,
+        "timed_out": false,
+        "session_id": "20260813_225741_7c856a",
+        "input_tokens": 51633,
+        "output_tokens": 9465,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": true,
+        "terminal_calls": 2,
+        "write_file_calls": 1,
+        "notes": [],
+        "failed_tests": []
+      },
+      "maxeffort": {
+        "score": 100.0,
+        "passed": 13,
+        "failed": 0,
+        "elapsed_seconds": 131.4,
+        "timed_out": false,
+        "session_id": "20260813_230017_416115",
+        "input_tokens": 50770,
+        "output_tokens": 11504,
+        "estimated_cost_usd": 0.0,
+        "delegate_calls": 0,
+        "subagents_dispatched": 0,
+        "batched_dispatches": 0,
+        "retries": 0,
+        "skill_loaded": true,
+        "terminal_calls": 1,
+        "write_file_calls": 2,
+        "notes": [],
+        "failed_tests": []
+      }
+    }
+  },
+  "verdicts": [
+    {
+      "claim": "Benchmark discriminative (gold=100, junk<40, gap\u226560)",
+      "verdict": "PASS",
+      "detail": "hard_T01_mini_regex: gold=100.0 junk=0.0; hard_T02_dag_executor: gold=100.0 junk=0.0; hard_T03_service_suite_v2: gold=100.0 junk=0.0; hard_T04_lfu_cache: gold=100.0 junk=0.0; hard_T05_json_parser: gold=100.0 junk=0.0; hard_T06_segment_tree: gold=100.0 junk=0.0; hard_T07_concurrent_token_bucket: gold=100.0 junk=0.0; hard_T08_trie_autocomplete: gold=100.0 junk=0.0; night_T01_binary_codec: gold=100.0 junk=0.0; night_T02_btree: gold=100.0 junk=0.0"
+    },
+    {
+      "claim": "hard_T01_mini_regex: control valid (baseline: no skill, no subagents)",
+      "verdict": "PASS",
+      "detail": "baseline skill_loaded=False subagents=0 (transcript-verified)"
+    },
+    {
+      "claim": "hard_T01_mini_regex [elysium base]: actually used subagents",
+      "verdict": "FAIL",
+      "detail": "delegate_calls=0 dispatched=0 batched=0 retries=0 skill_loaded=True"
+    },
+    {
+      "claim": "hard_T01_mini_regex [elysium base]: quality \u2265 baseline",
+      "verdict": "INCONCLUSIVE",
+      "detail": "margin 0.0 pts (100.0 \u2192 100.0) \u2014 within noise"
+    },
+    {
+      "claim": "hard_T01_mini_regex [elysium base]: wall-time \u2264 baseline",
+      "verdict": "FAIL",
+      "detail": "base 759.0s vs elysium base 997.4s (1.3x slower)"
+    },
+    {
+      "claim": "hard_T01_mini_regex [elysium base]: cost accounting",
+      "verdict": "INFO",
+      "detail": "base ~$0.000/40183tok vs elysium base ~$0.000/115472tok"
+    },
+    {
+      "claim": "hard_T01_mini_regex [MAX EFFORT]: actually used subagents",
+      "verdict": "FAIL",
+      "detail": "delegate_calls=0 dispatched=0 batched=0 retries=0 skill_loaded=True"
+    },
+    {
+      "claim": "hard_T01_mini_regex [MAX EFFORT]: quality \u2265 baseline",
+      "verdict": "INCONCLUSIVE",
+      "detail": "margin 0.0 pts (100.0 \u2192 100.0) \u2014 within noise"
+    },
+    {
+      "claim": "hard_T01_mini_regex [MAX EFFORT]: wall-time \u2264 baseline",
+      "verdict": "PASS",
+      "detail": "base 759.0s vs MAX EFFORT 398.9s"
+    },
+    {
+      "claim": "hard_T01_mini_regex [MAX EFFORT]: cost accounting",
+      "verdict": "INFO",
+      "detail": "base ~$0.000/40183tok vs MAX EFFORT ~$0.000/89393tok"
+    },
+    {
+      "claim": "hard_T02_dag_executor: control valid (baseline: no skill, no subagents)",
+      "verdict": "PASS",
+      "detail": "baseline skill_loaded=False subagents=0 (transcript-verified)"
+    },
+    {
+      "claim": "hard_T03_service_suite_v2: control valid (baseline: no skill, no subagents)",
+      "verdict": "PASS",
+      "detail": "baseline skill_loaded=False subagents=0 (transcript-verified)"
+    },
+    {
+      "claim": "hard_T03_service_suite_v2 [elysium base]: actually used subagents",
+      "verdict": "FAIL",
+      "detail": "delegate_calls=0 dispatched=0 batched=0 retries=0 skill_loaded=True"
+    },
+    {
+      "claim": "hard_T03_service_suite_v2 [elysium base]: quality \u2265 baseline",
+      "verdict": "INCONCLUSIVE",
+      "detail": "margin -2.9 pts (100.0 \u2192 97.1) \u2014 within noise"
+    },
+    {
+      "claim": "hard_T03_service_suite_v2 [elysium base]: wall-time \u2264 baseline",
+      "verdict": "PASS",
+      "detail": "base 627.4s vs elysium base 452.9s"
+    },
+    {
+      "claim": "hard_T03_service_suite_v2 [elysium base]: cost accounting",
+      "verdict": "INFO",
+      "detail": "base ~$0.000/41115tok vs elysium base ~$0.000/101004tok"
+    },
+    {
+      "claim": "hard_T03_service_suite_v2 [MAX EFFORT]: actually used subagents",
+      "verdict": "FAIL",
+      "detail": "delegate_calls=0 dispatched=0 batched=0 retries=0 skill_loaded=True"
+    },
+    {
+      "claim": "hard_T03_service_suite_v2 [MAX EFFORT]: quality \u2265 baseline",
+      "verdict": "INCONCLUSIVE",
+      "detail": "margin 0.0 pts (100.0 \u2192 100.0) \u2014 within noise"
+    },
+    {
+      "claim": "hard_T03_service_suite_v2 [MAX EFFORT]: wall-time \u2264 baseline",
+      "verdict": "PASS",
+      "detail": "base 627.4s vs MAX EFFORT 340.3s"
+    },
+    {
+      "claim": "hard_T03_service_suite_v2 [MAX EFFORT]: cost accounting",
+      "verdict": "INFO",
+      "detail": "base ~$0.000/41115tok vs MAX EFFORT ~$0.000/93988tok"
+    },
+    {
+      "claim": "hard_T03_service_suite_v2 [MESM]: actually used subagents",
+      "verdict": "FAIL",
+      "detail": "delegate_calls=0 dispatched=0 batched=0 retries=0 skill_loaded=True"
+    },
+    {
+      "claim": "hard_T03_service_suite_v2 [MESM]: quality \u2265 baseline",
+      "verdict": "INCONCLUSIVE",
+      "detail": "margin -2.9 pts (100.0 \u2192 97.1) \u2014 within noise"
+    },
+    {
+      "claim": "hard_T03_service_suite_v2 [MESM]: wall-time \u2264 baseline",
+      "verdict": "PASS",
+      "detail": "base 627.4s vs MESM 310.6s"
+    },
+    {
+      "claim": "hard_T03_service_suite_v2 [MESM]: cost accounting",
+      "verdict": "INFO",
+      "detail": "base ~$0.000/41115tok vs MESM ~$0.000/90367tok"
+    },
+    {
+      "claim": "hard_T04_lfu_cache: control valid (baseline: no skill, no subagents)",
+      "verdict": "PASS",
+      "detail": "baseline skill_loaded=False subagents=0 (transcript-verified)"
+    },
+    {
+      "claim": "hard_T05_json_parser: control valid (baseline: no skill, no subagents)",
+      "verdict": "PASS",
+      "detail": "baseline skill_loaded=False subagents=0 (transcript-verified)"
+    },
+    {
+      "claim": "hard_T05_json_parser [elysium base]: actually used subagents",
+      "verdict": "FAIL",
+      "detail": "delegate_calls=0 dispatched=0 batched=0 retries=0 skill_loaded=True"
+    },
+    {
+      "claim": "hard_T05_json_parser [elysium base]: quality \u2265 baseline",
+      "verdict": "PASS",
+      "detail": "elysium base +16.7 pts (83.3 \u2192 100.0)"
+    },
+    {
+      "claim": "hard_T05_json_parser [elysium base]: wall-time \u2264 baseline",
+      "verdict": "PASS",
+      "detail": "base 254.5s vs elysium base 162.5s"
+    },
+    {
+      "claim": "hard_T05_json_parser [elysium base]: cost accounting",
+      "verdict": "INFO",
+      "detail": "base ~$0.000/22226tok vs elysium base ~$0.000/66138tok"
+    },
+    {
+      "claim": "hard_T05_json_parser [MAX EFFORT]: actually used subagents",
+      "verdict": "FAIL",
+      "detail": "delegate_calls=0 dispatched=0 batched=0 retries=0 skill_loaded=True"
+    },
+    {
+      "claim": "hard_T05_json_parser [MAX EFFORT]: quality \u2265 baseline",
+      "verdict": "PASS",
+      "detail": "MAX EFFORT +16.7 pts (83.3 \u2192 100.0)"
+    },
+    {
+      "claim": "hard_T05_json_parser [MAX EFFORT]: wall-time \u2264 baseline",
+      "verdict": "PASS",
+      "detail": "base 254.5s vs MAX EFFORT 206.3s"
+    },
+    {
+      "claim": "hard_T05_json_parser [MAX EFFORT]: cost accounting",
+      "verdict": "INFO",
+      "detail": "base ~$0.000/22226tok vs MAX EFFORT ~$0.000/72719tok"
+    },
+    {
+      "claim": "hard_T05_json_parser [MESM]: actually used subagents",
+      "verdict": "FAIL",
+      "detail": "delegate_calls=0 dispatched=0 batched=0 retries=0 skill_loaded=True"
+    },
+    {
+      "claim": "hard_T05_json_parser [MESM]: quality \u2265 baseline",
+      "verdict": "PASS",
+      "detail": "MESM +16.7 pts (83.3 \u2192 100.0)"
+    },
+    {
+      "claim": "hard_T05_json_parser [MESM]: wall-time \u2264 baseline",
+      "verdict": "PASS",
+      "detail": "base 254.5s vs MESM 207.2s"
+    },
+    {
+      "claim": "hard_T05_json_parser [MESM]: cost accounting",
+      "verdict": "INFO",
+      "detail": "base ~$0.000/22226tok vs MESM ~$0.000/70042tok"
+    },
+    {
+      "claim": "hard_T06_segment_tree: control valid (baseline: no skill, no subagents)",
+      "verdict": "PASS",
+      "detail": "baseline skill_loaded=False subagents=0 (transcript-verified)"
+    },
+    {
+      "claim": "hard_T07_concurrent_token_bucket: control valid (baseline: no skill, no subagents)",
+      "verdict": "PASS",
+      "detail": "baseline skill_loaded=False subagents=0 (transcript-verified)"
+    },
+    {
+      "claim": "hard_T08_trie_autocomplete: control valid (baseline: no skill, no subagents)",
+      "verdict": "PASS",
+      "detail": "baseline skill_loaded=False subagents=0 (transcript-verified)"
+    },
+    {
+      "claim": "night_T01_binary_codec: control valid (baseline: no skill, no subagents)",
+      "verdict": "PASS",
+      "detail": "baseline skill_loaded=False subagents=0 (transcript-verified)"
+    },
+    {
+      "claim": "night_T02_btree: control valid (baseline: no skill, no subagents)",
+      "verdict": "PASS",
+      "detail": "baseline skill_loaded=False subagents=0 (transcript-verified)"
+    },
+    {
+      "claim": "night_T02_btree [elysium base]: actually used subagents",
+      "verdict": "FAIL",
+      "detail": "delegate_calls=0 dispatched=0 batched=0 retries=0 skill_loaded=True"
+    },
+    {
+      "claim": "night_T02_btree [elysium base]: quality \u2265 baseline",
+      "verdict": "INCONCLUSIVE",
+      "detail": "margin 0.0 pts (100.0 \u2192 100.0) \u2014 within noise"
+    },
+    {
+      "claim": "night_T02_btree [elysium base]: wall-time \u2264 baseline",
+      "verdict": "PASS",
+      "detail": "base 332.4s vs elysium base 153.3s"
+    },
+    {
+      "claim": "night_T02_btree [elysium base]: cost accounting",
+      "verdict": "INFO",
+      "detail": "base ~$0.000/23732tok vs elysium base ~$0.000/61098tok"
+    },
+    {
+      "claim": "night_T02_btree [MAX EFFORT]: actually used subagents",
+      "verdict": "FAIL",
+      "detail": "delegate_calls=0 dispatched=0 batched=0 retries=0 skill_loaded=True"
+    },
+    {
+      "claim": "night_T02_btree [MAX EFFORT]: quality \u2265 baseline",
+      "verdict": "INCONCLUSIVE",
+      "detail": "margin 0.0 pts (100.0 \u2192 100.0) \u2014 within noise"
+    },
+    {
+      "claim": "night_T02_btree [MAX EFFORT]: wall-time \u2264 baseline",
+      "verdict": "PASS",
+      "detail": "base 332.4s vs MAX EFFORT 131.4s"
+    },
+    {
+      "claim": "night_T02_btree [MAX EFFORT]: cost accounting",
+      "verdict": "INFO",
+      "detail": "base ~$0.000/23732tok vs MAX EFFORT ~$0.000/62274tok"
+    }
+  ],
+  "calibration": {
+    "hard_T01_mini_regex": {
+      "gold": 100.0
+    },
+    "hard_T02_dag_executor": {
+      "gold": 100.0
+    },
+    "hard_T03_service_suite_v2": {
+      "gold": 100.0
+    },
+    "hard_T04_lfu_cache": {
+      "gold": 100.0
+    },
+    "hard_T05_json_parser": {
+      "gold": 100.0
+    },
+    "hard_T06_segment_tree": {
+      "gold": 100.0
+    },
+    "hard_T07_concurrent_token_bucket": {
+      "gold": 100.0
+    },
+    "hard_T08_trie_autocomplete": {
+      "gold": 100.0
+    },
+    "night_T01_binary_codec": {
+      "gold": 100.0
+    },
+    "night_T02_btree": {
+      "gold": 100.0
+    }
+  },
+  "critic_meta": {}
+}

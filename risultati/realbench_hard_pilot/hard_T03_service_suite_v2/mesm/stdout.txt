@@ -1,0 +1,458 @@
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_mesm\lexer.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_mesm\lexer.py[0m
+[38;2;139;134;130m@@ -0,0 +1,157 @@[0m
+[38;2;255;255;255;48;2;19;87;20m+"""Lexer for the expression language.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+Produces a flat list of tokens, each a tuple ``(kind, value)`` where ``kind``[0m
+[38;2;255;255;255;48;2;19;87;20m+is one of ``"num"``, ``"str"``, ``"ident"``, ``"op"``, ``"kw"``.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+Numbers keep their Python type: an integer literal with no fraction or[0m
+[38;2;255;255;255;48;2;19;87;20m+exponent becomes ``int``, anything with a fraction/exponent becomes ``float``.[0m
+[38;2;255;255;255;48;2;19;87;20m+"""[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+from __future__ import annotations[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# Keywords are emitted with kind "kw".[0m
+[38;2;255;255;255;48;2;19;87;20m+_KEYWORDS = ("true", "false", "none", "and", "or", "not")[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# Multi-character operators are matched before single-character ones.[0m
+[38;2;255;255;255;48;2;19;87;20m+_MULTI_OPS = ("<=", ">=", "==", "!=")[0m
+[38;2;255;255;255;48;2;19;87;20m+_SINGLE_OPS = "+-*/%(),<>"[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+_ILLEGAL_ESCAPES = ()[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+def tokenize(text: str) -> list[tuple]:[0m
+[38;2;255;255;255;48;2;19;87;20m+    """Tokenize ``text`` into a list of ``(kind, value)`` tuples.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    Raises ValueError if an illegal character is encountered, if a string is[0m
+[38;2;255;255;255;48;2;19;87;20m+    unterminated, or if a numeric literal is malformed. The error message[0m
+[38;2;255;255;255;48;2;19;87;20m+    always contains the character position where the problem was found.[0m
+[38;2;255;255;255;48;2;19;87;20m+    """[0m
+[38;2;255;255;255;48;2;19;87;20m+    tokens: list[tuple] = [][0m
+[38;2;255;255;255;48;2;19;87;20m+    i = 0[0m
+[38;2;255;255;255;48;2;19;87;20m+    n = len(text)[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    while i < n:[0m
+[38;2;255;255;255;48;2;19;87;20m+        c = text[i][0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+        # Whitespace is skipped.[0m
+[38;2;255;255;255;48;2;19;87;20m+        if c in " \t\r\n":[0m
+[38;2;255;255;255;48;2;19;87;20m+            i += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+            continue[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+        # Comments run to the end of the line.[0m
+[38;2;255;255;255;48;2;19;87;20m+        if c == "#":[0m
+[38;2;255;255;255;48;2;19;87;20m+            while i < n and text[i] != "\n":[0m
+[38;2;255;255;255;48;2;19;87;20m+                i += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+            continue[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+        # Single-quoted strings with a small escape set.[0m
+[38;2;255;255;255;48;2;19;87;20m+        if c == "'":[0m
+[38;2;255;255;255;48;2;19;87;20m+            i, value = _read_string(text, i + 1, n)[0m
+[38;2;255;255;255;48;2;19;87;20m+            tokens.append(("str", value))[0m
+[38;2;255;255;255;48;2;19;87;20m+            continue[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+        # Numbers must begin with a digit.[0m
+[38;2;255;255;255;48;2;19;87;20m+        if c.isdigit():[0m
+[38;2;255;255;255;48;2;19;87;20m+            i, value = _read_number(text, i, n)[0m
+[38;2;255;255;255;48;2;19;87;20m+            tokens.append(("num", value))[0m
+[38;2;255;255;255;48;2;19;87;20m+            continue[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+        # Identifiers and keywords.[0m
+[38;2;255;255;255;48;2;19;87;20m+        if c.isalpha() or c == "_":[0m
+[38;2;255;255;255;48;2;19;87;20m+            start = i[0m
+[38;2;255;255;255;48;2;19;87;20m+            while i < n and (text[i].isalnum() or text[i] == "_"):[0m
+[38;2;255;255;255;48;2;19;87;20m+                i += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+            word = text[start:i][0m
+[38;2;255;255;255;48;2;19;87;20m+            if word in _KEYWORDS:[0m
+[38;2;255;255;255;48;2;19;87;20m+                tokens.append(("kw", word))[0m
+[38;2;255;255;255;48;2;19;87;20m+            else:[0m
+[38;2;255;255;255;48;2;19;87;20m+                tokens.append(("ident", word))[0m
+[38;2;255;255;255;48;2;19;87;20m+            continue[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+        # Multi-character operators.[0m
+[38;2;255;255;255;48;2;19;87;20m+        two = text[i:i + 2][0m
+[38;2;255;255;255;48;2;19;87;20m+        if two in _MULTI_OPS:[0m
+[38;2;255;255;255;48;2;19;87;20m+            tokens.append(("op", two))[0m
+[38;2;255;255;255;48;2;19;87;20m+            i += 2[0m
+[38;2;255;255;255;48;2;19;87;20m+            continue[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+        # Single-character operators.[0m
+[38;2;139;134;130m… omitted 79 diff line(s) across 1 additional file(s)/section(s)[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_mesm\parser.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_mesm\parser.py[0m
+[38;2;139;134;130m@@ -0,0 +1,184 @@[0m
+[38;2;255;255;255;48;2;19;87;20m+"""Recursive-descent parser for the expression language.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+``parse(tokens)`` turns a token list (as produced by ``lexer.tokenize``) into[0m
+[38;2;255;255;255;48;2;19;87;20m+an AST. The AST is a tuple whose first element is a node tag:[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    ("num", value)            a numeric literal[0m
+[38;2;255;255;255;48;2;19;87;20m+    ("str", value)            a string literal[0m
+[38;2;255;255;255;48;2;19;87;20m+    ("bool", bool)            true / false[0m
+[38;2;255;255;255;48;2;19;87;20m+    ("none",)                 none[0m
+[38;2;255;255;255;48;2;19;87;20m+    ("name", name)            an identifier reference[0m
+[38;2;255;255;255;48;2;19;87;20m+    ("unary", "-", node)      unary minus[0m
+[38;2;255;255;255;48;2;19;87;20m+    ("not", node)             logical not[0m
+[38;2;255;255;255;48;2;19;87;20m+    ("binop", op, l, r)       + - * / %  (arithmetic)[0m
+[38;2;255;255;255;48;2;19;87;20m+    ("and", l, r)             logical and (left-associative)[0m
+[38;2;255;255;255;48;2;19;87;20m+    ("or", l, r)              logical or  (left-associative)[0m
+[38;2;255;255;255;48;2;19;87;20m+    ("compare", [ops], [nodes])  chained comparison[0m
+[38;2;255;255;255;48;2;19;87;20m+    ("call", name, [args])    a builtin call[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+Precedence (lowest to highest): or, and, not, comparison, + -, * / %,[0m
+[38;2;255;255;255;48;2;19;87;20m+unary minus, primary.[0m
+[38;2;255;255;255;48;2;19;87;20m+"""[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+from __future__ import annotations[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+class _Parser:[0m
+[38;2;255;255;255;48;2;19;87;20m+    def __init__(self, tokens: list[tuple]):[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.tokens = tokens[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.pos = 0[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    # --- token helpers ---------------------------------------------------[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _peek(self):[0m
+[38;2;255;255;255;48;2;19;87;20m+        if self.pos < len(self.tokens):[0m
+[38;2;255;255;255;48;2;19;87;20m+            return self.tokens[self.pos][0m
+[38;2;255;255;255;48;2;19;87;20m+        return None[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _next(self):[0m
+[38;2;255;255;255;48;2;19;87;20m+        tok = self.tokens[self.pos][0m
+[38;2;255;255;255;48;2;19;87;20m+        self.pos += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+        return tok[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _is_kw(self, word: str) -> bool:[0m
+[38;2;255;255;255;48;2;19;87;20m+        tok = self._peek()[0m
+[38;2;255;255;255;48;2;19;87;20m+        return tok is not None and tok[0] == "kw" and tok[1] == word[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _is_op(self, value: str) -> bool:[0m
+[38;2;255;255;255;48;2;19;87;20m+        tok = self._peek()[0m
+[38;2;255;255;255;48;2;19;87;20m+        return tok is not None and tok[0] == "op" and tok[1] == value[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _err(self, msg: str):[0m
+[38;2;255;255;255;48;2;19;87;20m+        raise ValueError(f"{msg} at position {self.pos}")[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    # --- grammar ---------------------------------------------------------[0m
+[38;2;255;255;255;48;2;19;87;20m+    def parse_program(self):[0m
+[38;2;255;255;255;48;2;19;87;20m+        node = self.parse_or()[0m
+[38;2;255;255;255;48;2;19;87;20m+        if self._peek() is not None:[0m
+[38;2;255;255;255;48;2;19;87;20m+            self._err("trailing tokens")[0m
+[38;2;255;255;255;48;2;19;87;20m+        return node[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def parse_or(self):[0m
+[38;2;255;255;255;48;2;19;87;20m+        left = self.parse_and()[0m
+[38;2;255;255;255;48;2;19;87;20m+        while self._is_kw("or"):[0m
+[38;2;255;255;255;48;2;19;87;20m+            self._next()[0m
+[38;2;255;255;255;48;2;19;87;20m+            right = self.parse_and()[0m
+[38;2;255;255;255;48;2;19;87;20m+            left = ("or", left, right)[0m
+[38;2;255;255;255;48;2;19;87;20m+        return left[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def parse_and(self):[0m
+[38;2;255;255;255;48;2;19;87;20m+        left = self.parse_not()[0m
+[38;2;255;255;255;48;2;19;87;20m+        while self._is_kw("and"):[0m
+[38;2;255;255;255;48;2;19;87;20m+            self._next()[0m
+[38;2;255;255;255;48;2;19;87;20m+            right = self.parse_not()[0m
+[38;2;255;255;255;48;2;19;87;20m+            left = ("and", left, right)[0m
+[38;2;255;255;255;48;2;19;87;20m+        return left[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def parse_not(self):[0m
+[38;2;255;255;255;48;2;19;87;20m+        if self._is_kw("not"):[0m
+[38;2;255;255;255;48;2;19;87;20m+            self._next()[0m
+[38;2;139;134;130m… omitted 106 diff line(s) across 1 additional file(s)/section(s)[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_mesm\eval.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_mesm\eval.py[0m
+[38;2;139;134;130m@@ -0,0 +1,231 @@[0m
+[38;2;255;255;255;48;2;19;87;20m+"""Evaluator for the expression language.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+``eval_text`` lexes, parses, and evaluates a single expression against the[0m
+[38;2;255;255;255;48;2;19;87;20m+given environment ``env`` (a mapping of variable name -> value).[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+Error contract:[0m
+[38;2;255;255;255;48;2;19;87;20m+    * lexing / parsing problems  -> ValueError (message contains the position)[0m
+[38;2;255;255;255;48;2;19;87;20m+    * undefined variable         -> NameError[0m
+[38;2;255;255;255;48;2;19;87;20m+    * type mismatch              -> TypeError[0m
+[38;2;255;255;255;48;2;19;87;20m+    * division by zero           -> ZeroDivisionError[0m
+[38;2;255;255;255;48;2;19;87;20m+"""[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+from __future__ import annotations[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+from lexer import tokenize[0m
+[38;2;255;255;255;48;2;19;87;20m+from parser import parse[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+_BUILTINS = ("len", "abs", "int", "str", "min", "max")[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+def eval_text(text: str, env: dict):[0m
+[38;2;255;255;255;48;2;19;87;20m+    """Lex, parse, and evaluate ``text`` in environment ``env``."""[0m
+[38;2;255;255;255;48;2;19;87;20m+    tokens = tokenize(text)[0m
+[38;2;255;255;255;48;2;19;87;20m+    ast = parse(tokens)[0m
+[38;2;255;255;255;48;2;19;87;20m+    return _eval(ast, env)[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+def _eval(node, env: dict):[0m
+[38;2;255;255;255;48;2;19;87;20m+    tag = node[0][0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    if tag == "num" or tag == "str":[0m
+[38;2;255;255;255;48;2;19;87;20m+        return node[1][0m
+[38;2;255;255;255;48;2;19;87;20m+    if tag == "bool":[0m
+[38;2;255;255;255;48;2;19;87;20m+        return node[1][0m
+[38;2;255;255;255;48;2;19;87;20m+    if tag == "none":[0m
+[38;2;255;255;255;48;2;19;87;20m+        return None[0m
+[38;2;255;255;255;48;2;19;87;20m+    if tag == "name":[0m
+[38;2;255;255;255;48;2;19;87;20m+        name = node[1][0m
+[38;2;255;255;255;48;2;19;87;20m+        if name not in env:[0m
+[38;2;255;255;255;48;2;19;87;20m+            raise NameError(f"undefined variable {name!r}")[0m
+[38;2;255;255;255;48;2;19;87;20m+        return env[name][0m
+[38;2;255;255;255;48;2;19;87;20m+    if tag == "unary":[0m
+[38;2;255;255;255;48;2;19;87;20m+        return _eval_unary(node, env)[0m
+[38;2;255;255;255;48;2;19;87;20m+    if tag == "not":[0m
+[38;2;255;255;255;48;2;19;87;20m+        return not _truthy(_eval(node[1], env))[0m
+[38;2;255;255;255;48;2;19;87;20m+    if tag == "binop":[0m
+[38;2;255;255;255;48;2;19;87;20m+        return _eval_binop(node, env)[0m
+[38;2;255;255;255;48;2;19;87;20m+    if tag == "and":[0m
+[38;2;255;255;255;48;2;19;87;20m+        left = _eval(node[1], env)[0m
+[38;2;255;255;255;48;2;19;87;20m+        if not _truthy(left):[0m
+[38;2;255;255;255;48;2;19;87;20m+            return left[0m
+[38;2;255;255;255;48;2;19;87;20m+        return _eval(node[2], env)[0m
+[38;2;255;255;255;48;2;19;87;20m+    if tag == "or":[0m
+[38;2;255;255;255;48;2;19;87;20m+        left = _eval(node[1], env)[0m
+[38;2;255;255;255;48;2;19;87;20m+        if _truthy(left):[0m
+[38;2;255;255;255;48;2;19;87;20m+            return left[0m
+[38;2;255;255;255;48;2;19;87;20m+        return _eval(node[2], env)[0m
+[38;2;255;255;255;48;2;19;87;20m+    if tag == "compare":[0m
+[38;2;255;255;255;48;2;19;87;20m+        return _eval_compare(node, env)[0m
+[38;2;255;255;255;48;2;19;87;20m+    if tag == "call":[0m
+[38;2;255;255;255;48;2;19;87;20m+        return _eval_call(node, env)[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    raise ValueError(f"unknown AST node {tag!r}")[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+def _eval_unary(node, env: dict):[0m
+[38;2;255;255;255;48;2;19;87;20m+    operand = _eval(node[2], env)[0m
+[38;2;255;255;255;48;2;19;87;20m+    if not isinstance(operand, (int, float)):[0m
+[38;2;255;255;255;48;2;19;87;20m+        raise TypeError([0m
+[38;2;255;255;255;48;2;19;87;20m+            f"unary minus requires a number, got {type(operand).__name__}"[0m
+[38;2;255;255;255;48;2;19;87;20m+        )[0m
+[38;2;255;255;255;48;2;19;87;20m+    return -operand[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+def _eval_binop(node, env: dict):[0m
+[38;2;255;255;255;48;2;19;87;20m+    op = node[1][0m
+[38;2;255;255;255;48;2;19;87;20m+    left = _eval(node[2], env)[0m
+[38;2;255;255;255;48;2;19;87;20m+    right = _eval(node[3], env)[0m
+[38;2;139;134;130m… omitted 153 diff line(s) across 1 additional file(s)/section(s)[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_mesm\repl.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_mesm\repl.py[0m
+[38;2;139;134;130m@@ -0,0 +1,25 @@[0m
+[38;2;255;255;255;48;2;19;87;20m+"""REPL wrapper for the expression language.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+``run`` evaluates a single expression and always returns a dict describing the[0m
+[38;2;255;255;255;48;2;19;87;20m+outcome. It never raises, regardless of what the expression does.[0m
+[38;2;255;255;255;48;2;19;87;20m+"""[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+from __future__ import annotations[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+from eval import eval_text[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+def run(text: str, env: dict | None = None) -> dict:[0m
+[38;2;255;255;255;48;2;19;87;20m+    """Evaluate ``text`` and return a result dict.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    Returns ``{"status": "ok", "value": v}`` on success, or[0m
+[38;2;255;255;255;48;2;19;87;20m+    ``{"status": "error", "error": "<message>"}`` if any exception is raised[0m
+[38;2;255;255;255;48;2;19;87;20m+    during lexing, parsing, or evaluation.[0m
+[38;2;255;255;255;48;2;19;87;20m+    """[0m
+[38;2;255;255;255;48;2;19;87;20m+    if env is None:[0m
+[38;2;255;255;255;48;2;19;87;20m+        env = {}[0m
+[38;2;255;255;255;48;2;19;87;20m+    try:[0m
+[38;2;255;255;255;48;2;19;87;20m+        value = eval_text(text, env)[0m
+[38;2;255;255;255;48;2;19;87;20m+    except Exception as exc:  # never propagate[0m
+[38;2;255;255;255;48;2;19;87;20m+        return {"status": "error", "error": str(exc)}[0m
+[38;2;255;255;255;48;2;19;87;20m+    return {"status": "ok", "value": value}[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_mesm\_verify.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_mesm\_verify.py[0m
+[38;2;139;134;130m@@ -0,0 +1,173 @@[0m
+[38;2;255;255;255;48;2;19;87;20m+import sys[0m
+[38;2;255;255;255;48;2;19;87;20m+sys.path.insert(0, ".")[0m
+[38;2;255;255;255;48;2;19;87;20m+import lexer, parser, eval as E, repl[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+ok = 0[0m
+[38;2;255;255;255;48;2;19;87;20m+bad = 0[0m
+[38;2;255;255;255;48;2;19;87;20m+def check(name, cond):[0m
+[38;2;255;255;255;48;2;19;87;20m+    global ok, bad[0m
+[38;2;255;255;255;48;2;19;87;20m+    if cond:[0m
+[38;2;255;255;255;48;2;19;87;20m+        ok += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+    else:[0m
+[38;2;255;255;255;48;2;19;87;20m+        bad += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+        print("FAIL:", name)[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+def approx(a, b):[0m
+[38;2;255;255;255;48;2;19;87;20m+    return abs(a - b) < 1e-9[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# ---- lexer ----[0m
+[38;2;255;255;255;48;2;19;87;20m+t = lexer.tokenize("1.5e3")[0m
+[38;2;255;255;255;48;2;19;87;20m+check("1.5e3 float", t == [("num", 1500.0)])[0m
+[38;2;255;255;255;48;2;19;87;20m+t = lexer.tokenize("42")[0m
+[38;2;255;255;255;48;2;19;87;20m+check("42 int", t == [("num", 42)])[0m
+[38;2;255;255;255;48;2;19;87;20m+t = lexer.tokenize("3.14")[0m
+[38;2;255;255;255;48;2;19;87;20m+check("3.14 float", t == [("num", 3.14)])[0m
+[38;2;255;255;255;48;2;19;87;20m+t = lexer.tokenize("-2")[0m
+[38;2;255;255;255;48;2;19;87;20m+check("unary minus is op-", t == [("op", "-"), ("num", 2)])[0m
+[38;2;255;255;255;48;2;19;87;20m+t = lexer.tokenize("'a\\'b\\n\\t'")[0m
+[38;2;255;255;255;48;2;19;87;20m+check("string escapes", t == [("str", "a'b\n\t")])[0m
+[38;2;255;255;255;48;2;19;87;20m+t = lexer.tokenize("'hi'")[0m
+[38;2;255;255;255;48;2;19;87;20m+check("plain str", t == [("str", "hi")])[0m
+[38;2;255;255;255;48;2;19;87;20m+t = lexer.tokenize("foo_bar1")[0m
+[38;2;255;255;255;48;2;19;87;20m+check("ident", t == [("ident", "foo_bar1")])[0m
+[38;2;255;255;255;48;2;19;87;20m+t = lexer.tokenize("true false none and or not")[0m
+[38;2;255;255;255;48;2;19;87;20m+check("keywords", t == [("kw","true"),("kw","false"),("kw","none"),("kw","and"),("kw","or"),("kw","not")])[0m
+[38;2;255;255;255;48;2;19;87;20m+t = lexer.tokenize("+ - * / % ( ) , < <= > >= == !=")[0m
+[38;2;255;255;255;48;2;19;87;20m+check("ops", t == [("op","+"),("op","-"),("op","*"),("op","/"),("op","%"),("op","("),("op",")"),("op",","),("op","<"),("op","<="),("op",">"),("op",">="),("op","=="),("op","!=")])[0m
+[38;2;255;255;255;48;2;19;87;20m+t = lexer.tokenize("x = 1 # comment")[0m
+[38;2;255;255;255;48;2;19;87;20m+check("comment skip", t == [("ident","x"),("op","="),("num",1)])[0m
+[38;2;255;255;255;48;2;19;87;20m+try:[0m
+[38;2;255;255;255;48;2;19;87;20m+    lexer.tokenize("2 @ 3"); check("illegal char raises", False)[0m
+[38;2;255;255;255;48;2;19;87;20m+except ValueError as e:[0m
+[38;2;255;255;255;48;2;19;87;20m+    check("illegal char raises", "position" in str(e))[0m
+[38;2;255;255;255;48;2;19;87;20m+try:[0m
+[38;2;255;255;255;48;2;19;87;20m+    lexer.tokenize("'unterminated"); check("unterminated raises", False)[0m
+[38;2;255;255;255;48;2;19;87;20m+except ValueError:[0m
+[38;2;255;255;255;48;2;19;87;20m+    check("unterminated raises", True)[0m
+[38;2;255;255;255;48;2;19;87;20m+try:[0m
+[38;2;255;255;255;48;2;19;87;20m+    lexer.tokenize("'line\nbreak'"); check("newline in str raises", False)[0m
+[38;2;255;255;255;48;2;19;87;20m+except ValueError:[0m
+[38;2;255;255;255;48;2;19;87;20m+    check("newline in str raises", True)[0m
+[38;2;255;255;255;48;2;19;87;20m+t = lexer.tokenize("1E-3")[0m
+[38;2;255;255;255;48;2;19;87;20m+check("1E-3", t == [("num", 0.001)])[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# ---- parser precedence ----[0m
+[38;2;255;255;255;48;2;19;87;20m+def ast_of(s):[0m
+[38;2;255;255;255;48;2;19;87;20m+    return parser.parse(lexer.tokenize(s))[0m
+[38;2;255;255;255;48;2;19;87;20m+# 2 * -3  -> binop * 2 unary-3[0m
+[38;2;255;255;255;48;2;19;87;20m+a = ast_of("2 * -3")[0m
+[38;2;255;255;255;48;2;19;87;20m+check("2 * -3 structure", a[0]=="binop" and a[2]==("num",2) and a[3][0]=="unary")[0m
+[38;2;255;255;255;48;2;19;87;20m+check("2 * -3 == -6", E.eval_text("2 * -3", {}) == -6)[0m
+[38;2;255;255;255;48;2;19;87;20m+check("--2 == 2", E.eval_text("--2", {}) == 2)[0m
+[38;2;255;255;255;48;2;19;87;20m+# precedence: 1 + 2 * 3[0m
+[38;2;255;255;255;48;2;19;87;20m+a = ast_of("1 + 2 * 3")[0m
+[38;2;255;255;255;48;2;19;87;20m+check("precedence mult before add", a[0]=="binop" and a[1]=="+")[0m
+[38;2;255;255;255;48;2;19;87;20m+# comparison chain[0m
+[38;2;255;255;255;48;2;19;87;20m+check("1 < 2 < 3", E.eval_text("1 < 2 < 3", {}) == True)[0m
+[38;2;255;255;255;48;2;19;87;20m+check("1 < 2 < 1", E.eval_text("1 < 2 < 1", {}) == False)[0m
+[38;2;255;255;255;48;2;19;87;20m+# parens[0m
+[38;2;255;255;255;48;2;19;87;20m+check("(1+2)*3", E.eval_text("(1+2)*3", {}) == 9)[0m
+[38;2;255;255;255;48;2;19;87;20m+# trailing token[0m
+[38;2;255;255;255;48;2;19;87;20m+try:[0m
+[38;2;255;255;255;48;2;19;87;20m+    parser.parse(lexer.tokenize("1 2")); check("trailing token raises", False)[0m
+[38;2;255;255;255;48;2;19;87;20m+except ValueError:[0m
+[38;2;255;255;255;48;2;19;87;20m+    check("trailing token raises", True)[0m
+[38;2;255;255;255;48;2;19;87;20m+# missing operand[0m
+[38;2;255;255;255;48;2;19;87;20m+try:[0m
+[38;2;255;255;255;48;2;19;87;20m+    parser.parse(lexer.tokenize("1 +")); check("missing operand raises", False)[0m
+[38;2;255;255;255;48;2;19;87;20m+except ValueError:[0m
+[38;2;139;134;130m… omitted 95 diff line(s) across 1 additional file(s)/section(s)[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_mesm\_verify.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_mesm\_verify.py[0m
+[38;2;139;134;130m@@ -95,8 +95,8 @@[0m
+[38;2;184;134;11m     E.eval_text("'a' + 1", {}); check("str+num raises", False)[0m
+[38;2;184;134;11m except TypeError:[0m
+[38;2;184;134;11m     check("str+num raises", True)[0m
+[38;2;255;255;255;48;2;119;20;20m-check("undef var", _raises(E.eval_text, "zzz", {}, NameError))[0m
+[38;2;255;255;255;48;2;119;20;20m-check("div zero", _raises(E.eval_text, "1/0", {}, ZeroDivisionError))[0m
+[38;2;255;255;255;48;2;19;87;20m+check("undef var", _raises(E.eval_text, "zzz", {}, exc=NameError))[0m
+[38;2;255;255;255;48;2;19;87;20m+check("div zero", _raises(E.eval_text, "1/0", {}, exc=ZeroDivisionError))[0m
+[38;2;184;134;11m check("and short circuit 0 and 5 -> 0", E.eval_text("0 and 5", {}) == 0)[0m
+[38;2;184;134;11m check("or 3 or 5 -> 3", E.eval_text("3 or 5", {}) == 3)[0m
+[38;2;184;134;11m check("false or 1/0 == 0 (no raise)", E.eval_text("false or 1/0", {}) == 0)[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_mesm\_verify.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_mesm\_verify.py[0m
+[38;2;139;134;130m@@ -163,11 +163,11 @@[0m
+[38;2;184;134;11m r = repl.run("x + 1", {"x": 10})[0m
+[38;2;184;134;11m check("repl with env", r == {"status":"ok","value":11})[0m
+[38;2;184;134;11m [0m
+[38;2;255;255;255;48;2;119;20;20m-def _raises(fn, *a, **k):[0m
+[38;2;255;255;255;48;2;19;87;20m+def _raises(fn, *a, exc=Exception, **k):[0m
+[38;2;184;134;11m     try:[0m
+[38;2;184;134;11m         fn(*a, **k); return False[0m
+[38;2;184;134;11m     except Exception as e:[0m
+[38;2;255;255;255;48;2;119;20;20m-        return isinstance(e, k.get("exc") if "exc" in k else Exception) if False else True[0m
+[38;2;255;255;255;48;2;19;87;20m+        return isinstance(e, exc)[0m
+[38;2;184;134;11m [0m
+[38;2;184;134;11m print(f"\nPASS={ok} FAIL={bad}")[0m
+[38;2;184;134;11m sys.exit(1 if bad else 0)[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_mesm\_verify.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_mesm\_verify.py[0m
+[38;2;139;134;130m@@ -34,8 +34,8 @@[0m
+[38;2;184;134;11m check("keywords", t == [("kw","true"),("kw","false"),("kw","none"),("kw","and"),("kw","or"),("kw","not")])[0m
+[38;2;184;134;11m t = lexer.tokenize("+ - * / % ( ) , < <= > >= == !=")[0m
+[38;2;184;134;11m check("ops", t == [("op","+"),("op","-"),("op","*"),("op","/"),("op","%"),("op","("),("op",")"),("op",","),("op","<"),("op","<="),("op",">"),("op",">="),("op","=="),("op","!=")])[0m
+[38;2;255;255;255;48;2;119;20;20m-t = lexer.tokenize("x = 1 # comment")[0m
+[38;2;255;255;255;48;2;119;20;20m-check("comment skip", t == [("ident","x"),("op","="),("num",1)])[0m
+[38;2;255;255;255;48;2;19;87;20m+t = lexer.tokenize("x # comment")[0m
+[38;2;255;255;255;48;2;19;87;20m+check("comment skip", t == [("ident","x")])[0m
+[38;2;184;134;11m try:[0m
+[38;2;184;134;11m     lexer.tokenize("2 @ 3"); check("illegal char raises", False)[0m
+[38;2;184;134;11m except ValueError as e:[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_mesm\_verify.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_mesm\_verify.py[0m
+[38;2;139;134;130m@@ -1,6 +1,12 @@[0m
+[38;2;184;134;11m import sys[0m
+[38;2;184;134;11m sys.path.insert(0, ".")[0m
+[38;2;184;134;11m import lexer, parser, eval as E, repl[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+def _raises(fn, *a, exc=Exception, **k):[0m
+[38;2;255;255;255;48;2;19;87;20m+    try:[0m
+[38;2;255;255;255;48;2;19;87;20m+        fn(*a, **k); return False[0m
+[38;2;255;255;255;48;2;19;87;20m+    except Exception as e:[0m
+[38;2;255;255;255;48;2;19;87;20m+        return isinstance(e, exc)[0m
+[38;2;184;134;11m [0m
+[38;2;184;134;11m ok = 0[0m
+[38;2;184;134;11m bad = 0[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_mesm\_verify.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_mesm\_verify.py[0m
+[38;2;139;134;130m@@ -169,11 +169,5 @@[0m
+[38;2;184;134;11m r = repl.run("x + 1", {"x": 10})[0m
+[38;2;184;134;11m check("repl with env", r == {"status":"ok","value":11})[0m
+[38;2;184;134;11m [0m
+[38;2;255;255;255;48;2;119;20;20m-def _raises(fn, *a, exc=Exception, **k):[0m
+[38;2;255;255;255;48;2;119;20;20m-    try:[0m
+[38;2;255;255;255;48;2;119;20;20m-        fn(*a, **k); return False[0m
+[38;2;255;255;255;48;2;119;20;20m-    except Exception as e:[0m
+[38;2;255;255;255;48;2;119;20;20m-        return isinstance(e, exc)[0m
+[38;2;255;255;255;48;2;119;20;20m-[0m
+[38;2;184;134;11m print(f"\nPASS={ok} FAIL={bad}")[0m
+[38;2;184;134;11m sys.exit(1 if bad else 0)[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_mesm\_verify.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_mesm\_verify.py[0m
+[38;2;139;134;130m@@ -105,8 +105,9 @@[0m
+[38;2;184;134;11m check("div zero", _raises(E.eval_text, "1/0", {}, exc=ZeroDivisionError))[0m
+[38;2;184;134;11m check("and short circuit 0 and 5 -> 0", E.eval_text("0 and 5", {}) == 0)[0m
+[38;2;184;134;11m check("or 3 or 5 -> 3", E.eval_text("3 or 5", {}) == 3)[0m
+[38;2;255;255;255;48;2;119;20;20m-check("false or 1/0 == 0 (no raise)", E.eval_text("false or 1/0", {}) == 0)[0m
+[38;2;255;255;255;48;2;119;20;20m-check("0 or 1/0 -> 0", E.eval_text("0 or 1/0", {}) == 0)[0m
+[38;2;255;255;255;48;2;19;87;20m+check("false and 1/0 == 0 no raise", E.eval_text("false and 1/0 == 0", {}) == False)[0m
+[38;2;255;255;255;48;2;19;87;20m+check("0 and 1/0 -> 0 (no raise)", E.eval_text("0 and 1/0", {}) == 0)[0m
+[38;2;255;255;255;48;2;19;87;20m+check("5 or 1/0 -> 5 (no raise)", E.eval_text("5 or 1/0", {}) == 5)[0m
+[38;2;184;134;11m check("not 0 -> True", E.eval_text("not 0", {}) == True)[0m
+[38;2;184;134;11m check("not 5 -> False", E.eval_text("not 5", {}) == False)[0m
+[38;2;184;134;11m check("true->True", E.eval_text("true", {}) == True)[0m
+DONE
+
+The four deliverables are written to:
+C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_mesm\
+  - lexer.py
+  - parser.py
+  - eval.py
+  - repl.py
+
+Verified against every clause of the spec with a 68-assertion harness (all passing) covering:
+- Lexer: int/float distinction (1.5e3→1500.0), string escapes, unterminated/newline-in-string errors, keywords, full operator set, comments, illegal-char ValueError with position.
+- Parser: full precedence chain, chained comparisons (1<2<3), unary minus in operand & stacked (--2==2), left-associative and/or, trailing-token / missing-operand / paren-mismatch ValueErrors with position.
+- Evaluator: number/string + semantics, short-circuit and/or (0 and 5→0, 3 or 5→3, false and 1/0→no raise), not, true/false/none, truthiness rules, builtins (len/abs/int/str/min/max) with type guards, correct NameError/TypeError/ZeroDivisionError.
+- REPL: status dict for ok and every error class, env passthrough.
+
+One spec point worth flagging: the example "false or 1/0 == 0 must NOT raise" actually raises under the documented grammar, because comparison binds tighter than `or` — so `false or (1/0 == 0)` evaluates `1/0` regardless of the `false` short-circuit on the left. The semantic guarantee (and/or skip their *unevaluated* branch, e.g. `false and 1/0`, `5 or 1/0`) is implemented correctly per Python truthiness. I kept that behavior rather than special-casing the example.
+  [tool] (´･_･`) computing...

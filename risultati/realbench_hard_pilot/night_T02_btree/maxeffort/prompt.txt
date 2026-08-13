@@ -1,0 +1,42 @@
+MAX EFFORT
+TASK: B-Tree: insert + DELETE with borrow/merge (min_degree=2), 50k ops
+
+Implement a B-tree in `btree.py`.
+
+SPEC (CLRS conventions, minimum degree t):
+- class BTree:
+    - __init__(self, min_degree: int = 2) — t >= 2, else ValueError.
+      A node (except root) holds BETWEEN t-1 and 2t-1 keys; the root may
+      hold as few as 0 keys. All leaves are at the SAME depth.
+    - insert(self, key: int) -> None
+      Insert; inserting an existing key → ValueError. Splits propagate
+      upward so all leaves stay at the same depth.
+    - search(self, key: int) -> bool
+    - delete(self, key: int) -> bool
+      Remove the key, returns True if it was present, False otherwise.
+      Must handle: leaf deletion, internal-node deletion via predecessor/
+      successor, borrow from left/right sibling, and MERGE cases —
+      including shrinking the tree height when the root empties.
+    - keys(self) -> list[int]
+      All keys in ascending order (in-order traversal).
+
+CORRECTNESS: a randomized test performs 5,000 mixed inserts/deletes and
+compares keys() against an independent reference (sorted list). Any
+structurally broken tree produces a wrong keys() result.
+
+PERFORMANCE: 50,000 inserts + 25,000 deletes must complete in under
+10 seconds. O(n) per operation cannot pass.
+
+Standard library only.
+
+
+YOUR ONLY DELIVERABLE — do not do anything else:
+Create the file(s): `btree.py`.
+Write them into EXACTLY this directory (use this absolute path):
+C:\Users\leob3\AppData\Local\Temp\realbench_ws\night_T02_btree_maxeffort
+
+Do NOT explore other directories, do NOT copy files around, do NOT create
+subdirectories, do NOT run any benchmark or pipeline you may find nearby,
+do NOT attempt git operations. Work autonomously, do not ask questions
+(fai tu). When the deliverable file(s) are written, reply DONE.
+You have the elysium-swarmloop skill loaded. You may decompose the task and dispatch parallel subagents via delegate_task — if you do, every subagent MUST also write its deliverable into the exact directory above. Judge the final files against the spec before replying DONE.

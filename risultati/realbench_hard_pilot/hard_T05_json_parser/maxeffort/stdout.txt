@@ -1,0 +1,107 @@
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T05_json_parser_maxeffort\jsoncodec.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T05_json_parser_maxeffort\jsoncodec.py[0m
+[38;2;139;134;130m@@ -0,0 +1,372 @@[0m
+[38;2;255;255;255;48;2;19;87;20m+"""Strict JSON codec implemented from scratch (no stdlib json module).[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+Public API:[0m
+[38;2;255;255;255;48;2;19;87;20m+    parse(text: str) -> object[0m
+[38;2;255;255;255;48;2;19;87;20m+    dumps(obj: object) -> str[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+Conforms to strict JSON:[0m
+[38;2;255;255;255;48;2;19;87;20m+  * object -> dict, array -> list, string -> str,[0m
+[38;2;255;255;255;48;2;19;87;20m+    number -> int (no fraction/exponent) or float,[0m
+[38;2;255;255;255;48;2;19;87;20m+    true -> True, false -> False, null -> None.[0m
+[38;2;255;255;255;48;2;19;87;20m+  * strings: \" \\ \/ \b \f \n \r \t and \uXXXX (surrogate pairs combined).[0m
+[38;2;255;255;255;48;2;19;87;20m+  * numbers: optional minus, required integer part, optional fraction,[0m
+[38;2;255;255;255;48;2;19;87;20m+    optional exponent; no leading zeros, no ".5"/"5."/"+5", no[0m
+[38;2;255;255;255;48;2;19;87;20m+    Infinity/NaN, no hex.[0m
+[38;2;255;255;255;48;2;19;87;20m+  * rejects trailing commas, missing commas, single quotes, comments,[0m
+[38;2;255;255;255;48;2;19;87;20m+    trailing content after the top-level value.[0m
+[38;2;255;255;255;48;2;19;87;20m+  * any violation -> ValueError whose message contains the position.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+dumps() emits COMPACT JSON (no extra spaces), non-ASCII as-is (UTF-8),[0m
+[38;2;255;255;255;48;2;19;87;20m+requires dict keys to be strings, and raises TypeError for sets/other[0m
+[38;2;255;255;255;48;2;19;87;20m+types. Round-trip: parse(dumps(x)) == x for any valid x.[0m
+[38;2;255;255;255;48;2;19;87;20m+"""[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+import math[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+__all__ = ["parse", "dumps"][0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+_WS = (" ", "\t", "\n", "\r")[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+class _Parser:[0m
+[38;2;255;255;255;48;2;19;87;20m+    __slots__ = ("text", "pos", "n")[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def __init__(self, text):[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.text = text[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.pos = 0[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.n = len(text)[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def error(self, msg):[0m
+[38;2;255;255;255;48;2;19;87;20m+        raise ValueError(f"{msg} at position {self.pos}")[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def skip_ws(self):[0m
+[38;2;255;255;255;48;2;19;87;20m+        t = self.text[0m
+[38;2;255;255;255;48;2;19;87;20m+        n = self.n[0m
+[38;2;255;255;255;48;2;19;87;20m+        p = self.pos[0m
+[38;2;255;255;255;48;2;19;87;20m+        while p < n:[0m
+[38;2;255;255;255;48;2;19;87;20m+            c = t[p][0m
+[38;2;255;255;255;48;2;19;87;20m+            if c == " " or c == "\t" or c == "\n" or c == "\r":[0m
+[38;2;255;255;255;48;2;19;87;20m+                p += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+            else:[0m
+[38;2;255;255;255;48;2;19;87;20m+                break[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.pos = p[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def expect(self, ch):[0m
+[38;2;255;255;255;48;2;19;87;20m+        if self.pos >= self.n or self.text[self.pos] != ch:[0m
+[38;2;255;255;255;48;2;19;87;20m+            self.error(f"expected '{ch}'")[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.pos += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    # ---- top-level dispatch -------------------------------------------[0m
+[38;2;255;255;255;48;2;19;87;20m+    def parse_value(self):[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.skip_ws()[0m
+[38;2;255;255;255;48;2;19;87;20m+        if self.pos >= self.n:[0m
+[38;2;255;255;255;48;2;19;87;20m+            self.error("unexpected end of input, expected value")[0m
+[38;2;255;255;255;48;2;19;87;20m+        c = self.text[self.pos][0m
+[38;2;255;255;255;48;2;19;87;20m+        if c == "{":[0m
+[38;2;255;255;255;48;2;19;87;20m+            return self.parse_object()[0m
+[38;2;255;255;255;48;2;19;87;20m+        if c == "[":[0m
+[38;2;255;255;255;48;2;19;87;20m+            return self.parse_array()[0m
+[38;2;255;255;255;48;2;19;87;20m+        if c == '"':[0m
+[38;2;255;255;255;48;2;19;87;20m+            return self.parse_string()[0m
+[38;2;255;255;255;48;2;19;87;20m+        if c == "-" or ("0" <= c <= "9"):[0m
+[38;2;255;255;255;48;2;19;87;20m+            return self.parse_number()[0m
+[38;2;255;255;255;48;2;19;87;20m+        if c == "t":[0m
+[38;2;255;255;255;48;2;19;87;20m+            if self.text.startswith("true", self.pos):[0m
+[38;2;255;255;255;48;2;19;87;20m+                self.pos += 4[0m
+[38;2;255;255;255;48;2;19;87;20m+                return True[0m
+[38;2;255;255;255;48;2;19;87;20m+            self.error("invalid literal (expected 'true')")[0m
+[38;2;255;255;255;48;2;19;87;20m+        if c == "f":[0m
+[38;2;139;134;130m… omitted 294 diff line(s) across 1 additional file(s)/section(s)[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T05_json_parser_maxeffort\jsoncodec.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T05_json_parser_maxeffort\jsoncodec.py[0m
+[38;2;139;134;130m@@ -8,7 +8,7 @@[0m
+[38;2;184;134;11m   * object -> dict, array -> list, string -> str,[0m
+[38;2;184;134;11m     number -> int (no fraction/exponent) or float,[0m
+[38;2;184;134;11m     true -> True, false -> False, null -> None.[0m
+[38;2;255;255;255;48;2;119;20;20m-  * strings: \" \\ \/ \b \f \n \r \t and \uXXXX (surrogate pairs combined).[0m
+[38;2;255;255;255;48;2;19;87;20m+  * strings: \" \\ \/ \b \f \n \r \t and \\uXXXX (surrogate pairs combined).[0m
+[38;2;184;134;11m   * numbers: optional minus, required integer part, optional fraction,[0m
+[38;2;184;134;11m     optional exponent; no leading zeros, no ".5"/"5."/"+5", no[0m
+[38;2;184;134;11m     Infinity/NaN, no hex.[0m
+All 67 checks pass, including every strictness rule, escape/surrogate handling, error-position messages, TypeError for sets/non-string keys, round-trip guarantees, and the 100k-number array parsed in 0.434s (well under the 5s budget).
+
+DONE
+
+Deliverable: C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T05_json_parser_maxeffort\jsoncodec.py
+
+What it does, verified against the spec:
+- parse(): strict JSON → dict/list/str/int-or-float/True/False/None, no stdlib json used.
+  - Escapes: \" \\ \/ \b \f \n \r \t and \uXXXX with correct surrogate-pair combination (😀 round-trips; lone high/low surrogates raise ValueError).
+  - Numbers: required int part, no leading zeros, rejects ".5"/"5."/"+5"/Infinity/NaN/hex/"1e"/"0.", emits int vs float correctly.
+  - Rejects trailing commas, missing commas, single quotes, comments, trailing content after top value — every ValueError message contains "position N".
+- dumps(): compact JSON, non-ASCII emitted as-is, dict keys must be str (TypeError otherwise), sets/unsupported types raise TypeError.
+- Round-trip: parse(dumps(x)) == x confirmed for all sample shapes.
+- Performance: 100,000-number array parsed in 0.43s.

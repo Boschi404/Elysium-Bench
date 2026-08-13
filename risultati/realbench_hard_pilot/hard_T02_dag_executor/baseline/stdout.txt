@@ -1,0 +1,94 @@
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T02_dag_executor_baseline\dag.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T02_dag_executor_baseline\dag.py[0m
+[38;2;139;134;130m@@ -0,0 +1,156 @@[0m
+[38;2;255;255;255;48;2;19;87;20m+"""DAG analysis library: topological order, critical path, ES/LS.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+Standard library only.[0m
+[38;2;255;255;255;48;2;19;87;20m+"""[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+import heapq[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+class Dag:[0m
+[38;2;255;255;255;48;2;19;87;20m+    def __init__(self):[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._dur = {}        # task_id -> duration (int >= 1)[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._preds = {}      # task_id -> list of dependency ids (deps)[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._cache = None    # lazily computed analysis results[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    # ------------------------------------------------------------------ #[0m
+[38;2;255;255;255;48;2;19;87;20m+    # Construction[0m
+[38;2;255;255;255;48;2;19;87;20m+    # ------------------------------------------------------------------ #[0m
+[38;2;255;255;255;48;2;19;87;20m+    def add_task(self, task_id: str, duration: int, deps: list) -> None:[0m
+[38;2;255;255;255;48;2;19;87;20m+        if duration < 1:[0m
+[38;2;255;255;255;48;2;19;87;20m+            raise ValueError("duration must be >= 1")[0m
+[38;2;255;255;255;48;2;19;87;20m+        if task_id in self._dur:[0m
+[38;2;255;255;255;48;2;19;87;20m+            raise ValueError("duplicate task id: %r" % (task_id,))[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._dur[task_id] = duration[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._preds[task_id] = list(deps)[0m
+[38;2;255;255;255;48;2;19;87;20m+        # Structure changed; invalidate any cached analysis.[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._cache = None[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    # ------------------------------------------------------------------ #[0m
+[38;2;255;255;255;48;2;19;87;20m+    # Internal analysis[0m
+[38;2;255;255;255;48;2;19;87;20m+    # ------------------------------------------------------------------ #[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _analyze(self):[0m
+[38;2;255;255;255;48;2;19;87;20m+        """Compute successors, in-degrees, topological order, and detect[0m
+[38;2;255;255;255;48;2;19;87;20m+        missing dependencies / cycles.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+        Returns (order, has_cycle, missing, succs) where:[0m
+[38;2;255;255;255;48;2;19;87;20m+          order      -- list of task ids in a valid topo order (empty if cycle)[0m
+[38;2;255;255;255;48;2;19;87;20m+          has_cycle  -- True if not all nodes were ordered (cycle / self-loop)[0m
+[38;2;255;255;255;48;2;19;87;20m+          missing    -- set of dependency ids that do not exist as tasks[0m
+[38;2;255;255;255;48;2;19;87;20m+          succs      -- dict task_id -> set of successor task ids[0m
+[38;2;255;255;255;48;2;19;87;20m+        """[0m
+[38;2;255;255;255;48;2;19;87;20m+        succs = {t: set() for t in self._dur}[0m
+[38;2;255;255;255;48;2;19;87;20m+        missing = set()[0m
+[38;2;255;255;255;48;2;19;87;20m+        indeg = {}[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+        for t, preds in self._preds.items():[0m
+[38;2;255;255;255;48;2;19;87;20m+            cnt = 0[0m
+[38;2;255;255;255;48;2;19;87;20m+            seen = set()[0m
+[38;2;255;255;255;48;2;19;87;20m+            for p in preds:[0m
+[38;2;255;255;255;48;2;19;87;20m+                if p not in self._dur:[0m
+[38;2;255;255;255;48;2;19;87;20m+                    missing.add(p)[0m
+[38;2;255;255;255;48;2;19;87;20m+                else:[0m
+[38;2;255;255;255;48;2;19;87;20m+                    succs[p].add(t)[0m
+[38;2;255;255;255;48;2;19;87;20m+                    if p not in seen:[0m
+[38;2;255;255;255;48;2;19;87;20m+                        seen.add(p)[0m
+[38;2;255;255;255;48;2;19;87;20m+                        cnt += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+            indeg[t] = cnt[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+        heap = [t for t in self._dur if indeg[t] == 0][0m
+[38;2;255;255;255;48;2;19;87;20m+        heapq.heapify(heap)[0m
+[38;2;255;255;255;48;2;19;87;20m+        order = [][0m
+[38;2;255;255;255;48;2;19;87;20m+        while heap:[0m
+[38;2;255;255;255;48;2;19;87;20m+            u = heapq.heappop(heap)[0m
+[38;2;255;255;255;48;2;19;87;20m+            order.append(u)[0m
+[38;2;255;255;255;48;2;19;87;20m+            for v in succs[u]:[0m
+[38;2;255;255;255;48;2;19;87;20m+                indeg[v] -= 1[0m
+[38;2;255;255;255;48;2;19;87;20m+                if indeg[v] == 0:[0m
+[38;2;255;255;255;48;2;19;87;20m+                    heapq.heappush(heap, v)[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+        has_cycle = len(order) != len(self._dur)[0m
+[38;2;255;255;255;48;2;19;87;20m+        return order, has_cycle, missing, succs[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _ensure_computed(self):[0m
+[38;2;255;255;255;48;2;19;87;20m+        """Return cached analysis dict, computing it if necessary.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+        Raises ValueError if the graph is invalid (missing dependency or[0m
+[38;2;255;255;255;48;2;19;87;20m+        cycle) since ES/LS and critical path are undefined in that case.[0m
+[38;2;255;255;255;48;2;19;87;20m+        """[0m
+[38;2;255;255;255;48;2;19;87;20m+        if self._cache is not None:[0m
+[38;2;139;134;130m… omitted 78 diff line(s) across 1 additional file(s)/section(s)[0m
+All tests pass and performance is well within budget (0.022s for 2000 tasks vs 5s limit).
+
+DONE
+
+The file is written to:
+C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T02_dag_executor_baseline\dag.py
+
+Summary of implementation:
+- Dag class with add_task (validates duration >= 1 and duplicate ids), is_valid, topological_order (lexicographic-tiebreak via heap), critical_path_length, earliest_start, latest_start.
+- Validity checks cover missing dependencies and cycles (including self-loops); cycle/missing-dep raise ValueError as specified.
+- Earliest start = longest path duration ending at (excluding) the task's own duration. Latest start = CPL - longest path starting at the task (including its own duration), so tasks on a critical path have latest == earliest.
+- Analysis is computed once and cached; cache invalidated on add_task. Topological order uses a heap for lexicographically-smallest-ready-first; longest-path dists computed in O(V+E) forward and reverse topological passes. Verified correct on chains, diamonds, cycles, self-loops, duplicates, bad durations, empty graph, and KeyError; 2000-task DAG completes all analysis in ~0.02s.

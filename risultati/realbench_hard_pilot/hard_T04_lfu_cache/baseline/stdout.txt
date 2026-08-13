@@ -1,0 +1,83 @@
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T04_lfu_cache_baseline\lfu.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T04_lfu_cache_baseline\lfu.py[0m
+[38;2;139;134;130m@@ -0,0 +1,101 @@[0m
+[38;2;255;255;255;48;2;19;87;20m+"""LFU (Least Frequently Used) cache with O(1) get/put and LRU tie-break.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+Design:[0m
+[38;2;255;255;255;48;2;19;87;20m+  - key_to_value:  dict key -> value[0m
+[38;2;255;255;255;48;2;19;87;20m+  - key_to_freq:   dict key -> current frequency[0m
+[38;2;255;255;255;48;2;19;87;20m+  - freq_to_keys:  dict freq -> OrderedDict(key -> None)[0m
+[38;2;255;255;255;48;2;19;87;20m+                  The OrderedDict preserves insertion/access order; the[0m
+[38;2;255;255;255;48;2;19;87;20m+                  *first* entry is the least recently used for that frequency.[0m
+[38;2;255;255;255;48;2;19;87;20m+  - min_freq:      the smallest frequency present in the cache[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+On every get/put of an existing key we move it to the "freq+1" bucket,[0m
+[38;2;255;255;255;48;2;19;87;20m+appending to the OrderedDict so the most-recent access sits at the end.[0m
+[38;2;255;255;255;48;2;19;87;20m+When evicting we pop the first item of freq_to_keys[min_freq].[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+All operations are O(1) average time (dict/OrderedDict moves are O(1)).[0m
+[38;2;255;255;255;48;2;19;87;20m+"""[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+from collections import OrderedDict[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+class LFUCache:[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def __init__(self, capacity: int):[0m
+[38;2;255;255;255;48;2;19;87;20m+        if capacity < 1:[0m
+[38;2;255;255;255;48;2;19;87;20m+            raise ValueError("capacity must be >= 1")[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.capacity = capacity[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.key_to_value = {}[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.key_to_freq = {}[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.freq_to_keys = {}[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.min_freq = 0[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _touch(self, key):[0m
+[38;2;255;255;255;48;2;19;87;20m+        """Move `key` from its current frequency bucket to the freq+1 bucket,[0m
+[38;2;255;255;255;48;2;19;87;20m+        recording it as the most-recently-used at the new frequency."""[0m
+[38;2;255;255;255;48;2;19;87;20m+        freq = self.key_to_freq[key][0m
+[38;2;255;255;255;48;2;19;87;20m+        # Remove from old bucket.[0m
+[38;2;255;255;255;48;2;19;87;20m+        old_bucket = self.freq_to_keys[freq][0m
+[38;2;255;255;255;48;2;19;87;20m+        del old_bucket[key][0m
+[38;2;255;255;255;48;2;19;87;20m+        # If the old bucket became empty and it was the min_freq bucket,[0m
+[38;2;255;255;255;48;2;19;87;20m+        # the new minimum frequency is freq+1.[0m
+[38;2;255;255;255;48;2;19;87;20m+        if not old_bucket and freq == self.min_freq:[0m
+[38;2;255;255;255;48;2;19;87;20m+            self.min_freq = freq + 1[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+        new_freq = freq + 1[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.key_to_freq[key] = new_freq[0m
+[38;2;255;255;255;48;2;19;87;20m+        bucket = self.freq_to_keys.get(new_freq)[0m
+[38;2;255;255;255;48;2;19;87;20m+        if bucket is None:[0m
+[38;2;255;255;255;48;2;19;87;20m+            bucket = OrderedDict()[0m
+[38;2;255;255;255;48;2;19;87;20m+            self.freq_to_keys[new_freq] = bucket[0m
+[38;2;255;255;255;48;2;19;87;20m+        bucket[key] = None  # append at end => most recently used[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def get(self, key: int) -> int:[0m
+[38;2;255;255;255;48;2;19;87;20m+        if key not in self.key_to_value:[0m
+[38;2;255;255;255;48;2;19;87;20m+            return -1[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._touch(key)[0m
+[38;2;255;255;255;48;2;19;87;20m+        return self.key_to_value[key][0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def put(self, key: int, value: int) -> None:[0m
+[38;2;255;255;255;48;2;19;87;20m+        if self.capacity == 0:[0m
+[38;2;255;255;255;48;2;19;87;20m+            return[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+        if key in self.key_to_value:[0m
+[38;2;255;255;255;48;2;19;87;20m+            # Existing key: update value and increment frequency.[0m
+[38;2;255;255;255;48;2;19;87;20m+            self.key_to_value[key] = value[0m
+[38;2;255;255;255;48;2;19;87;20m+            self._touch(key)[0m
+[38;2;255;255;255;48;2;19;87;20m+            return[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+        # New key.[0m
+[38;2;255;255;255;48;2;19;87;20m+        if len(self.key_to_value) >= self.capacity:[0m
+[38;2;255;255;255;48;2;19;87;20m+            # Evict least-frequently-used; among those, least-recently-used.[0m
+[38;2;255;255;255;48;2;19;87;20m+            bucket = self.freq_to_keys[self.min_freq][0m
+[38;2;255;255;255;48;2;19;87;20m+            evict_key, _ = bucket.popitem(last=False)  # oldest entry[0m
+[38;2;255;255;255;48;2;19;87;20m+            del self.key_to_value[evict_key][0m
+[38;2;255;255;255;48;2;19;87;20m+            del self.key_to_freq[evict_key][0m
+[38;2;255;255;255;48;2;19;87;20m+            if not bucket:[0m
+[38;2;255;255;255;48;2;19;87;20m+                # min_freq will be reset to 1 below for the new insertion.[0m
+[38;2;255;255;255;48;2;19;87;20m+                del self.freq_to_keys[self.min_freq][0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;139;134;130m… omitted 23 diff line(s) across 1 additional file(s)/section(s)[0m
+DONE

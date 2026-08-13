@@ -24,7 +24,10 @@ results: dict[str, dict[str, RunResult]] = {}
 lost: list[str] = []
 
 for task_dir in sorted(OUT.rglob("hard_*")) + sorted(OUT.rglob("code_*")) \
-        + sorted(OUT.rglob("math_*")) + sorted(OUT.rglob("text_*")):
+        + sorted(OUT.rglob("math_*")) + sorted(OUT.rglob("text_*")) \
+        + sorted(OUT.rglob("night_*")):
+    if not task_dir.is_dir() or "_isolated_homes" in task_dir.parts:
+        continue
     task_id = task_dir.name
     results[task_id] = {}
     for cond_dir in [task_dir / c for c in
@@ -46,7 +49,10 @@ for task_dir in sorted(OUT.rglob("hard_*")) + sorted(OUT.rglob("code_*")) \
             continue
         # which state.db holds this session?
         if cond == "baseline":
-            db = ISOLATED_ROOT / f"hermes_home_{task_id}_baseline" / "state.db"
+            db = (ISOLATED_ROOT / f"hermes_home_{task_id}_baseline"
+                  / "hermes_home_isolated" / "state.db")
+            if not db.exists():
+                db = ISOLATED_ROOT / f"hermes_home_{task_id}_baseline" / "state.db"
         else:
             db = DEFAULT_HERMES_HOME / "state.db"
         r.evidence = collect_evidence(db, r.session_id)
@@ -54,24 +60,35 @@ for task_dir in sorted(OUT.rglob("hard_*")) + sorted(OUT.rglob("code_*")) \
             lost.append(f"{task_id}/{cond}: session {r.session_id} not found in {db.name}")
         results[task_id][cond] = r
 
-# merge scores + wall times from the pilot's results.json (they are final)
-pilot_json = OUT / "results.json"
-if pilot_json.exists():
-    pilot = json.loads(pilot_json.read_text(encoding="utf-8"))["tasks"]
-    for task_id, conds in pilot.items():
-        for cond, data in conds.items():
-            r = results.get(task_id, {}).get(cond)
-            if r is None:
-                continue
-            from realbench.scoring import ScoreResult
-            if data.get("score") is not None:
-                r.score = ScoreResult(
-                    task_id=task_id, score=data["score"], passed=data.get("passed", 0),
-                    failed=data.get("failed", 0),
-                    failed_test_names=data.get("failed_tests", []))
-            r.elapsed_seconds = data.get("elapsed_seconds", 0.0)
-            r.timed_out = bool(data.get("timed_out", False))
-            r.notes = data.get("notes", [])
+# merge scores + wall times from the incremental results.jsonl (has ALL runs)
+# plus the probe dirs' jsonl files (baselines live there)
+jsonl_files = [OUT / "results.jsonl"]
+for sibling in OUT.parent.glob("realbench_*probe*/results.jsonl"):
+    if sibling != (OUT / "results.jsonl"):
+        jsonl_files.append(sibling)
+for pilot_jsonl in jsonl_files:
+    if not pilot_jsonl.exists():
+        continue
+    for line in pilot_jsonl.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        data = json.loads(line)
+        task_id, cond = data["task"], data["condition"]
+        r = results.setdefault(task_id, {}).get(cond)
+        if r is None:
+            r = RunResult(task_id=task_id, condition=cond,
+                          workspace=OUT / task_id / cond)
+            results[task_id][cond] = r
+        from realbench.scoring import ScoreResult
+        if data.get("score") is not None:
+            r.score = ScoreResult(
+                task_id=task_id, score=data["score"], passed=data.get("passed", 0),
+                failed=data.get("failed", 0),
+                failed_test_names=data.get("failed_tests", []))
+        r.elapsed_seconds = data.get("elapsed_seconds", 0.0)
+        r.timed_out = bool(data.get("timed_out", False))
+        r.session_id = data.get("session_id") or r.session_id
+        r.notes = data.get("notes", [])
 
 # summary of re-collected evidence
 for task_id, conds in sorted(results.items()):
@@ -86,10 +103,20 @@ for task_id, conds in sorted(results.items()):
 
 print("\nlost:", lost if lost else "none")
 
-cal = {"code_T01_lru_cache": {"gold": 100.0}, "math_T01_knapsack": {"gold": 100.0},
-       "code_T03_service_suite": {"gold": 100.0}}
-critic_meta = {"ok": True, "gold_score": 99.0, "junk_score": 22.0,
-               "margin": 77.0, "elapsed_seconds": 169.1}
+# calibration: re-grade gold for every task present in this pilot (fast)
+from realbench.scoring import score_gold
+from realbench.task_loader import get_task as _get_task
+
+cal = {}
+for task_id in sorted(results):
+    try:
+        g = score_gold(_get_task(task_id))
+        cal[task_id] = {"gold": g.score}
+    except Exception as e:  # noqa: BLE001
+        cal[task_id] = {"gold": None, "note": str(e)}
+print("\ncalibration:", {k: v["gold"] for k, v in cal.items()})
+
+critic_meta = None
 verdicts = evaluate_claims(results, cal, critic_meta)
 md, js = write_report(results, verdicts, OUT, cal, critic_meta)
 

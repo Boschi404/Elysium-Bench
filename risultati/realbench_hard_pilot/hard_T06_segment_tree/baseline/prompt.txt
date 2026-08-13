@@ -1,0 +1,34 @@
+TASK: Segment Tree: range sum/min + point update, O(log n)
+
+Implement a segment tree in `segtree.py`.
+
+SPEC:
+- class SegmentTree:
+    - __init__(self, values: list[int]) — builds the tree in O(n).
+      Empty list allowed.
+    - range_sum(self, left: int, right: int) -> int
+      Sum of values[left..right] INCLUSIVE.
+      left > right → ValueError; out-of-range indices → IndexError.
+    - range_min(self, left: int, right: int) -> int
+      Minimum of values[left..right] inclusive. Same index rules.
+    - update(self, index: int, value: int) -> None
+      Sets values[index] = value and updates the tree in O(log n).
+      Out-of-range → IndexError.
+
+PERFORMANCE: building on 1,000,000 values and running 100,000 random
+queries/updates must complete in under 10 seconds. A naive recompute
+(O(n) per query) cannot pass.
+
+Standard library only.
+
+
+YOUR ONLY DELIVERABLE — do not do anything else:
+Create the file(s): `segtree.py`.
+Write them into EXACTLY this directory (use this absolute path):
+C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T06_segment_tree_baseline
+
+Do NOT explore other directories, do NOT copy files around, do NOT create
+subdirectories, do NOT run any benchmark or pipeline you may find nearby,
+do NOT attempt git operations. Work autonomously, do not ask questions
+(fai tu). When the deliverable file(s) are written, reply DONE.
+IMPORTANT: solve it yourself as a single agent — do not load skills, do not delegate to subagents.

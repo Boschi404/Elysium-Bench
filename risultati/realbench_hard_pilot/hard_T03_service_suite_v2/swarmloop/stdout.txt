@@ -1,0 +1,480 @@
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_swarmloop\lexer.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_swarmloop\lexer.py[0m
+[38;2;139;134;130m@@ -0,0 +1,142 @@[0m
+[38;2;255;255;255;48;2;19;87;20m+"""Lexer for the expression language.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+tokenize(text) -> list of (kind, value) tuples.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+Kinds: "num", "str", "ident", "op", "kw".[0m
+[38;2;255;255;255;48;2;19;87;20m+"""[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+_KEYWORDS = {"true", "false", "none", "and", "or", "not"}[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# Operators ordered by length (longest first) so we match "<=" before "<".[0m
+[38;2;255;255;255;48;2;19;87;20m+_OPERATORS = ["<=", ">=", "==", "!=", "+", "-", "*", "/", "%", "(", ")", ","][0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+def _make_number(text, start):[0m
+[38;2;255;255;255;48;2;19;87;20m+    """Parse a number starting at text[start]. Returns (value, end_index)."""[0m
+[38;2;255;255;255;48;2;19;87;20m+    i = start[0m
+[38;2;255;255;255;48;2;19;87;20m+    n = len(text)[0m
+[38;2;255;255;255;48;2;19;87;20m+    # integer part[0m
+[38;2;255;255;255;48;2;19;87;20m+    while i < n and text[i].isdigit():[0m
+[38;2;255;255;255;48;2;19;87;20m+        i += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+    is_float = False[0m
+[38;2;255;255;255;48;2;19;87;20m+    # fraction[0m
+[38;2;255;255;255;48;2;19;87;20m+    if i < n and text[i] == ".":[0m
+[38;2;255;255;255;48;2;19;87;20m+        is_float = True[0m
+[38;2;255;255;255;48;2;19;87;20m+        i += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+        while i < n and text[i].isdigit():[0m
+[38;2;255;255;255;48;2;19;87;20m+            i += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+    # exponent[0m
+[38;2;255;255;255;48;2;19;87;20m+    if i < n and text[i] in ("e", "E"):[0m
+[38;2;255;255;255;48;2;19;87;20m+        # require a digit-introduced exponent; allow sign[0m
+[38;2;255;255;255;48;2;19;87;20m+        j = i + 1[0m
+[38;2;255;255;255;48;2;19;87;20m+        if j < n and text[j] in ("+", "-"):[0m
+[38;2;255;255;255;48;2;19;87;20m+            j += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+        if j < n and text[j].isdigit():[0m
+[38;2;255;255;255;48;2;19;87;20m+            is_float = True[0m
+[38;2;255;255;255;48;2;19;87;20m+            i = j[0m
+[38;2;255;255;255;48;2;19;87;20m+            while i < n and text[i].isdigit():[0m
+[38;2;255;255;255;48;2;19;87;20m+                i += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+    raw = text[start:i][0m
+[38;2;255;255;255;48;2;19;87;20m+    if is_float:[0m
+[38;2;255;255;255;48;2;19;87;20m+        return float(raw), i[0m
+[38;2;255;255;255;48;2;19;87;20m+    return int(raw), i[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+def _make_string(text, start):[0m
+[38;2;255;255;255;48;2;19;87;20m+    """Parse a single-quoted string starting at the opening quote.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    start points at the opening single quote. Returns (value, end_index).[0m
+[38;2;255;255;255;48;2;19;87;20m+    Unescaped newline -> unterminated string error.[0m
+[38;2;255;255;255;48;2;19;87;20m+    """[0m
+[38;2;255;255;255;48;2;19;87;20m+    n = len(text)[0m
+[38;2;255;255;255;48;2;19;87;20m+    i = start + 1[0m
+[38;2;255;255;255;48;2;19;87;20m+    chars = [][0m
+[38;2;255;255;255;48;2;19;87;20m+    while i < n:[0m
+[38;2;255;255;255;48;2;19;87;20m+        ch = text[i][0m
+[38;2;255;255;255;48;2;19;87;20m+        if ch == "\\":[0m
+[38;2;255;255;255;48;2;19;87;20m+            # escape[0m
+[38;2;255;255;255;48;2;19;87;20m+            if i + 1 >= n:[0m
+[38;2;255;255;255;48;2;19;87;20m+                raise ValueError("unterminated string at position %d" % i)[0m
+[38;2;255;255;255;48;2;19;87;20m+            nxt = text[i + 1][0m
+[38;2;255;255;255;48;2;19;87;20m+            if nxt == "\\":[0m
+[38;2;255;255;255;48;2;19;87;20m+                chars.append("\\")[0m
+[38;2;255;255;255;48;2;19;87;20m+            elif nxt == "'":[0m
+[38;2;255;255;255;48;2;19;87;20m+                chars.append("'")[0m
+[38;2;255;255;255;48;2;19;87;20m+            elif nxt == "n":[0m
+[38;2;255;255;255;48;2;19;87;20m+                chars.append("\n")[0m
+[38;2;255;255;255;48;2;19;87;20m+            elif nxt == "t":[0m
+[38;2;255;255;255;48;2;19;87;20m+                chars.append("\t")[0m
+[38;2;255;255;255;48;2;19;87;20m+            else:[0m
+[38;2;255;255;255;48;2;19;87;20m+                # unrecognized escape: keep backslash + char literally[0m
+[38;2;255;255;255;48;2;19;87;20m+                chars.append("\\")[0m
+[38;2;255;255;255;48;2;19;87;20m+                chars.append(nxt)[0m
+[38;2;255;255;255;48;2;19;87;20m+            i += 2[0m
+[38;2;255;255;255;48;2;19;87;20m+        elif ch == "'":[0m
+[38;2;255;255;255;48;2;19;87;20m+            # closing quote[0m
+[38;2;255;255;255;48;2;19;87;20m+            return "".join(chars), i + 1[0m
+[38;2;255;255;255;48;2;19;87;20m+        elif ch == "\n":[0m
+[38;2;255;255;255;48;2;19;87;20m+            raise ValueError("unterminated string at position %d" % start)[0m
+[38;2;139;134;130m… omitted 64 diff line(s) across 1 additional file(s)/section(s)[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_swarmloop\parser.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_swarmloop\parser.py[0m
+[38;2;139;134;130m@@ -0,0 +1,284 @@[0m
+[38;2;255;255;255;48;2;19;87;20m+"""Parser for the expression language.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+parse(tokens) -> AST[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+AST node types (this module owns the AST shape):[0m
+[38;2;255;255;255;48;2;19;87;20m+    Num(value)            numeric literal[0m
+[38;2;255;255;255;48;2;19;87;20m+    Str(value)            string literal[0m
+[38;2;255;255;255;48;2;19;87;20m+    Name(name)            variable reference[0m
+[38;2;255;255;255;48;2;19;87;20m+    ConstTrue()           true[0m
+[38;2;255;255;255;48;2;19;87;20m+    ConstFalse()          false[0m
+[38;2;255;255;255;48;2;19;87;20m+    NoneVal()             none[0m
+[38;2;255;255;255;48;2;19;87;20m+    Unary(op, operand)    unary minus (op == "-")[0m
+[38;2;255;255;255;48;2;19;87;20m+    Not(operand)          logical not[0m
+[38;2;255;255;255;48;2;19;87;20m+    BinOp(op, left, right)   + - * / %[0m
+[38;2;255;255;255;48;2;19;87;20m+    Logical(op, left, right) and / or (left-associative chains)[0m
+[38;2;255;255;255;48;2;19;87;20m+    Compare(left, ops, comparators)  chained comparisons[0m
+[38;2;255;255;255;48;2;19;87;20m+    Call(name, args)      builtin function call[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+Precedence (low -> high):[0m
+[38;2;255;255;255;48;2;19;87;20m+    or, and, not, comparison, (+ -), (* / %), unary -, primary.[0m
+[38;2;255;255;255;48;2;19;87;20m+"""[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# Comparison operator set.[0m
+[38;2;255;255;255;48;2;19;87;20m+_CMP_OPS = {"<", "<=", ">", ">=", "==", "!="}[0m
+[38;2;255;255;255;48;2;19;87;20m+_ADD_OPS = {"+", "-"}[0m
+[38;2;255;255;255;48;2;19;87;20m+_MUL_OPS = {"*", "/", "%"}[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+class _Parser:[0m
+[38;2;255;255;255;48;2;19;87;20m+    def __init__(self, tokens):[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.tokens = tokens[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.pos = 0[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _peek(self):[0m
+[38;2;255;255;255;48;2;19;87;20m+        if self.pos < len(self.tokens):[0m
+[38;2;255;255;255;48;2;19;87;20m+            return self.tokens[self.pos][0m
+[38;2;255;255;255;48;2;19;87;20m+        return None[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _advance(self):[0m
+[38;2;255;255;255;48;2;19;87;20m+        tok = self.tokens[self.pos][0m
+[38;2;255;255;255;48;2;19;87;20m+        self.pos += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+        return tok[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _err(self, msg):[0m
+[38;2;255;255;255;48;2;19;87;20m+        # Position reported is the current token index.[0m
+[38;2;255;255;255;48;2;19;87;20m+        raise ValueError("%s at position %d" % (msg, self.pos))[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _expect_op(self, op):[0m
+[38;2;255;255;255;48;2;19;87;20m+        tok = self._peek()[0m
+[38;2;255;255;255;48;2;19;87;20m+        if tok == ("op", op):[0m
+[38;2;255;255;255;48;2;19;87;20m+            self._advance()[0m
+[38;2;255;255;255;48;2;19;87;20m+            return[0m
+[38;2;255;255;255;48;2;19;87;20m+        if tok is None:[0m
+[38;2;255;255;255;48;2;19;87;20m+            self._err("expected %r but reached end of input" % op)[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._err("expected %r but found %r" % (op, tok))[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    # ---- grammar ----[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def parse(self):[0m
+[38;2;255;255;255;48;2;19;87;20m+        node = self.parse_or()[0m
+[38;2;255;255;255;48;2;19;87;20m+        if self.pos < len(self.tokens):[0m
+[38;2;255;255;255;48;2;19;87;20m+            self._err("trailing tokens after expression")[0m
+[38;2;255;255;255;48;2;19;87;20m+        return node[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def parse_or(self):[0m
+[38;2;255;255;255;48;2;19;87;20m+        left = self.parse_and()[0m
+[38;2;255;255;255;48;2;19;87;20m+        while self._peek() == ("op", "or"):[0m
+[38;2;255;255;255;48;2;19;87;20m+            self._advance()[0m
+[38;2;255;255;255;48;2;19;87;20m+            right = self.parse_and()[0m
+[38;2;255;255;255;48;2;19;87;20m+            left = Logical("or", left, right)[0m
+[38;2;255;255;255;48;2;19;87;20m+        return left[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def parse_and(self):[0m
+[38;2;255;255;255;48;2;19;87;20m+        left = self.parse_not()[0m
+[38;2;255;255;255;48;2;19;87;20m+        while self._peek() == ("op", "and"):[0m
+[38;2;255;255;255;48;2;19;87;20m+            self._advance()[0m
+[38;2;255;255;255;48;2;19;87;20m+            right = self.parse_not()[0m
+[38;2;255;255;255;48;2;19;87;20m+            left = Logical("and", left, right)[0m
+[38;2;139;134;130m… omitted 206 diff line(s) across 1 additional file(s)/section(s)[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_swarmloop\eval.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_swarmloop\eval.py[0m
+[38;2;139;134;130m@@ -0,0 +1,224 @@[0m
+[38;2;255;255;255;48;2;19;87;20m+"""Evaluator for the expression language.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+eval_text(text, env) -> value[0m
+[38;2;255;255;255;48;2;19;87;20m+  Lexes, parses, then evaluates the AST against `env` (a dict of variables).[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+Errors:[0m
+[38;2;255;255;255;48;2;19;87;20m+  ValueError  - lex / parse errors (message carries the position)[0m
+[38;2;255;255;255;48;2;19;87;20m+  NameError   - undefined variable[0m
+[38;2;255;255;255;48;2;19;87;20m+  TypeError   - type mismatch[0m
+[38;2;255;255;255;48;2;19;87;20m+  ZeroDivisionError - division/modulo by zero[0m
+[38;2;255;255;255;48;2;19;87;20m+"""[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+from lexer import tokenize[0m
+[38;2;255;255;255;48;2;19;87;20m+from parser import ([0m
+[38;2;255;255;255;48;2;19;87;20m+    parse,[0m
+[38;2;255;255;255;48;2;19;87;20m+    Num, Str, Name, ConstTrue, ConstFalse, NoneVal,[0m
+[38;2;255;255;255;48;2;19;87;20m+    Unary, Not, BinOp, Logical, Compare, Call,[0m
+[38;2;255;255;255;48;2;19;87;20m+)[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+def _truthy(v):[0m
+[38;2;255;255;255;48;2;19;87;20m+    if v is False or v is None:[0m
+[38;2;255;255;255;48;2;19;87;20m+        return False[0m
+[38;2;255;255;255;48;2;19;87;20m+    if v == 0 or v == 0.0:[0m
+[38;2;255;255;255;48;2;19;87;20m+        # catches int 0, float 0.0 but not False (handled above)[0m
+[38;2;255;255;255;48;2;19;87;20m+        if isinstance(v, (int, float)) and not isinstance(v, bool):[0m
+[38;2;255;255;255;48;2;19;87;20m+            return False[0m
+[38;2;255;255;255;48;2;19;87;20m+    if v == "":[0m
+[38;2;255;255;255;48;2;19;87;20m+        return False[0m
+[38;2;255;255;255;48;2;19;87;20m+    return True[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+def _is_number(v):[0m
+[38;2;255;255;255;48;2;19;87;20m+    return isinstance(v, (int, float)) and not isinstance(v, bool)[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+def _type_guard_number(v, what):[0m
+[38;2;255;255;255;48;2;19;87;20m+    if not _is_number(v):[0m
+[38;2;255;255;255;48;2;19;87;20m+        raise TypeError("%s requires a number, got %r" % (what, v))[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+class _Evaluator:[0m
+[38;2;255;255;255;48;2;19;87;20m+    def __init__(self, env):[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.env = env[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def eval(self, node):[0m
+[38;2;255;255;255;48;2;19;87;20m+        m = getattr(self, "_ev_" + type(node).__name__, None)[0m
+[38;2;255;255;255;48;2;19;87;20m+        if m is None:[0m
+[38;2;255;255;255;48;2;19;87;20m+            raise TypeError("cannot evaluate node %r" % type(node).__name__)[0m
+[38;2;255;255;255;48;2;19;87;20m+        return m(node)[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _ev_Num(self, node):[0m
+[38;2;255;255;255;48;2;19;87;20m+        return node.value[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _ev_Str(self, node):[0m
+[38;2;255;255;255;48;2;19;87;20m+        return node.value[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _ev_ConstTrue(self, node):[0m
+[38;2;255;255;255;48;2;19;87;20m+        return True[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _ev_ConstFalse(self, node):[0m
+[38;2;255;255;255;48;2;19;87;20m+        return False[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _ev_NoneVal(self, node):[0m
+[38;2;255;255;255;48;2;19;87;20m+        return None[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _ev_Name(self, node):[0m
+[38;2;255;255;255;48;2;19;87;20m+        if node.name not in self.env:[0m
+[38;2;255;255;255;48;2;19;87;20m+            raise NameError("undefined variable %r" % node.name)[0m
+[38;2;255;255;255;48;2;19;87;20m+        return self.env[node.name][0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _ev_Unary(self, node):[0m
+[38;2;255;255;255;48;2;19;87;20m+        # unary minus only[0m
+[38;2;255;255;255;48;2;19;87;20m+        operand = self.eval(node.operand)[0m
+[38;2;255;255;255;48;2;19;87;20m+        _type_guard_number(operand, "unary -")[0m
+[38;2;255;255;255;48;2;19;87;20m+        return -operand[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _ev_Not(self, node):[0m
+[38;2;139;134;130m… omitted 146 diff line(s) across 1 additional file(s)/section(s)[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_swarmloop\repl.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_swarmloop\repl.py[0m
+[38;2;139;134;130m@@ -0,0 +1,20 @@[0m
+[38;2;255;255;255;48;2;19;87;20m+"""REPL wrapper for the expression language.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+run(text, env=None) -> dict[0m
+[38;2;255;255;255;48;2;19;87;20m+  Returns {"status": "ok", "value": v} on success, or[0m
+[38;2;255;255;255;48;2;19;87;20m+  {"status": "error", "error": "<message>"} on any exception.[0m
+[38;2;255;255;255;48;2;19;87;20m+  Never raises.[0m
+[38;2;255;255;255;48;2;19;87;20m+"""[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+from eval import eval_text[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+def run(text, env=None):[0m
+[38;2;255;255;255;48;2;19;87;20m+    """Evaluate `text` and return a result dict. Never raises."""[0m
+[38;2;255;255;255;48;2;19;87;20m+    if env is None:[0m
+[38;2;255;255;255;48;2;19;87;20m+        env = {}[0m
+[38;2;255;255;255;48;2;19;87;20m+    try:[0m
+[38;2;255;255;255;48;2;19;87;20m+        value = eval_text(text, env)[0m
+[38;2;255;255;255;48;2;19;87;20m+    except Exception as exc:  # noqa: BLE001 - REPL must swallow all errors[0m
+[38;2;255;255;255;48;2;19;87;20m+        return {"status": "error", "error": str(exc)}[0m
+[38;2;255;255;255;48;2;19;87;20m+    return {"status": "ok", "value": value}[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\verify_expr.py → b/C:\Users\leob3\AppData\Local\Temp\verify_expr.py[0m
+[38;2;139;134;130m@@ -0,0 +1,153 @@[0m
+[38;2;255;255;255;48;2;19;87;20m+import sys, os[0m
+[38;2;255;255;255;48;2;19;87;20m+sys.path.insert(0, r"C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_swarmloop")[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+import lexer, parser, ev, repl[0m
+[38;2;255;255;255;48;2;19;87;20m+from eval import eval_text[0m
+[38;2;255;255;255;48;2;19;87;20m+from repl import run[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+fails = [][0m
+[38;2;255;255;255;48;2;19;87;20m+def check(desc, cond, extra=""):[0m
+[38;2;255;255;255;48;2;19;87;20m+    if cond:[0m
+[38;2;255;255;255;48;2;19;87;20m+        pass[0m
+[38;2;255;255;255;48;2;19;87;20m+    else:[0m
+[38;2;255;255;255;48;2;19;87;20m+        fails.append(desc + ("  " + extra if extra else ""))[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# ---------- LEXER ----------[0m
+[38;2;255;255;255;48;2;19;87;20m+# numbers[0m
+[38;2;255;255;255;48;2;19;87;20m+t = lexer.tokenize("1")[0m
+[38;2;255;255;255;48;2;19;87;20m+check("int token", t == [("num", 1)], str(t))[0m
+[38;2;255;255;255;48;2;19;87;20m+t = lexer.tokenize("1.5e3")[0m
+[38;2;255;255;255;48;2;19;87;20m+check("float 1.5e3 -> 1500.0", t == [("num", 1500.0)], str(t))[0m
+[38;2;255;255;255;48;2;19;87;20m+t = lexer.tokenize("1.0")[0m
+[38;2;255;255;255;48;2;19;87;20m+check("float 1.0", t == [("num", 1.0)], str(t))[0m
+[38;2;255;255;255;48;2;19;87;20m+t = lexer.tokenize("42e2")[0m
+[38;2;255;255;255;48;2;19;87;20m+check("42e2 -> 4200.0", t == [("num", 4200.0)], str(t))[0m
+[38;2;255;255;255;48;2;19;87;20m+t = lexer.tokenize("1e-3")[0m
+[38;2;255;255;255;48;2;19;87;20m+check("1e-3 -> 0.001", t == [("num", 0.001)], str(t))[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# strings[0m
+[38;2;255;255;255;48;2;19;87;20m+t = lexer.tokenize("'hi'")[0m
+[38;2;255;255;255;48;2;19;87;20m+check("str token", t == [("str", "hi")], str(t))[0m
+[38;2;255;255;255;48;2;19;87;20m+t = lexer.tokenize(r"'a\nb\tc\\d'")[0m
+[38;2;255;255;255;48;2;19;87;20m+check("str escapes", t == [("str", "a\nb\tc\\d")], str(t))[0m
+[38;2;255;255;255;48;2;19;87;20m+t = lexer.tokenize(r"'a\'b'")[0m
+[38;2;255;255;255;48;2;19;87;20m+check("str quote escape", t == [("str", "a'b")], str(t))[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# identifiers / keywords[0m
+[38;2;255;255;255;48;2;19;87;20m+t = lexer.tokenize("foo _bar9")[0m
+[38;2;255;255;255;48;2;19;87;20m+check("idents", t == [("ident", "foo"), ("ident", "_bar9")], str(t))[0m
+[38;2;255;255;255;48;2;19;87;20m+t = lexer.tokenize("true false none and or not")[0m
+[38;2;255;255;255;48;2;19;87;20m+check("keywords", t == [("kw","true"),("kw","false"),("kw","none"),("kw","and"),("kw","or"),("kw","not")], str(t))[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# operators[0m
+[38;2;255;255;255;48;2;19;87;20m+t = lexer.tokenize("+ - * / % ( ) , < <= > >= == !=")[0m
+[38;2;255;255;255;48;2;19;87;20m+check("ops", t == [("op",x) for x in ["+","-","*","/","%","(",")",",","<","<=",">",">=","==","!="]], str(t))[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# comments + ws[0m
+[38;2;255;255;255;48;2;19;87;20m+t = lexer.tokenize("1 # comment\n + 2")[0m
+[38;2;255;255;255;48;2;19;87;20m+check("comment skip", t == [("num",1),("op","+"),("num",2)], str(t))[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# errors[0m
+[38;2;255;255;255;48;2;19;87;20m+try:[0m
+[38;2;255;255;255;48;2;19;87;20m+    lexer.tokenize("1 @ 2"); check("illegal char raises", False, "no raise")[0m
+[38;2;255;255;255;48;2;19;87;20m+except ValueError as e:[0m
+[38;2;255;255;255;48;2;19;87;20m+    check("illegal char raises", "position" in str(e), str(e))[0m
+[38;2;255;255;255;48;2;19;87;20m+try:[0m
+[38;2;255;255;255;48;2;19;87;20m+    lexer.tokenize("'unterminated")[0m
+[38;2;255;255;255;48;2;19;87;20m+    check("unterminated str raises", False, "no raise")[0m
+[38;2;255;255;255;48;2;19;87;20m+except ValueError as e:[0m
+[38;2;255;255;255;48;2;19;87;20m+    check("unterminated str raises", True)[0m
+[38;2;255;255;255;48;2;19;87;20m+try:[0m
+[38;2;255;255;255;48;2;19;87;20m+    lexer.tokenize("'multi\nline'")[0m
+[38;2;255;255;255;48;2;19;87;20m+    check("newline in str raises", False, "no raise")[0m
+[38;2;255;255;255;48;2;19;87;20m+except ValueError as e:[0m
+[38;2;255;255;255;48;2;19;87;20m+    check("newline in str raises", True)[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# ---------- PARSER / EVAL: precedence & arithmetic ----------[0m
+[38;2;255;255;255;48;2;19;87;20m+check("2 * -3 == -6", eval_text("2 * -3", {}) == -6, str(eval_text("2 * -3",{})))[0m
+[38;2;255;255;255;48;2;19;87;20m+check("--2 == 2", eval_text("--2", {}) == 2, str(eval_text("--2",{})))[0m
+[38;2;255;255;255;48;2;19;87;20m+check("add sub", eval_text("3 + 4 - 2", {}) == 5)[0m
+[38;2;255;255;255;48;2;19;87;20m+check("mul prec", eval_text("2 + 3 * 4", {}) == 14)[0m
+[38;2;255;255;255;48;2;19;87;20m+check("paren", eval_text("(2 + 3) * 4", {}) == 20)[0m
+[38;2;255;255;255;48;2;19;87;20m+check("div float", eval_text("7 / 2", {}) == 3.5)[0m
+[38;2;255;255;255;48;2;19;87;20m+check("mod", eval_text("7 % 3", {}) == 1)[0m
+[38;2;255;255;255;48;2;19;87;20m+check("string concat", eval_text("'a' + 'b'", {}) == "ab")[0m
+[38;2;255;255;255;48;2;19;87;20m+check("string concat var", eval_text("x + y", {"x":"a","y":"b"}) == "ab")[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# ---------- comparisons chaining ----------[0m
+[38;2;255;255;255;48;2;19;87;20m+check("chain 1<2<3 true", eval_text("1 < 2 < 3", {}) is True)[0m
+[38;2;139;134;130m… omitted 75 diff line(s) across 1 additional file(s)/section(s)[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\verify_expr.py → b/C:\Users\leob3\AppData\Local\Temp\verify_expr.py[0m
+[38;2;139;134;130m@@ -6,6 +6,15 @@[0m
+[38;2;184;134;11m from repl import run[0m
+[38;2;184;134;11m [0m
+[38;2;184;134;11m fails = [][0m
+[38;2;255;255;255;48;2;19;87;20m+def _expect_raise(expr, exc_type):[0m
+[38;2;255;255;255;48;2;19;87;20m+    try:[0m
+[38;2;255;255;255;48;2;19;87;20m+        eval_text(expr, {})[0m
+[38;2;255;255;255;48;2;19;87;20m+        return False[0m
+[38;2;255;255;255;48;2;19;87;20m+    except exc_type:[0m
+[38;2;255;255;255;48;2;19;87;20m+        return True[0m
+[38;2;255;255;255;48;2;19;87;20m+    except Exception:[0m
+[38;2;255;255;255;48;2;19;87;20m+        return False[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;184;134;11m def check(desc, cond, extra=""):[0m
+[38;2;184;134;11m     if cond:[0m
+[38;2;184;134;11m         pass[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\verify_expr.py → b/C:\Users\leob3\AppData\Local\Temp\verify_expr.py[0m
+[38;2;139;134;130m@@ -1,7 +1,7 @@[0m
+[38;2;184;134;11m import sys, os[0m
+[38;2;184;134;11m sys.path.insert(0, r"C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_swarmloop")[0m
+[38;2;184;134;11m [0m
+[38;2;255;255;255;48;2;119;20;20m-import lexer, parser, ev, repl[0m
+[38;2;255;255;255;48;2;19;87;20m+import lexer, parser, repl[0m
+[38;2;184;134;11m from eval import eval_text[0m
+[38;2;184;134;11m from repl import run[0m
+[38;2;184;134;11m [0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_swarmloop\lexer.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_swarmloop\lexer.py[0m
+[38;2;139;134;130m@@ -8,7 +8,7 @@[0m
+[38;2;184;134;11m _KEYWORDS = {"true", "false", "none", "and", "or", "not"}[0m
+[38;2;184;134;11m [0m
+[38;2;184;134;11m # Operators ordered by length (longest first) so we match "<=" before "<".[0m
+[38;2;255;255;255;48;2;119;20;20m-_OPERATORS = ["<=", ">=", "==", "!=", "+", "-", "*", "/", "%", "(", ")", ","][0m
+[38;2;255;255;255;48;2;19;87;20m+_OPERATORS = ["<=", ">=", "==", "!=", "<", ">", "+", "-", "*", "/", "%", "(", ")", ","][0m
+[38;2;184;134;11m [0m
+[38;2;184;134;11m [0m
+[38;2;184;134;11m def _make_number(text, start):[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_swarmloop\eval.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_swarmloop\eval.py[0m
+[38;2;139;134;130m@@ -83,13 +83,20 @@[0m
+[38;2;184;134;11m         left = self.eval(node.left)[0m
+[38;2;184;134;11m         right = self.eval(node.right)[0m
+[38;2;184;134;11m         op = node.op[0m
+[38;2;255;255;255;48;2;119;20;20m-        if op in ("+", "-", "*", "/", "%"):[0m
+[38;2;255;255;255;48;2;19;87;20m+        if op == "+":[0m
+[38;2;255;255;255;48;2;19;87;20m+            if isinstance(left, str) and isinstance(right, str):[0m
+[38;2;255;255;255;48;2;19;87;20m+                return left + right[0m
+[38;2;255;255;255;48;2;19;87;20m+            if _is_number(left) and _is_number(right):[0m
+[38;2;255;255;255;48;2;19;87;20m+                return left + right[0m
+[38;2;255;255;255;48;2;19;87;20m+            raise TypeError([0m
+[38;2;255;255;255;48;2;19;87;20m+                "operator '+' requires two numbers or two strings, got %r and %r"[0m
+[38;2;255;255;255;48;2;19;87;20m+                % (left, right)[0m
+[38;2;255;255;255;48;2;19;87;20m+            )[0m
+[38;2;255;255;255;48;2;19;87;20m+        if op in ("-", "*", "/", "%"):[0m
+[38;2;184;134;11m             if not _is_number(left) or not _is_number(right):[0m
+[38;2;184;134;11m                 raise TypeError([0m
+[38;2;184;134;11m                     "operator %r requires numbers, got %r and %r" % (op, left, right)[0m
+[38;2;184;134;11m                 )[0m
+[38;2;255;255;255;48;2;119;20;20m-            if op == "+":[0m
+[38;2;255;255;255;48;2;119;20;20m-                return left + right[0m
+[38;2;184;134;11m             if op == "-":[0m
+[38;2;184;134;11m                 return left - right[0m
+[38;2;184;134;11m             if op == "*":[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_swarmloop\parser.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_swarmloop\parser.py[0m
+[38;2;139;134;130m@@ -64,7 +64,7 @@[0m
+[38;2;184;134;11m [0m
+[38;2;184;134;11m     def parse_or(self):[0m
+[38;2;184;134;11m         left = self.parse_and()[0m
+[38;2;255;255;255;48;2;119;20;20m-        while self._peek() == ("op", "or"):[0m
+[38;2;255;255;255;48;2;19;87;20m+        while self._peek() == ("kw", "or"):[0m
+[38;2;184;134;11m             self._advance()[0m
+[38;2;184;134;11m             right = self.parse_and()[0m
+[38;2;184;134;11m             left = Logical("or", left, right)[0m
+[38;2;139;134;130m@@ -72,14 +72,14 @@[0m
+[38;2;184;134;11m [0m
+[38;2;184;134;11m     def parse_and(self):[0m
+[38;2;184;134;11m         left = self.parse_not()[0m
+[38;2;255;255;255;48;2;119;20;20m-        while self._peek() == ("op", "and"):[0m
+[38;2;255;255;255;48;2;19;87;20m+        while self._peek() == ("kw", "and"):[0m
+[38;2;184;134;11m             self._advance()[0m
+[38;2;184;134;11m             right = self.parse_not()[0m
+[38;2;184;134;11m             left = Logical("and", left, right)[0m
+[38;2;184;134;11m         return left[0m
+[38;2;184;134;11m [0m
+[38;2;184;134;11m     def parse_not(self):[0m
+[38;2;255;255;255;48;2;119;20;20m-        if self._peek() == ("op", "not"):[0m
+[38;2;255;255;255;48;2;19;87;20m+        if self._peek() == ("kw", "not"):[0m
+[38;2;184;134;11m             self._advance()[0m
+[38;2;184;134;11m             operand = self.parse_not()[0m
+[38;2;184;134;11m             return Not(operand)[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\verify_expr.py → b/C:\Users\leob3\AppData\Local\Temp\verify_expr.py[0m
+[38;2;139;134;130m@@ -94,8 +94,9 @@[0m
+[38;2;184;134;11m # ---------- logical short-circuit ----------[0m
+[38;2;184;134;11m check("0 and 5 -> 0", eval_text("0 and 5", {}) == 0, str(eval_text("0 and 5",{})))[0m
+[38;2;184;134;11m check("3 or 5 -> 3", eval_text("3 or 5", {}) == 3, str(eval_text("3 or 5",{})))[0m
+[38;2;255;255;255;48;2;119;20;20m-check("false or 1/0 == 0 no raise", eval_text("false or 1/0", {}) == 0, "raised!")[0m
+[38;2;255;255;255;48;2;119;20;20m-check("true and 1/0 raises", _expect_raise("true and 1/0", ZeroDivisionError))[0m
+[38;2;255;255;255;48;2;19;87;20m+check("true or 1/0 no raise", eval_text("true or 1/0", {}) is True, "raised!")[0m
+[38;2;255;255;255;48;2;19;87;20m+check("false and 1/0 no raise", eval_text("false and 1/0", {}) is False, "raised!")[0m
+[38;2;255;255;255;48;2;19;87;20m+check("false or 1/0 DOES raise", _expect_raise("false or 1/0", ZeroDivisionError))[0m
+[38;2;184;134;11m check("not truthy", eval_text("not 0", {}) is True)[0m
+[38;2;184;134;11m check("not falsy", eval_text("not 5", {}) is False)[0m
+[38;2;184;134;11m check("true/false/none", eval_text("true", {}) is True and eval_text("false", {}) is False and eval_text("none", {}) is None)[0m
+DONE
+
+All four modules are written to the exact directory:
+C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_swarmloop\
+  - lexer.py
+  - parser.py
+  - eval.py
+  - repl.py
+
+Verified against the spec with a 60+ assertion harness (ALL PASS):
+
+Lexer: ints stay int, float/exponent → float (1.5e3==1500.0), single-quoted strings with \ \\ ' n t escapes, unterminated/newline-in-string errors, identifiers, keywords (true/false/none/and/or/not), all operators incl. < <= > >= == !=, "#" comments skipped, illegal-char errors with position.
+
+Parser: full precedence chain (or→and→not→comparison→+-→*/%→unary-→primary), chained comparisons (1<2<3 → (1<2)and(2<3)) with short-circuit at eval, left-associative logic, unary minus in operand position (2*-3==-6, --2==2), call parsing, and ValueError with position on missing operand / paren mismatch / trailing tokens.
+
+Eval: lex+parse+eval pipeline; arithmetic with Python semantics (/ is float), string concat, comparisons on numbers/strings, and/or with Python truthiness short-circuit (0 and 5→0, 3 or 5→3, true or 1/0 never raises), not, true/false/none, truthiness rules, and builtins len/abs/int/str/min/max with correct type guards. Error mapping: NameError (undefined var), TypeError (type mismatch like "a"+1, len(5)), ZeroDivisionError (1/0, 1%0), ValueError for lex/parse with position in message.
+
+REPL: run() returns {"status":"ok","value":v} or {"status":"error","error":"..."} and never raises (verified on empty input, undefined var, div-by-zero, unterminated string).
+
+Note on one spec sentence: the example `false or 1/0 == 0 must NOT raise` is contradictory — with `false` falsy on the left, `or` *must* evaluate the right side and raise. I implemented standard Python short-circuit semantics (which match the spec's own `0 and 5 → 0` / `3 or 5 → 3` examples), so `true or 1/0` and `false and 1/0` are the demonstrated no-raise cases. Everything else matches the spec exactly.
+  [tool] (´･_･`) reasoning...

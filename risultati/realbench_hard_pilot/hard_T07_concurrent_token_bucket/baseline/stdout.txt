@@ -1,0 +1,70 @@
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T07_concurrent_token_bucket_baseline\bucket.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T07_concurrent_token_bucket_baseline\bucket.py[0m
+[38;2;139;134;130m@@ -0,0 +1,41 @@[0m
+[38;2;255;255;255;48;2;19;87;20m+import threading[0m
+[38;2;255;255;255;48;2;19;87;20m+import time[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+class TokenBucket:[0m
+[38;2;255;255;255;48;2;19;87;20m+    def __init__(self, capacity: float, refill_rate: float) -> None:[0m
+[38;2;255;255;255;48;2;19;87;20m+        if capacity <= 0:[0m
+[38;2;255;255;255;48;2;19;87;20m+            raise ValueError("capacity must be > 0")[0m
+[38;2;255;255;255;48;2;19;87;20m+        if refill_rate <= 0:[0m
+[38;2;255;255;255;48;2;19;87;20m+            raise ValueError("refill_rate must be > 0")[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._capacity = float(capacity)[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._refill_rate = float(refill_rate)[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._tokens = float(capacity)[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._last_refill = time.monotonic()[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._lock = threading.Lock()[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _refill(self, now: float) -> None:[0m
+[38;2;255;255;255;48;2;19;87;20m+        # precondition: called while holding self._lock[0m
+[38;2;255;255;255;48;2;19;87;20m+        elapsed = now - self._last_refill[0m
+[38;2;255;255;255;48;2;19;87;20m+        if elapsed > 0:[0m
+[38;2;255;255;255;48;2;19;87;20m+            self._tokens = min(self._capacity, self._tokens + elapsed * self._refill_rate)[0m
+[38;2;255;255;255;48;2;19;87;20m+            self._last_refill = now[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def try_acquire(self, n: float = 1.0, now: float | None = None) -> bool:[0m
+[38;2;255;255;255;48;2;19;87;20m+        if n < 0:[0m
+[38;2;255;255;255;48;2;19;87;20m+            raise ValueError("n must be >= 0")[0m
+[38;2;255;255;255;48;2;19;87;20m+        if now is None:[0m
+[38;2;255;255;255;48;2;19;87;20m+            now = time.monotonic()[0m
+[38;2;255;255;255;48;2;19;87;20m+        with self._lock:[0m
+[38;2;255;255;255;48;2;19;87;20m+            self._refill(now)[0m
+[38;2;255;255;255;48;2;19;87;20m+            if self._tokens >= n:[0m
+[38;2;255;255;255;48;2;19;87;20m+                self._tokens -= n[0m
+[38;2;255;255;255;48;2;19;87;20m+                return True[0m
+[38;2;255;255;255;48;2;19;87;20m+            return False[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def available(self, now: float | None = None) -> float:[0m
+[38;2;255;255;255;48;2;19;87;20m+        if now is None:[0m
+[38;2;255;255;255;48;2;19;87;20m+            now = time.monotonic()[0m
+[38;2;255;255;255;48;2;19;87;20m+        with self._lock:[0m
+[38;2;255;255;255;48;2;19;87;20m+            self._refill(now)[0m
+[38;2;255;255;255;48;2;19;87;20m+            return self._tokens[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T07_concurrent_token_bucket_baseline\bucket.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T07_concurrent_token_bucket_baseline\bucket.py[0m
+[38;2;139;134;130m@@ -11,11 +11,19 @@[0m
+[38;2;184;134;11m         self._capacity = float(capacity)[0m
+[38;2;184;134;11m         self._refill_rate = float(refill_rate)[0m
+[38;2;184;134;11m         self._tokens = float(capacity)[0m
+[38;2;255;255;255;48;2;119;20;20m-        self._last_refill = time.monotonic()[0m
+[38;2;255;255;255;48;2;19;87;20m+        # Anchor the timeline on the first call so that explicitly provided[0m
+[38;2;255;255;255;48;2;19;87;20m+        # `now` values (e.g. 0.0, 1.0, 2.5) and time.monotonic() defaults[0m
+[38;2;255;255;255;48;2;19;87;20m+        # both work consistently as a shared clock.[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._last_refill = None[0m
+[38;2;184;134;11m         self._lock = threading.Lock()[0m
+[38;2;184;134;11m [0m
+[38;2;184;134;11m     def _refill(self, now: float) -> None:[0m
+[38;2;184;134;11m         # precondition: called while holding self._lock[0m
+[38;2;255;255;255;48;2;19;87;20m+        if self._last_refill is None:[0m
+[38;2;255;255;255;48;2;19;87;20m+            # First observation: establish the timeline, no refill needed[0m
+[38;2;255;255;255;48;2;19;87;20m+            # since _tokens already starts at capacity.[0m
+[38;2;255;255;255;48;2;19;87;20m+            self._last_refill = now[0m
+[38;2;255;255;255;48;2;19;87;20m+            return[0m
+[38;2;184;134;11m         elapsed = now - self._last_refill[0m
+[38;2;184;134;11m         if elapsed > 0:[0m
+[38;2;184;134;11m             self._tokens = min(self._capacity, self._tokens + elapsed * self._refill_rate)[0m
+All checks pass: deterministic refill (exact amounts), concurrency stress (8×2000 acquisitions, no over-grant, no exceptions), and ValueError validation.
+
+DONE.

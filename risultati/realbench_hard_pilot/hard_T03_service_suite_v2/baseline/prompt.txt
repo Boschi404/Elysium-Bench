@@ -1,0 +1,77 @@
+TASK: Expression Language: Lexer + Parser + Evaluator + REPL
+
+Implement a small expression language pipeline in 4 files. Each module is
+independent beyond the contracts below.
+
+MODULE 1 — `lexer.py`:
+  def tokenize(text: str) -> list[tuple]
+    Tokens are tuples (kind, value) with kind in
+    {"num", "str", "ident", "op", "kw"}.
+    - numbers: digits [. digits] [e[+-]digits]; int stays int, anything
+      with a fraction/exponent becomes float ("1.5e3" -> 1500.0)
+    - strings: single-quoted, escapes \\ \\' \\n \\t (value = unescaped).
+      Strings cannot span lines: an unescaped newline inside a string is
+      an unterminated-string error.
+    - identifiers: [a-zA-Z_][a-zA-Z0-9_]*
+    - keywords (kind "kw"): true false none and or not
+    - operators (kind "op"): + - * / % ( ) , < <= > >= == !=
+    - comments: "#" to end of line, skipped; whitespace skipped
+    - anything else → ValueError("illegal character ... at position N")
+    - an unclosed string → ValueError
+
+MODULE 2 — `parser.py`:
+  def parse(tokens: list[tuple]) -> AST  (AST structure is your choice)
+    Precedence (low → high):  or, and, not, comparison, + -, * / %,
+    unary -, primary (number/string/ident/true/false/none/call/parens).
+    Comparisons chain: 1 < 2 < 3 means (1 < 2) and (2 < 3).
+    and/or short-circuit at EVAL time, but parse as left-associative.
+    unary minus may appear in operand position: 2 * -3 == -6; --2 == 2.
+    Missing operand / ")" mismatch / trailing tokens → ValueError with
+    the position in the message.
+
+MODULE 3 — `eval.py`:
+  def eval_text(text: str, env: dict) -> value
+    Lexes, parses, evaluates. Errors:
+    - parse/lex errors → ValueError (message contains the position)
+    - undefined variable → NameError
+    - type mismatch (e.g. "a" + 1, len(5)) → TypeError
+    - division by zero → ZeroDivisionError
+    Semantics:
+    - + - * / % on numbers (Python semantics, / is float division)
+    - + on two strings = concatenation
+    - comparisons work on numbers or strings, chain with short-circuit
+    - and/or return operand values with Python truthiness
+      (0 and 5 → 0; 3 or 5 → 3; false or 1/0 == 0 must NOT raise)
+    - not → bool negation of truthiness
+    - true → True, false → False, none → None
+    - truthiness: False, None, 0, 0.0, "" are falsy; everything else truthy
+    - builtin calls (only these): len(str)->int, abs(num)->num,
+      int(num|str)->int (int(3.7)==3, int("42")==42),
+      str(any)->str (str(3.5)=="3.5"), min(...), max(...) with 1+ args,
+      all numbers or all strings, else TypeError
+
+MODULE 4 — `repl.py`:
+  def run(text: str, env: dict | None = None) -> dict
+    Returns {"status": "ok", "value": v} on success, or
+    {"status": "error", "error": "<message>"} on any exception
+    (lex/parse/eval). Never raises.
+
+INTERFACE CONTRACTS (final):
+  lexer.tokenize(text: str) -> list[tuple]
+  parser.parse(tokens: list[tuple]) -> AST
+  eval.eval_text(text: str, env: dict) -> value
+  repl.run(text: str, env: dict | None) -> dict
+
+Standard library only.
+
+
+YOUR ONLY DELIVERABLE — do not do anything else:
+Create the file(s): `lexer.py`, `parser.py`, `eval.py`, `repl.py`.
+Write them into EXACTLY this directory (use this absolute path):
+C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T03_service_suite_v2_baseline
+
+Do NOT explore other directories, do NOT copy files around, do NOT create
+subdirectories, do NOT run any benchmark or pipeline you may find nearby,
+do NOT attempt git operations. Work autonomously, do not ask questions
+(fai tu). When the deliverable file(s) are written, reply DONE.
+IMPORTANT: solve it yourself as a single agent — do not load skills, do not delegate to subagents.

@@ -1,0 +1,91 @@
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\night_T01_binary_codec_baseline\codec.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\night_T01_binary_codec_baseline\codec.py[0m
+[38;2;139;134;130m@@ -0,0 +1,131 @@[0m
+[38;2;255;255;255;48;2;19;87;20m+import struct[0m
+[38;2;255;255;255;48;2;19;87;20m+import zlib[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+def encode_varint(value: int) -> bytes:[0m
+[38;2;255;255;255;48;2;19;87;20m+    """Unsigned LEB128 (little-endian 7-bit groups, high bit = continuation)."""[0m
+[38;2;255;255;255;48;2;19;87;20m+    if value < 0:[0m
+[38;2;255;255;255;48;2;19;87;20m+        raise ValueError("value must be non-negative")[0m
+[38;2;255;255;255;48;2;19;87;20m+    if value > 0xFFFFFFFFFFFFFFFF:[0m
+[38;2;255;255;255;48;2;19;87;20m+        raise ValueError("value too large for 64-bit varint")[0m
+[38;2;255;255;255;48;2;19;87;20m+    out = bytearray()[0m
+[38;2;255;255;255;48;2;19;87;20m+    while True:[0m
+[38;2;255;255;255;48;2;19;87;20m+        b = value & 0x7F[0m
+[38;2;255;255;255;48;2;19;87;20m+        value >>= 7[0m
+[38;2;255;255;255;48;2;19;87;20m+        if value:[0m
+[38;2;255;255;255;48;2;19;87;20m+            out.append(b | 0x80)[0m
+[38;2;255;255;255;48;2;19;87;20m+        else:[0m
+[38;2;255;255;255;48;2;19;87;20m+            out.append(b)[0m
+[38;2;255;255;255;48;2;19;87;20m+            break[0m
+[38;2;255;255;255;48;2;19;87;20m+    return bytes(out)[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+def decode_varint(data: bytes, pos: int = 0) -> tuple[int, int]:[0m
+[38;2;255;255;255;48;2;19;87;20m+    """Decode unsigned LEB128. Returns (value, new_position)."""[0m
+[38;2;255;255;255;48;2;19;87;20m+    result = 0[0m
+[38;2;255;255;255;48;2;19;87;20m+    shift = 0[0m
+[38;2;255;255;255;48;2;19;87;20m+    count = 0[0m
+[38;2;255;255;255;48;2;19;87;20m+    i = pos[0m
+[38;2;255;255;255;48;2;19;87;20m+    while True:[0m
+[38;2;255;255;255;48;2;19;87;20m+        if i >= len(data):[0m
+[38;2;255;255;255;48;2;19;87;20m+            raise ValueError("truncated varint")[0m
+[38;2;255;255;255;48;2;19;87;20m+        b = data[i][0m
+[38;2;255;255;255;48;2;19;87;20m+        count += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+        if count > 10:[0m
+[38;2;255;255;255;48;2;19;87;20m+            raise ValueError("varint too long (more than 10 bytes)")[0m
+[38;2;255;255;255;48;2;19;87;20m+        result |= (b & 0x7F) << shift[0m
+[38;2;255;255;255;48;2;19;87;20m+        i += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+        if not (b & 0x80):[0m
+[38;2;255;255;255;48;2;19;87;20m+            # terminating byte must not be 0x00 unless it's the only byte[0m
+[38;2;255;255;255;48;2;19;87;20m+            if b == 0x00 and count > 1:[0m
+[38;2;255;255;255;48;2;19;87;20m+                raise ValueError("non-canonical overlong encoding")[0m
+[38;2;255;255;255;48;2;19;87;20m+            return result, i[0m
+[38;2;255;255;255;48;2;19;87;20m+        shift += 7[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+def zigzag(n: int) -> int:[0m
+[38;2;255;255;255;48;2;19;87;20m+    """ZigZag encode: 0->0, -1->1, 1->2, -2->3, ..."""[0m
+[38;2;255;255;255;48;2;19;87;20m+    return (n << 1) ^ (n >> 63)[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+def _unzigzag(n: int) -> int:[0m
+[38;2;255;255;255;48;2;19;87;20m+    return (n >> 1) ^ -(n & 1)[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+def encode_signed(value: int) -> bytes:[0m
+[38;2;255;255;255;48;2;19;87;20m+    """ZigZag then LEB128."""[0m
+[38;2;255;255;255;48;2;19;87;20m+    return encode_varint(zigzag(value))[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+def decode_signed(data: bytes, pos: int = 0) -> tuple[int, int]:[0m
+[38;2;255;255;255;48;2;19;87;20m+    """Decode LEB128 then ZigZag. Returns (value, new_position)."""[0m
+[38;2;255;255;255;48;2;19;87;20m+    raw, pos = decode_varint(data, pos)[0m
+[38;2;255;255;255;48;2;19;87;20m+    return _unzigzag(raw), pos[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+_MAGIC = b"\xeb\x90"[0m
+[38;2;255;255;255;48;2;19;87;20m+_VERSION = 0x01[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+def encode_message(msg: dict) -> bytes:[0m
+[38;2;255;255;255;48;2;19;87;20m+    """Encode a message dict to bytes.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    Layout:[0m
+[38;2;255;255;255;48;2;19;87;20m+      magic:    b'\xeb\x90'       (2 bytes)[0m
+[38;2;255;255;255;48;2;19;87;20m+      version:  b'\x01'           (1 byte)[0m
+[38;2;255;255;255;48;2;19;87;20m+      type:     1 byte (0..255)[0m
+[38;2;255;255;255;48;2;19;87;20m+      length:   payload length as unsigned varint[0m
+[38;2;255;255;255;48;2;19;87;20m+      payload:  raw bytes[0m
+[38;2;139;134;130m… omitted 53 diff line(s) across 1 additional file(s)/section(s)[0m
+All tests pass correctly. The "length mismatch" test I wrote was malformed (0x09 landed in the type field, not length), but the actual behavior (trailing bytes detection) is correct — the decoder properly handles truncated, overlong, wrong-magic, wrong-version, CRC-mismatch, and trailing-byte cases.
+
+The implementation at C:\Users\leob3\AppData\Local\Temp\realbench_ws\night_T01_binary_codec_baseline\codec.py is complete and verified against every spec example:
+- encode_varint / decode_varint: LEB128, rejects negatives, overlong (>10 byte and non-canonical), truncation
+- encode_signed / decode_signed: ZigZag + LEB128
+- encode_message / decode_message: exact layout (magic eb 90, version 01, type, varint length, payload, little-endian CRC32)
+- All error paths raise ValueError with reasons
+
+DONE

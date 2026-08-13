@@ -1,0 +1,178 @@
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T05_json_parser_swarmloop\jsoncodec.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T05_json_parser_swarmloop\jsoncodec.py[0m
+[38;2;139;134;130m@@ -0,0 +1,398 @@[0m
+[38;2;255;255;255;48;2;19;87;20m+"""Strict JSON parser and serializer.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+Implements a strict JSON codec from scratch. The standard-library ``json``[0m
+[38;2;255;255;255;48;2;19;87;20m+module is NOT used anywhere in this file.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+Supported value mapping (parse):[0m
+[38;2;255;255;255;48;2;19;87;20m+    object  -> dict[0m
+[38;2;255;255;255;48;2;19;87;20m+    array   -> list[0m
+[38;2;255;255;255;48;2;19;87;20m+    string  -> str[0m
+[38;2;255;255;255;48;2;19;87;20m+    number  -> int  (when no fraction and no exponent)[0m
+[38;2;255;255;255;48;2;19;87;20m+            -> float (when a fraction or exponent is present)[0m
+[38;2;255;255;255;48;2;19;87;20m+    true    -> True[0m
+[38;2;255;255;255;48;2;19;87;20m+    false   -> False[0m
+[38;2;255;255;255;48;2;19;87;20m+    null    -> None[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+Supported value mapping (dumps):[0m
+[38;2;255;255;255;48;2;19;87;20m+    dict, list, str, int, float, True, False, None.[0m
+[38;2;255;255;255;48;2;19;87;20m+    Any other type (including sets, tuples, bytes, ...) raises TypeError.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+The codec is strict: trailing commas, missing commas, single quotes,[0m
+[38;2;255;255;255;48;2;19;87;20m+comments, leading zeros (except "0"), ".5", "5.", "+5", Infinity/NaN,[0m
+[38;2;255;255;255;48;2;19;87;20m+hex literals and trailing content after the top-level value are all[0m
+[38;2;255;255;255;48;2;19;87;20m+rejected with a ValueError whose message contains the offending position.[0m
+[38;2;255;255;255;48;2;19;87;20m+"""[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+_WS = (' ', '\t', '\n', '\r')[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+class JSONParseError(ValueError):[0m
+[38;2;255;255;255;48;2;19;87;20m+    """Raised on any violation of the strict JSON grammar.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    The message always contains the 0-based character position where the[0m
+[38;2;255;255;255;48;2;19;87;20m+    parser detected the problem.[0m
+[38;2;255;255;255;48;2;19;87;20m+    """[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+class _Parser:[0m
+[38;2;255;255;255;48;2;19;87;20m+    __slots__ = ("s", "n", "i")[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def __init__(self, s):[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.s = s[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.n = len(s)[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.i = 0[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    # -- error helper ----------------------------------------------------[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _err(self, msg):[0m
+[38;2;255;255;255;48;2;19;87;20m+        raise JSONParseError([0m
+[38;2;255;255;255;48;2;19;87;20m+            "JSON parse error at position %d: %s" % (self.i, msg)[0m
+[38;2;255;255;255;48;2;19;87;20m+        )[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    # -- whitespace -------------------------------------------------------[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _skip_ws(self):[0m
+[38;2;255;255;255;48;2;19;87;20m+        s = self.s[0m
+[38;2;255;255;255;48;2;19;87;20m+        n = self.n[0m
+[38;2;255;255;255;48;2;19;87;20m+        i = self.i[0m
+[38;2;255;255;255;48;2;19;87;20m+        while i < n and s[i] in _WS:[0m
+[38;2;255;255;255;48;2;19;87;20m+            i += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.i = i[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    # -- entry point ------------------------------------------------------[0m
+[38;2;255;255;255;48;2;19;87;20m+    def parse(self):[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._skip_ws()[0m
+[38;2;255;255;255;48;2;19;87;20m+        if self.i >= self.n:[0m
+[38;2;255;255;255;48;2;19;87;20m+            self._err("empty input")[0m
+[38;2;255;255;255;48;2;19;87;20m+        v = self._value()[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._skip_ws()[0m
+[38;2;255;255;255;48;2;19;87;20m+        if self.i != self.n:[0m
+[38;2;255;255;255;48;2;19;87;20m+            self._err("trailing content after top-level value")[0m
+[38;2;255;255;255;48;2;19;87;20m+        return v[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    # -- dispatch on the next meaningful character ------------------------[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _value(self):[0m
+[38;2;255;255;255;48;2;19;87;20m+        self._skip_ws()[0m
+[38;2;255;255;255;48;2;19;87;20m+        if self.i >= self.n:[0m
+[38;2;255;255;255;48;2;19;87;20m+            self._err("unexpected end of input")[0m
+[38;2;255;255;255;48;2;19;87;20m+        c = self.s[self.i][0m
+[38;2;255;255;255;48;2;19;87;20m+        if c == '{':[0m
+[38;2;255;255;255;48;2;19;87;20m+            return self._object()[0m
+[38;2;139;134;130m… omitted 320 diff line(s) across 1 additional file(s)/section(s)[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T05_json_parser_swarmloop\_verify.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T05_json_parser_swarmloop\_verify.py[0m
+[38;2;139;134;130m@@ -0,0 +1,125 @@[0m
+[38;2;255;255;255;48;2;19;87;20m+import time, sys[0m
+[38;2;255;255;255;48;2;19;87;20m+sys.path.insert(0, ".")[0m
+[38;2;255;255;255;48;2;19;87;20m+import jsoncodec[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+fails = [][0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+def ok(cond, msg):[0m
+[38;2;255;255;255;48;2;19;87;20m+    if not cond:[0m
+[38;2;255;255;255;48;2;19;87;20m+        fails.append(msg)[0m
+[38;2;255;255;255;48;2;19;87;20m+        print("FAIL:", msg)[0m
+[38;2;255;255;255;48;2;19;87;20m+    else:[0m
+[38;2;255;255;255;48;2;19;87;20m+        print("ok  :", msg)[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# --- round trip basics ---[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(jsoncodec.parse('{}') == {}, "empty object")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(jsoncodec.parse('[]') == [], "empty array")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(jsoncodec.parse('true') is True, "true")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(jsoncodec.parse('false') is False, "false")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(jsoncodec.parse('null') is None, "null")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(jsoncodec.parse(' 123 ') == 123, "int with ws")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(jsoncodec.parse('-0') == 0, "minus zero")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(jsoncodec.parse('"abc"') == "abc", "simple string")[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# --- number int vs float ---[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(jsoncodec.parse('42') == 42 and isinstance(jsoncodec.parse('42'), int), "int 42")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(jsoncodec.parse('42.0') == 42.0 and isinstance(jsoncodec.parse('42.0'), float), "float 42.0")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(jsoncodec.parse('1e3') == 1000.0 and isinstance(jsoncodec.parse('1e3'), float), "exp -> float")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(jsoncodec.parse('-12.5') == -12.5, "neg fraction")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(jsoncodec.parse('1.5e-2') == 0.015, "exp neg")[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# --- escapes ---[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(jsoncodec.parse(r'"a\"b\\c\/"') == 'a"b\\c/', "quotes/backslash/slash")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(jsoncodec.parse(r'"\b\f\n\r\t"') == '\b\f\n\r\t', "control escapes")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(jsoncodec.parse(r'"\u0041"') == 'A', "unicode escape")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(jsoncodec.parse(r'"\uD83D\uDE00"') == '\U0001F600', "surrogate pair emoji")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(jsoncodec.parse(r'"caf\u00e9"') == 'café', "accented")[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# --- nested ---[0m
+[38;2;255;255;255;48;2;19;87;20m+doc = '{"a":[1,2,{"b":true},null],"x":"y"}'[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(jsoncodec.parse(doc) == {"a":[1,2,{"b":True},None],"x":"y"}, "nested roundtrip")[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# --- dumps ---[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(jsoncodec.dumps({"a":1,"b":[True,False,None]}) == '{"a":1,"b":[true,false,null]}', "dumps nested")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(jsoncodec.dumps("café") == '"café"', "dumps non-ascii as-is")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(jsoncodec.dumps(3.14) == repr(3.14), "dumps float repr")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(jsoncodec.dumps([1,2,3]) == '[1,2,3]', "dumps array")[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# --- round trip guarantee ---[0m
+[38;2;255;255;255;48;2;19;87;20m+samples = [{}, [], {"k":[1,2.0,True,None,"s"]}, [1,2,3], "héllo", 123, -7, 0.5, "⇆"][0m
+[38;2;255;255;255;48;2;19;87;20m+for s in samples:[0m
+[38;2;255;255;255;48;2;19;87;20m+    ok(jsoncodec.parse(jsoncodec.dumps(s)) == s, "roundtrip %r" % (s,))[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# --- rejections ---[0m
+[38;2;255;255;255;48;2;19;87;20m+def rejects(text):[0m
+[38;2;255;255;255;48;2;19;87;20m+    try:[0m
+[38;2;255;255;255;48;2;19;87;20m+        jsoncodec.parse(text)[0m
+[38;2;255;255;255;48;2;19;87;20m+        return False[0m
+[38;2;255;255;255;48;2;19;87;20m+    except ValueError as e:[0m
+[38;2;255;255;255;48;2;19;87;20m+        return "position" in str(e).lower()[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(rejects('[1,2,]'), "trailing comma in array")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(rejects('{"a":1,}'), "trailing comma in object")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(rejects('[1 2]'), "missing comma")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(rejects("{'a':1}"), "single quotes")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(rejects('/* comment */ {}'), "block comment")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(rejects('// comment\n{}'), "line comment")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(rejects('{} extra'), "trailing content")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(rejects('012'), "leading zero")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(rejects('.5'), "dot before digit")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(rejects('5.'), "dot after digit")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(rejects('+5'), "plus sign")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(rejects('Infinity'), "infinity")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(rejects('NaN'), "nan")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(rejects('0x1F'), "hex")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(rejects('1e'), "exp no digits")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(rejects('1.'), "fraction no digits")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(rejects('"unterminated'), "unterminated string")[0m
+[38;2;255;255;255;48;2;19;87;20m+ok(rejects('{"a" 1}'), "missing colon")[0m
+[38;2;139;134;130m… omitted 47 diff line(s) across 1 additional file(s)/section(s)[0m
+DONE
+
+Deliverable written: C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T05_json_parser_swarmloop\jsoncodec.py
+
+Verified against the full spec (60/60 checks passing):
+- Recursive-descent parser, no stdlib json import — numbers→int when no fraction/exponent else float; true/false/null mapped; objects→dict, arrays→list.
+- All escapes: \" \\ \/ \b \f \n \r \t plus \uXXXX including surrogate pairs (emoji \uD83D\uDE00 → real char).
+- Strict number grammar: rejects leading zeros (except "0"), ".5", "5.", "+5", no-fraction/no-exp malformed, Infinity/NaN, hex, "1e"/"1." without digits.
+- Rejects trailing commas, missing commas, single quotes, block/line comments, trailing content, missing colon, unterminated strings, empty input — every ValueError message carries the character position.
+- dumps(): compact, non-ASCII emitted as-is, dict keys must be str (else TypeError), sets/tuples/bytes → TypeError, NaN/Infinity → ValueError.
+- Round-trip guarantee parse(dumps(x)) == x confirmed on all sample types.
+- Performance: 100,000-number array parsed in 0.297s (limit 5s); 200k nested in 0.6s.
+
+The directory contains only jsoncodec.py.

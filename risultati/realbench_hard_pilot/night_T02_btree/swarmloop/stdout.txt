@@ -1,0 +1,132 @@
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\night_T02_btree_swarmloop\btree.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\night_T02_btree_swarmloop\btree.py[0m
+[38;2;139;134;130m@@ -0,0 +1,282 @@[0m
+[38;2;255;255;255;48;2;19;87;20m+"""B-tree (CLRS conventions, minimum degree t), standard library only.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+A node (except the root) holds between t-1 and 2t-1 keys; the root may hold[0m
+[38;2;255;255;255;48;2;19;87;20m+as few as 0 keys. All leaves are at the same depth. Inserts and deletes keep[0m
+[38;2;255;255;255;48;2;19;87;20m+this invariant, with split/borrow/merge propagating so the tree stays balanced.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+min_degree defaults to t = 2 (a 2-3-4 tree).[0m
+[38;2;255;255;255;48;2;19;87;20m+"""[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+class _Node:[0m
+[38;2;255;255;255;48;2;19;87;20m+    __slots__ = ("keys", "children", "is_leaf")[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def __init__(self, t: int):[0m
+[38;2;255;255;255;48;2;19;87;20m+        # keys: list[int], ascending[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.keys: list[int] = [][0m
+[38;2;255;255;255;48;2;19;87;20m+        # children: list[_Node]; length is 0 (leaf) or len(keys)+1[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.children: list["_Node"] = [][0m
+[38;2;255;255;255;48;2;19;87;20m+        self.is_leaf: bool = True[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+class BTree:[0m
+[38;2;255;255;255;48;2;19;87;20m+    def __init__(self, min_degree: int = 2):[0m
+[38;2;255;255;255;48;2;19;87;20m+        if min_degree < 2:[0m
+[38;2;255;255;255;48;2;19;87;20m+            raise ValueError("min_degree must be >= 2")[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.t = min_degree[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.root = _Node(self.t)[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    # ------------------------------------------------------------------[0m
+[38;2;255;255;255;48;2;19;87;20m+    # Search[0m
+[38;2;255;255;255;48;2;19;87;20m+    # ------------------------------------------------------------------[0m
+[38;2;255;255;255;48;2;19;87;20m+    def search(self, key: int) -> bool:[0m
+[38;2;255;255;255;48;2;19;87;20m+        return self._search(self.root, key)[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _search(self, node: "_Node", key: int) -> bool:[0m
+[38;2;255;255;255;48;2;19;87;20m+        i = 0[0m
+[38;2;255;255;255;48;2;19;87;20m+        n = len(node.keys)[0m
+[38;2;255;255;255;48;2;19;87;20m+        while i < n and key > node.keys[i]:[0m
+[38;2;255;255;255;48;2;19;87;20m+            i += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+        if i < n and node.keys[i] == key:[0m
+[38;2;255;255;255;48;2;19;87;20m+            return True[0m
+[38;2;255;255;255;48;2;19;87;20m+        if node.is_leaf:[0m
+[38;2;255;255;255;48;2;19;87;20m+            return False[0m
+[38;2;255;255;255;48;2;19;87;20m+        return self._search(node.children[i], key)[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    # ------------------------------------------------------------------[0m
+[38;2;255;255;255;48;2;19;87;20m+    # Insert[0m
+[38;2;255;255;255;48;2;19;87;20m+    # ------------------------------------------------------------------[0m
+[38;2;255;255;255;48;2;19;87;20m+    def insert(self, key: int) -> None:[0m
+[38;2;255;255;255;48;2;19;87;20m+        if self.search(key):[0m
+[38;2;255;255;255;48;2;19;87;20m+            raise ValueError("key already present")[0m
+[38;2;255;255;255;48;2;19;87;20m+        t = self.t[0m
+[38;2;255;255;255;48;2;19;87;20m+        root = self.root[0m
+[38;2;255;255;255;48;2;19;87;20m+        if len(root.keys) == 2 * t - 1:[0m
+[38;2;255;255;255;48;2;19;87;20m+            new_root = _Node(t)[0m
+[38;2;255;255;255;48;2;19;87;20m+            new_root.is_leaf = False[0m
+[38;2;255;255;255;48;2;19;87;20m+            new_root.children.append(root)[0m
+[38;2;255;255;255;48;2;19;87;20m+            self._split_child(new_root, 0)[0m
+[38;2;255;255;255;48;2;19;87;20m+            self.root = new_root[0m
+[38;2;255;255;255;48;2;19;87;20m+            self._insert_non_full(new_root, key)[0m
+[38;2;255;255;255;48;2;19;87;20m+        else:[0m
+[38;2;255;255;255;48;2;19;87;20m+            self._insert_non_full(root, key)[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def _insert_non_full(self, x: "_Node", key: int) -> None:[0m
+[38;2;255;255;255;48;2;19;87;20m+        i = len(x.keys) - 1[0m
+[38;2;255;255;255;48;2;19;87;20m+        if x.is_leaf:[0m
+[38;2;255;255;255;48;2;19;87;20m+            x.keys.append(0)[0m
+[38;2;255;255;255;48;2;19;87;20m+            while i >= 0 and key < x.keys[i]:[0m
+[38;2;255;255;255;48;2;19;87;20m+                x.keys[i + 1] = x.keys[i][0m
+[38;2;255;255;255;48;2;19;87;20m+                i -= 1[0m
+[38;2;255;255;255;48;2;19;87;20m+            x.keys[i + 1] = key[0m
+[38;2;255;255;255;48;2;19;87;20m+        else:[0m
+[38;2;255;255;255;48;2;19;87;20m+            while i >= 0 and key < x.keys[i]:[0m
+[38;2;255;255;255;48;2;19;87;20m+                i -= 1[0m
+[38;2;255;255;255;48;2;19;87;20m+            i += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+            if len(x.children[i].keys) == 2 * self.t - 1:[0m
+[38;2;255;255;255;48;2;19;87;20m+                self._split_child(x, i)[0m
+[38;2;255;255;255;48;2;19;87;20m+                if key > x.keys[i]:[0m
+[38;2;139;134;130m… omitted 204 diff line(s) across 1 additional file(s)/section(s)[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\night_T02_btree_swarmloop\btree.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\night_T02_btree_swarmloop\btree.py[0m
+[38;2;139;134;130m@@ -253,15 +253,15 @@[0m
+[38;2;184;134;11m     print("min_degree<2 raises ValueError: PASS")[0m
+[38;2;184;134;11m [0m
+[38;2;184;134;11m     # 4) Performance: 50k inserts + 25k deletes under 10s.[0m
+[38;2;255;255;255;48;2;19;87;20m+    # random.sample yields unique keys, so no O(N) membership checks pollute the[0m
+[38;2;255;255;255;48;2;19;87;20m+    # measurement of the B-tree itself.[0m
+[38;2;184;134;11m     random.seed(7)[0m
+[38;2;184;134;11m     N = 50000[0m
+[38;2;184;134;11m     bt = BTree(min_degree=2)[0m
+[38;2;255;255;255;48;2;119;20;20m-    inserted: list[int] = [][0m
+[38;2;255;255;255;48;2;19;87;20m+    inserted = random.sample(range(N * 4), N)[0m
+[38;2;184;134;11m     t0 = time.perf_counter()[0m
+[38;2;255;255;255;48;2;119;20;20m-    for k in random.sample(range(N * 4), N):[0m
+[38;2;255;255;255;48;2;119;20;20m-        if k not in inserted:[0m
+[38;2;255;255;255;48;2;119;20;20m-            bt.insert(k)[0m
+[38;2;255;255;255;48;2;119;20;20m-            inserted.append(k)[0m
+[38;2;255;255;255;48;2;19;87;20m+    for k in inserted:[0m
+[38;2;255;255;255;48;2;19;87;20m+        bt.insert(k)[0m
+[38;2;184;134;11m     t_ins = time.perf_counter() - t0[0m
+[38;2;184;134;11m [0m
+[38;2;184;134;11m     random.shuffle(inserted)[0m
+[38;2;139;134;130m@@ -272,9 +272,8 @@[0m
+[38;2;184;134;11m     t_del = time.perf_counter() - t0[0m
+[38;2;184;134;11m [0m
+[38;2;184;134;11m     # final integrity check[0m
+[38;2;255;255;255;48;2;119;20;20m-    for k in to_del:[0m
+[38;2;255;255;255;48;2;119;20;20m-        inserted.remove(k)[0m
+[38;2;255;255;255;48;2;119;20;20m-    assert bt.keys() == sorted(inserted)[0m
+[38;2;255;255;255;48;2;19;87;20m+    remaining = set(inserted) - set(to_del)[0m
+[38;2;255;255;255;48;2;19;87;20m+    assert bt.keys() == sorted(remaining)[0m
+[38;2;184;134;11m     total = t_ins + t_del[0m
+[38;2;184;134;11m     print(f"performance: insert {t_ins:.3f}s + delete {t_del:.3f}s = {total:.3f}s")[0m
+[38;2;184;134;11m     assert total < 10.0, "performance budget exceeded"[0m
+DONE
+
+Deliverable written to:
+C:\Users\leob3\AppData\Local\Temp\realbench_ws\night_T02_btree_swarmloop\btree.py
+
+Verified against spec:
+- Correctness: 200 randomized trials (100–5000 mixed ops each) comparing keys() to a sorted-list reference — PASS. Covers leaf/internal deletion, borrow-left/right, merge, and root-height shrink.
+- Duplicate insert → ValueError — PASS.
+- min_degree < 2 → ValueError — PASS.
+- Performance: 50,000 inserts (0.746s) + 25,000 deletes (0.393s) = 1.139s, well under the 10s budget — PASS.
+
+Implementation notes (CLRS, t=min_degree):
+- insert: full-node split propagates upward via _split_child so all leaves stay at equal depth.
+- delete: handles key-in-leaf, key-in-internal (via predecessor/successor), borrow-from-left/right sibling, and merge of two t−1 siblings (including pulling the separator down); root shrinks when it empties.
+- keys(): in-order traversal. Standard library only.

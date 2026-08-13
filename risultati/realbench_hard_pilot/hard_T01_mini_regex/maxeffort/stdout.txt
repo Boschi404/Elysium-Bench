@@ -1,0 +1,253 @@
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T01_mini_regex_maxeffort\regex.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T01_mini_regex_maxeffort\regex.py[0m
+[38;2;139;134;130m@@ -0,0 +1,307 @@[0m
+[38;2;255;255;255;48;2;19;87;20m+"""Mini regular-expression engine.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+Standard library only. Implements a small regex subset using Thompson-NFA[0m
+[38;2;255;255;255;48;2;19;87;20m+simulation, so matching is always linear in the input length -- there is no[0m
+[38;2;255;255;255;48;2;19;87;20m+backtracking and therefore no catastrophic backtracking (ReDoS).[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+Supported grammar (no anchors, no groups, no alternation):[0m
+[38;2;255;255;255;48;2;19;87;20m+  - literal char   : any char except  . ^ $ [ ] * + ? \\[0m
+[38;2;255;255;255;48;2;19;87;20m+  - "."            : any single char except newline[0m
+[38;2;255;255;255;48;2;19;87;20m+  - "\\x"          : escape, where x is one of  . ^ $ [ ] * + ? \\ n t[0m
+[38;2;255;255;255;48;2;19;87;20m+                     (\\n -> newline, \\t -> tab); any other escape -> ValueError[0m
+[38;2;255;255;255;48;2;19;87;20m+  - "[...]"        : character class, with ranges "a-z" and optional leading "^"[0m
+[38;2;255;255;255;48;2;19;87;20m+  - "*" "+" "?"    : quantifiers placed after an atom or class[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+Invalid patterns raise ValueError:[0m
+[38;2;255;255;255;48;2;19;87;20m+  - quantifier at start of pattern or directly after another quantifier[0m
+[38;2;255;255;255;48;2;19;87;20m+  - empty class "[]" / "[^]"[0m
+[38;2;255;255;255;48;2;19;87;20m+  - descending range "z-a"[0m
+[38;2;255;255;255;48;2;19;87;20m+  - invalid escape[0m
+[38;2;255;255;255;48;2;19;87;20m+"""[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+from __future__ import annotations[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+def _make_lit(c: str):[0m
+[38;2;255;255;255;48;2;19;87;20m+    """Return a predicate that matches exactly the character ``c``."""[0m
+[38;2;255;255;255;48;2;19;87;20m+    return lambda ch, c=c: ch == c[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+def _make_dot():[0m
+[38;2;255;255;255;48;2;19;87;20m+    """Return a predicate matching any char except newline."""[0m
+[38;2;255;255;255;48;2;19;87;20m+    return lambda ch: ch != "\n"[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+def _make_class_pred(chars, ranges, negated):[0m
+[38;2;255;255;255;48;2;19;87;20m+    """Return a predicate for a character class."""[0m
+[38;2;255;255;255;48;2;19;87;20m+    def pred(ch, chars=chars, ranges=ranges, negated=negated):[0m
+[38;2;255;255;255;48;2;19;87;20m+        matched = ch in chars[0m
+[38;2;255;255;255;48;2;19;87;20m+        if not matched:[0m
+[38;2;255;255;255;48;2;19;87;20m+            for lo, hi in ranges:[0m
+[38;2;255;255;255;48;2;19;87;20m+                if lo <= ch <= hi:[0m
+[38;2;255;255;255;48;2;19;87;20m+                    matched = True[0m
+[38;2;255;255;255;48;2;19;87;20m+                    break[0m
+[38;2;255;255;255;48;2;19;87;20m+        return (not matched) if negated else matched[0m
+[38;2;255;255;255;48;2;19;87;20m+    return pred[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+def _parse(pattern: str) -> list:[0m
+[38;2;255;255;255;48;2;19;87;20m+    """Parse ``pattern`` into a list of (predicate, quantifier) tokens.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    Raises ValueError on any invalid pattern construct.[0m
+[38;2;255;255;255;48;2;19;87;20m+    """[0m
+[38;2;255;255;255;48;2;19;87;20m+    tokens = [][0m
+[38;2;255;255;255;48;2;19;87;20m+    i = 0[0m
+[38;2;255;255;255;48;2;19;87;20m+    n = len(pattern)[0m
+[38;2;255;255;255;48;2;19;87;20m+    while i < n:[0m
+[38;2;255;255;255;48;2;19;87;20m+        c = pattern[i][0m
+[38;2;255;255;255;48;2;19;87;20m+        if c in "*+?":[0m
+[38;2;255;255;255;48;2;19;87;20m+            raise ValueError(f"quantifier '{c}' has no preceding atom")[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+        if c == "\\":[0m
+[38;2;255;255;255;48;2;19;87;20m+            i += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+            if i >= n:[0m
+[38;2;255;255;255;48;2;19;87;20m+                raise ValueError("trailing backslash in pattern")[0m
+[38;2;255;255;255;48;2;19;87;20m+            e = pattern[i][0m
+[38;2;255;255;255;48;2;19;87;20m+            if e in ".^$[]*+?\\":[0m
+[38;2;255;255;255;48;2;19;87;20m+                pred = _make_lit(e)[0m
+[38;2;255;255;255;48;2;19;87;20m+            elif e == "n":[0m
+[38;2;255;255;255;48;2;19;87;20m+                pred = _make_lit("\n")[0m
+[38;2;255;255;255;48;2;19;87;20m+            elif e == "t":[0m
+[38;2;255;255;255;48;2;19;87;20m+                pred = _make_lit("\t")[0m
+[38;2;255;255;255;48;2;19;87;20m+            else:[0m
+[38;2;255;255;255;48;2;19;87;20m+                raise ValueError(f"invalid escape '\\{e}'")[0m
+[38;2;255;255;255;48;2;19;87;20m+            i += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+        elif c == ".":[0m
+[38;2;255;255;255;48;2;19;87;20m+            pred = _make_dot()[0m
+[38;2;255;255;255;48;2;19;87;20m+            i += 1[0m
+[38;2;139;134;130m… omitted 229 diff line(s) across 1 additional file(s)/section(s)[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T01_mini_regex_maxeffort\_selftest.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T01_mini_regex_maxeffort\_selftest.py[0m
+[38;2;139;134;130m@@ -0,0 +1,75 @@[0m
+[38;2;255;255;255;48;2;19;87;20m+import time[0m
+[38;2;255;255;255;48;2;19;87;20m+import regex[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+BS = chr(92)[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+def chk(cond, msg):[0m
+[38;2;255;255;255;48;2;19;87;20m+    assert cond, "FAIL: " + msg[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# match whole-text semantics[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(regex.Regex("a").match("a"), "literal match")[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(not regex.Regex("a").match("ab"), "partial not whole")[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(not regex.Regex("a").match(""), "empty no match")[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# dot[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(regex.Regex(".").match("x"), "dot match")[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(not regex.Regex(".").match("\n"), "dot no newline")[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(not regex.Regex(".").match(""), "dot needs char")[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# quantifiers[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(regex.Regex("a*").match(""), "star empty")[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(regex.Regex("a*").match("aaa"), "star rep")[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(regex.Regex("a+").match("a"), "plus")[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(not regex.Regex("a+").match(""), "plus empty fail")[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(regex.Regex("a?").match(""), "ques empty")[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(regex.Regex("a?").match("a"), "ques one")[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# find greedy leftmost-longest + empty match semantics[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(regex.Regex("a*").find("b") == ["", ""], "empty match spec example")[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(regex.Regex("a*").find("aaab") == ["aaa", "", ""], "greedy + empties")[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(regex.Regex("ab").find("abab") == ["ab", "ab"], "non-overlapping")[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(regex.Regex("a.c").find("axc") == ["axc"], "dot in find")[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(regex.Regex("a").find("banana") == ["a", "a", "a"], "literal find")[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# escapes[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(regex.Regex(r"\.").match("."), "escape dot")[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(not regex.Regex(r"\.").match("a"), "escape dot literal")[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(regex.Regex(r"\n").match("\n"), "escape newline")[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(regex.Regex(r"\t").match("\t"), "escape tab")[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(regex.Regex(r"\*").match("*"), "escape star literal")[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(regex.Regex(r"\\").match(BS), "escape backslash real")[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# char classes[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(regex.Regex("[abc]").match("b"), "class in")[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(not regex.Regex("[abc]").match("d"), "class out")[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(regex.Regex("[a-z]").match("m"), "range")[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(not regex.Regex("[a-z]").match("M"), "range case")[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(regex.Regex("[^a]").match("b"), "negate")[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(not regex.Regex("[^a]").match("a"), "negate out")[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(regex.Regex("[a\-z]").match("-"), "literal dash in class")[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(regex.Regex("[a-z]+").find("ab12") == ["ab"], "class find")[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(regex.Regex(r"[\]]").match("]"), "escaped ] in class")[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(regex.Regex(r"[\\]").match(BS), "escaped backslash in class")[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# invalid patterns -> ValueError[0m
+[38;2;255;255;255;48;2;19;87;20m+for bad in ["*", "+a", "a**", "a+*", "[]", "[^]", "[z-a]", r"\q", "[", r"a\"]:[0m
+[38;2;255;255;255;48;2;19;87;20m+    try:[0m
+[38;2;255;255;255;48;2;19;87;20m+        regex.Regex(bad)[0m
+[38;2;255;255;255;48;2;19;87;20m+        chk(False, "should raise: " + repr(bad))[0m
+[38;2;255;255;255;48;2;19;87;20m+    except ValueError:[0m
+[38;2;255;255;255;48;2;19;87;20m+        pass[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# backtracking safety: a*a*a*a*a*b against 30 a's -> False fast[0m
+[38;2;255;255;255;48;2;19;87;20m+p = "a" * 5 + "*" + "b"[0m
+[38;2;255;255;255;48;2;19;87;20m+t = "a" * 30[0m
+[38;2;255;255;255;48;2;19;87;20m+s = time.time()[0m
+[38;2;255;255;255;48;2;19;87;20m+res = regex.Regex(p).match(t)[0m
+[38;2;255;255;255;48;2;19;87;20m+dt = time.time() - s[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(res is False, "must be False")[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(dt < 2.0, "performance under 2s, took %.3f" % dt)[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# whole-text match with quantifier at end[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(regex.Regex("a*b").match("aaab"), "kstar then b")[0m
+[38;2;255;255;255;48;2;19;87;20m+chk(not regex.Regex("a*b").match("aaac"), "no b -> false")[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+print("ALL TESTS PASSED  (perf: %.4fs)" % dt)[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T01_mini_regex_maxeffort\_selftest.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T01_mini_regex_maxeffort\_selftest.py[0m
+[38;2;139;134;130m@@ -52,7 +52,8 @@[0m
+[38;2;184;134;11m chk(regex.Regex(r"[\\]").match(BS), "escaped backslash in class")[0m
+[38;2;184;134;11m [0m
+[38;2;184;134;11m # invalid patterns -> ValueError[0m
+[38;2;255;255;255;48;2;119;20;20m-for bad in ["*", "+a", "a**", "a+*", "[]", "[^]", "[z-a]", r"\q", "[", r"a\"]:[0m
+[38;2;255;255;255;48;2;19;87;20m+trailing_bslash = "a" + BS[0m
+[38;2;255;255;255;48;2;19;87;20m+for bad in ["*", "+a", "a**", "a+*", "[]", "[^]", "[z-a]", r"\q", "[", trailing_bslash]:[0m
+[38;2;184;134;11m     try:[0m
+[38;2;184;134;11m         regex.Regex(bad)[0m
+[38;2;184;134;11m         chk(False, "should raise: " + repr(bad))[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T01_mini_regex_maxeffort\regex.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T01_mini_regex_maxeffort\regex.py[0m
+[38;2;139;134;130m@@ -244,7 +244,7 @@[0m
+[38;2;184;134;11m             if not nxt:[0m
+[38;2;184;134;11m                 return False[0m
+[38;2;184;134;11m             cur = self._closure(nxt)[0m
+[38;2;255;255;255;48;2;119;20;20m-        return self.accept[0m
+[38;2;255;255;255;48;2;19;87;20m+        return self.accept in cur[0m
+[38;2;184;134;11m [0m
+[38;2;184;134;11m     def _match_from(self, text: str, i: int) -> int:[0m
+[38;2;184;134;11m         """Return the furthest end position >= i where the pattern matches[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T01_mini_regex_maxeffort\regex.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T01_mini_regex_maxeffort\regex.py[0m
+[38;2;139;134;130m@@ -115,7 +115,7 @@[0m
+[38;2;184;134;11m         negated = True[0m
+[38;2;184;134;11m         i += 1[0m
+[38;2;184;134;11m [0m
+[38;2;255;255;255;48;2;119;20;20m-    items = []  # collected literal chars (escaped or plain)[0m
+[38;2;255;255;255;48;2;19;87;20m+    items = []  # list of (escaped_flag, char)[0m
+[38;2;184;134;11m     closed = False[0m
+[38;2;184;134;11m     while i < n:[0m
+[38;2;184;134;11m         c = pattern[i][0m
+[38;2;139;134;130m@@ -123,13 +123,13 @@[0m
+[38;2;184;134;11m             i += 1[0m
+[38;2;184;134;11m             if i >= n:[0m
+[38;2;184;134;11m                 raise ValueError("trailing backslash in character class")[0m
+[38;2;255;255;255;48;2;119;20;20m-            items.append(pattern[i])[0m
+[38;2;255;255;255;48;2;19;87;20m+            items.append((True, pattern[i]))[0m
+[38;2;184;134;11m             i += 1[0m
+[38;2;184;134;11m             continue[0m
+[38;2;184;134;11m         if c == "]":[0m
+[38;2;184;134;11m             closed = True[0m
+[38;2;184;134;11m             break[0m
+[38;2;255;255;255;48;2;119;20;20m-        items.append(c)[0m
+[38;2;255;255;255;48;2;19;87;20m+        items.append((False, c))[0m
+[38;2;184;134;11m         i += 1[0m
+[38;2;184;134;11m [0m
+[38;2;184;134;11m     if not closed:[0m
+[38;2;139;134;130m@@ -138,19 +138,19 @@[0m
+[38;2;184;134;11m [0m
+[38;2;184;134;11m     chars = set()[0m
+[38;2;184;134;11m     ranges = [][0m
+[38;2;255;255;255;48;2;19;87;20m+    m = len(items)[0m
+[38;2;184;134;11m     idx = 0[0m
+[38;2;255;255;255;48;2;119;20;20m-    m = len(items)[0m
+[38;2;184;134;11m     while idx < m:[0m
+[38;2;255;255;255;48;2;119;20;20m-        cur = items[idx][0m
+[38;2;255;255;255;48;2;119;20;20m-        # A '-' forms a range only when it is neither first nor last in the[0m
+[38;2;255;255;255;48;2;119;20;20m-        # class content (so leading/trailing '-' stay literal).[0m
+[38;2;255;255;255;48;2;119;20;20m-        if cur == "-" and 0 < idx < m - 1:[0m
+[38;2;255;255;255;48;2;119;20;20m-            lo = items[idx - 1][0m
+[38;2;255;255;255;48;2;119;20;20m-            hi = items[idx + 1][0m
+[38;2;255;255;255;48;2;19;87;20m+        escaped, cur = items[idx][0m
+[38;2;255;255;255;48;2;19;87;20m+        # A plain '-' forms a range only when it is neither the first nor the[0m
+[38;2;255;255;255;48;2;19;87;20m+        # last item of the class content (leading/trailing '-' stay literal).[0m
+[38;2;255;255;255;48;2;19;87;20m+        if (not escaped) and cur == "-" and 0 < idx < m - 1:[0m
+[38;2;255;255;255;48;2;19;87;20m+            lo = items[idx - 1][1][0m
+[38;2;255;255;255;48;2;19;87;20m+            hi = items[idx + 1][1][0m
+[38;2;184;134;11m             if ord(lo) > ord(hi):[0m
+[38;2;184;134;11m                 raise ValueError(f"descending range '{lo}-{hi}'")[0m
+[38;2;255;255;255;48;2;19;87;20m+            chars.discard(lo)  # lo was added when items[idx-1] was processed[0m
+[38;2;184;134;11m             ranges.append((lo, hi))[0m
+[38;2;255;255;255;48;2;119;20;20m-            chars.discard(lo)  # lo was added when items[idx-1] was processed[0m
+[38;2;184;134;11m             idx += 2  # skip the upper bound char[0m
+[38;2;184;134;11m             continue[0m
+[38;2;184;134;11m         chars.add(cur)[0m
+DONE
+
+Deliverable written to:
+C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T01_mini_regex_maxeffort\regex.py
+
+Implementation summary (verified against the spec with my own self-test, all passing):
+
+- Approach: Thompson NFA simulation (no backtracking), so matching is linear in input length → catastrophic backtracking is impossible. The required pattern `a*a*a*a*a*b` against 30 a's returns False in ~0 ms (500 chars in 3 ms).
+- `Regex(pattern)` compiles to a token list then an NFA. Raises `ValueError` for: quantifier with no preceding atom, quantifier after another quantifier, empty class `[]`/`[^]`, descending range `z-a`, invalid escape, unterminated class, stray `]`.
+- `match(text)` → True iff the WHOLE text is consumed and accept state is reached.
+- `find(text)` → list of non-overlapping greedy (leftmost-longest) matches, left to right. Empty matches contribute `""` and advance one character, so `Regex("a*").find("b") == ["", ""]` and `Regex("a*").find("aaab") == ["aaa", "", ""]`.
+- Grammar covered: literals (incl. `^` and `$` as plain literals per spec), `.` (any char except newline), escapes `\` + `. ^ $ [ ] * + ? \ n t`, character classes `[...]` with ranges `a-z`, negation `^`, escaped `\] \- \\` inside classes, and quantifiers `* + ?`.
+- Standard library only; `re` is not imported.
+
+The directory contains only `regex.py` (temp test file and `__pycache__` removed).

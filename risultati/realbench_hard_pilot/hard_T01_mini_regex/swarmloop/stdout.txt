@@ -1,0 +1,199 @@
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T01_mini_regex_swarmloop\regex.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T01_mini_regex_swarmloop\regex.py[0m
+[38;2;139;134;130m@@ -0,0 +1,368 @@[0m
+[38;2;255;255;255;48;2;19;87;20m+"""A small regular-expression engine (match + find, greedy, backtracking-safe).[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+Implements a subset of regex syntax compiled to a Thompson NFA and simulated[0m
+[38;2;255;255;255;48;2;19;87;20m+in O(n * states) time. Because an NFA explores all paths simultaneously in a[0m
+[38;2;255;255;255;48;2;19;87;20m+bounded state set (instead of recursing per choice like a backtracking engine),[0m
+[38;2;255;255;255;48;2;19;87;20m+matching is immune to catastrophic backtracking regardless of quantifier nesting.[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+Standard library only. `re` is not imported.[0m
+[38;2;255;255;255;48;2;19;87;20m+"""[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+__all__ = ["Regex"][0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# Escape sequences that are valid both at top level and inside a class.[0m
+[38;2;255;255;255;48;2;19;87;20m+# Anything else after a backslash is invalid -> ValueError.[0m
+[38;2;255;255;255;48;2;19;87;20m+_ESCAPES = {[0m
+[38;2;255;255;255;48;2;19;87;20m+    '.': '.', '^': '^', '$': '$', '[': '[', ']': ']',[0m
+[38;2;255;255;255;48;2;19;87;20m+    '*': '*', '+': '+', '?': '?', '\\': '\\', 'n': '\n', 't': '\t',[0m
+[38;2;255;255;255;48;2;19;87;20m+}[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# --------------------------------------------------------------------------[0m
+[38;2;255;255;255;48;2;19;87;20m+# AST node types[0m
+[38;2;255;255;255;48;2;19;87;20m+# --------------------------------------------------------------------------[0m
+[38;2;255;255;255;48;2;19;87;20m+class _Leaf:[0m
+[38;2;255;255;255;48;2;19;87;20m+    __slots__ = ('pred',)[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def __init__(self, pred):[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.pred = pred  # callable: char -> bool[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+class _Star:[0m
+[38;2;255;255;255;48;2;19;87;20m+    __slots__ = ('child',)[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def __init__(self, child):[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.child = child[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+class _Plus:[0m
+[38;2;255;255;255;48;2;19;87;20m+    __slots__ = ('child',)[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def __init__(self, child):[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.child = child[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+class _Opt:[0m
+[38;2;255;255;255;48;2;19;87;20m+    __slots__ = ('child',)[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def __init__(self, child):[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.child = child[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+class _Concat:[0m
+[38;2;255;255;255;48;2;19;87;20m+    __slots__ = ('children',)[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    def __init__(self, children):[0m
+[38;2;255;255;255;48;2;19;87;20m+        self.children = children[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+# --------------------------------------------------------------------------[0m
+[38;2;255;255;255;48;2;19;87;20m+# Parser[0m
+[38;2;255;255;255;48;2;19;87;20m+# --------------------------------------------------------------------------[0m
+[38;2;255;255;255;48;2;19;87;20m+def _parse_class(pattern, i):[0m
+[38;2;255;255;255;48;2;19;87;20m+    """Parse a character class starting at '[' (pattern[i] == '[').[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    Returns (leaf_node, new_index) where new_index points just past the ']'.[0m
+[38;2;255;255;255;48;2;19;87;20m+    """[0m
+[38;2;255;255;255;48;2;19;87;20m+    n = len(pattern)[0m
+[38;2;255;255;255;48;2;19;87;20m+    i += 1  # consume '['[0m
+[38;2;255;255;255;48;2;19;87;20m+    negate = False[0m
+[38;2;255;255;255;48;2;19;87;20m+    if i < n and pattern[i] == '^':[0m
+[38;2;255;255;255;48;2;19;87;20m+        negate = True[0m
+[38;2;255;255;255;48;2;19;87;20m+        i += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+    members = []  # list of ('char', c) or ('range', lo, hi)[0m
+[38;2;255;255;255;48;2;19;87;20m+    first = True[0m
+[38;2;255;255;255;48;2;19;87;20m+    while True:[0m
+[38;2;255;255;255;48;2;19;87;20m+        if i >= n:[0m
+[38;2;255;255;255;48;2;19;87;20m+            raise ValueError("unterminated character class")[0m
+[38;2;139;134;130m… omitted 290 diff line(s) across 1 additional file(s)/section(s)[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T01_mini_regex_swarmloop\regex.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T01_mini_regex_swarmloop\regex.py[0m
+[38;2;139;134;130m@@ -325,6 +325,9 @@[0m
+[38;2;184;134;11m             # Empty match: contributes "" and advances by one character.[0m
+[38;2;184;134;11m             results.append("")[0m
+[38;2;184;134;11m             pos += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+        elif end == -1:[0m
+[38;2;255;255;255;48;2;19;87;20m+            # No match (not even empty) starting at this position: advance.[0m
+[38;2;255;255;255;48;2;19;87;20m+            pos += 1[0m
+[38;2;184;134;11m         else:[0m
+[38;2;184;134;11m             results.append(text[pos:end])[0m
+[38;2;184;134;11m             pos = end[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T01_mini_regex_swarmloop\regex.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T01_mini_regex_swarmloop\regex.py[0m
+[38;2;139;134;130m@@ -98,6 +98,13 @@[0m
+[38;2;184;134;11m             members.append(('char', c))[0m
+[38;2;184;134;11m             first = False[0m
+[38;2;184;134;11m             continue[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+        # The ']' terminator (not at first position) ends the class.[0m
+[38;2;255;255;255;48;2;19;87;20m+        if c == ']':[0m
+[38;2;255;255;255;48;2;19;87;20m+            if first:[0m
+[38;2;255;255;255;48;2;19;87;20m+                raise ValueError("empty character class")[0m
+[38;2;255;255;255;48;2;19;87;20m+            i += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+            break[0m
+[38;2;184;134;11m [0m
+[38;2;184;134;11m         # Range check: c-X where X is a real following char (not ']').[0m
+[38;2;184;134;11m         if (i < n and pattern[i] == '-' and (i + 1) < n[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T01_mini_regex_swarmloop\regex.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T01_mini_regex_swarmloop\regex.py[0m
+[38;2;139;134;130m@@ -86,29 +86,32 @@[0m
+[38;2;184;134;11m                 raise ValueError("invalid escape in character class")[0m
+[38;2;184;134;11m             c = _ESCAPES[e][0m
+[38;2;184;134;11m             i += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+            is_escaped = True[0m
+[38;2;184;134;11m         else:[0m
+[38;2;255;255;255;48;2;119;20;20m-            if c == ']':[0m
+[38;2;255;255;255;48;2;119;20;20m-                if first:[0m
+[38;2;255;255;255;48;2;119;20;20m-                    raise ValueError("empty character class")[0m
+[38;2;255;255;255;48;2;119;20;20m-                break  # terminator[0m
+[38;2;255;255;255;48;2;119;20;20m-            i += 1[0m
+[38;2;255;255;255;48;2;119;20;20m-[0m
+[38;2;255;255;255;48;2;119;20;20m-        # A '-' immediately at the start of the class is a literal '-'.[0m
+[38;2;255;255;255;48;2;19;87;20m+            i += 1[0m
+[38;2;255;255;255;48;2;19;87;20m+            is_escaped = False[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+        # A raw ']' (not at the first position) terminates the class.[0m
+[38;2;255;255;255;48;2;19;87;20m+        if (not is_escaped) and c == ']':[0m
+[38;2;255;255;255;48;2;19;87;20m+            if first:[0m
+[38;2;255;255;255;48;2;19;87;20m+                raise ValueError("empty character class")[0m
+[38;2;255;255;255;48;2;19;87;20m+            break  # i already points past the terminator[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+        # A leading '-' is a literal '-'.[0m
+[38;2;184;134;11m         if c == '-' and first:[0m
+[38;2;184;134;11m             members.append(('char', c))[0m
+[38;2;184;134;11m             first = False[0m
+[38;2;184;134;11m             continue[0m
+[38;2;184;134;11m [0m
+[38;2;255;255;255;48;2;119;20;20m-        # The ']' terminator (not at first position) ends the class.[0m
+[38;2;255;255;255;48;2;119;20;20m-        if c == ']':[0m
+[38;2;255;255;255;48;2;119;20;20m-            if first:[0m
+[38;2;255;255;255;48;2;119;20;20m-                raise ValueError("empty character class")[0m
+[38;2;255;255;255;48;2;119;20;20m-            i += 1[0m
+[38;2;255;255;255;48;2;119;20;20m-            break[0m
+[38;2;255;255;255;48;2;119;20;20m-[0m
+[38;2;255;255;255;48;2;119;20;20m-        # Range check: c-X where X is a real following char (not ']').[0m
+[38;2;255;255;255;48;2;119;20;20m-        if (i < n and pattern[i] == '-' and (i + 1) < n[0m
+[38;2;255;255;255;48;2;119;20;20m-                and pattern[i + 1] != ']'):[0m
+[38;2;255;255;255;48;2;19;87;20m+        # A '-' that is not first and not part of a range is a literal '-'.[0m
+[38;2;255;255;255;48;2;19;87;20m+        if (not is_escaped) and c == '-' and not first:[0m
+[38;2;255;255;255;48;2;19;87;20m+            members.append(('char', c))[0m
+[38;2;255;255;255;48;2;19;87;20m+            first = False[0m
+[38;2;255;255;255;48;2;19;87;20m+            continue[0m
+[38;2;255;255;255;48;2;19;87;20m+[0m
+[38;2;255;255;255;48;2;19;87;20m+        # Range: c - X  where X is a real following char (and X is not ']').[0m
+[38;2;255;255;255;48;2;19;87;20m+        if ((not is_escaped) and i < n and pattern[i] == '-'[0m
+[38;2;255;255;255;48;2;19;87;20m+                and (i + 1) < n and pattern[i + 1] != ']'):[0m
+[38;2;184;134;11m             i += 1  # consume '-'[0m
+[38;2;184;134;11m             if pattern[i] == '\\':[0m
+[38;2;184;134;11m                 i += 1[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T01_mini_regex_swarmloop\regex.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T01_mini_regex_swarmloop\regex.py[0m
+[38;2;139;134;130m@@ -82,9 +82,12 @@[0m
+[38;2;184;134;11m             if i >= n:[0m
+[38;2;184;134;11m                 raise ValueError("dangling escape in character class")[0m
+[38;2;184;134;11m             e = pattern[i][0m
+[38;2;255;255;255;48;2;119;20;20m-            if e not in _ESCAPES:[0m
+[38;2;255;255;255;48;2;19;87;20m+            # Inside a class, '\' escapes the next character. The spec's class[0m
+[38;2;255;255;255;48;2;19;87;20m+            # examples include '\]', '\-' and '\\'; we accept the standard[0m
+[38;2;255;255;255;48;2;19;87;20m+            # escape set plus '-' (a class metacharacter).[0m
+[38;2;255;255;255;48;2;19;87;20m+            if e not in _ESCAPES and e != '-':[0m
+[38;2;184;134;11m                 raise ValueError("invalid escape in character class")[0m
+[38;2;255;255;255;48;2;119;20;20m-            c = _ESCAPES[e][0m
+[38;2;255;255;255;48;2;19;87;20m+            c = _ESCAPES.get(e, e)  # '-' (and others) map to themselves[0m
+[38;2;184;134;11m             i += 1[0m
+[38;2;184;134;11m             is_escaped = True[0m
+[38;2;184;134;11m         else:[0m
+  ┊ review diff
+[38;2;218;165;32ma/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T01_mini_regex_swarmloop\regex.py → b/C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T01_mini_regex_swarmloop\regex.py[0m
+[38;2;139;134;130m@@ -121,9 +121,9 @@[0m
+[38;2;184;134;11m                 if i >= n:[0m
+[38;2;184;134;11m                     raise ValueError("dangling escape in character class")[0m
+[38;2;184;134;11m                 e = pattern[i][0m
+[38;2;255;255;255;48;2;119;20;20m-                if e not in _ESCAPES:[0m
+[38;2;255;255;255;48;2;19;87;20m+                if e not in _ESCAPES and e != '-':[0m
+[38;2;184;134;11m                     raise ValueError("invalid escape in character class")[0m
+[38;2;255;255;255;48;2;119;20;20m-                hi = _ESCAPES[e][0m
+[38;2;255;255;255;48;2;19;87;20m+                hi = _ESCAPES.get(e, e)[0m
+[38;2;184;134;11m                 i += 1[0m
+[38;2;184;134;11m             else:[0m
+[38;2;184;134;11m                 hi = pattern[i][0m
+`Regex(r"[]]")` raising "empty character class" is **correct per spec** — the spec states "`]` must be escaped inside a class" and "empty class `[]` → ValueError", so an unescaped `]` right after `[` terminates an empty class = ValueError. My test expectation was again wrong, not the engine.
+
+The implementation is complete and spec-compliant. All genuine spec behaviors pass (match/find, greedy leftmost-longest, empty-match advance, character classes with ranges/negation/escapes, escapes `\n \t` + others, literal `^ $`, quantifier/anchor validity rules, and catastrophic-backtracking immunity in <25ms). No `re` import.
+
+DONE.
+  [tool] ( ͡° ͜ʖ ͡°) processing...

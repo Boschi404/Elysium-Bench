@@ -1,0 +1,49 @@
+TASK: Mini Regex Engine (match + find, greedy, backtracking-safe)
+
+Implement a small regular-expression engine in `regex.py`.
+
+SPEC:
+- class Regex:
+    - __init__(self, pattern: str) — compiles the pattern.
+      Raises ValueError for invalid patterns.
+    - match(self, text: str) -> bool
+      True iff the WHOLE text matches the pattern.
+    - find(self, text: str) -> list[str]
+      All non-overlapping matches, scanned left to right, greedy
+      (leftmost-longest). Semantics of empty matches: an empty match at
+      position i contributes "" and advances by one character.
+      Example: Regex("a*").find("b") == ["", ""]
+
+PATTERN GRAMMAR (no anchors, no groups):
+- atom: a literal character (any char EXCEPT: . ^ $ [ ] * + ? \)
+- "." matches any single character except newline
+- escape "\x" where x is one of: . ^ $ [ ] * + ? \ n t
+  (\n = newline, \t = tab; any other escape → ValueError)
+- character class "[...]":
+    - contains characters and ranges "a-z"; a leading "^" negates
+    - inside a class, "\" escapes the next char (e.g. "\]", "\-", "\\")
+    - "]" must be escaped inside a class
+    - empty class "[]" or "[^]" → ValueError
+    - descending range "z-a" → ValueError
+- quantifier after an atom or class: "*" (0+), "+" (1+), "?" (0 or 1)
+- a quantifier at the start of the pattern, or directly after another
+  quantifier → ValueError
+- "^" and "$" are plain literal characters in this engine
+
+PERFORMANCE REQUIREMENT: matching must be safe against catastrophic
+backtracking — the pattern "a*a*a*a*a*b" against "a"*30 must return
+False in under 2 seconds.
+
+Standard library only. Do NOT import `re` — implement the engine yourself.
+
+
+YOUR ONLY DELIVERABLE — do not do anything else:
+Create the file(s): `regex.py`.
+Write them into EXACTLY this directory (use this absolute path):
+C:\Users\leob3\AppData\Local\Temp\realbench_ws\hard_T01_mini_regex_swarmloop
+
+Do NOT explore other directories, do NOT copy files around, do NOT create
+subdirectories, do NOT run any benchmark or pipeline you may find nearby,
+do NOT attempt git operations. Work autonomously, do not ask questions
+(fai tu). When the deliverable file(s) are written, reply DONE.
+You have the elysium-swarmloop skill loaded. You may decompose the task and dispatch parallel subagents via delegate_task — if you do, every subagent MUST also write its deliverable into the exact directory above. Judge the final files against the spec before replying DONE.
